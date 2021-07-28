@@ -1,5 +1,5 @@
 <p align="center">
-![puch-logo](./doc/puch-logo.png)
+<img src="./doc/puch-logo.png">
 </p>
 
 
