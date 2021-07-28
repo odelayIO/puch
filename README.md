@@ -20,11 +20,11 @@
 
 ## Downloads
 
-[Ubuntu 18.04 LTE - IOS Download File](http://old-releases.ubuntu.com/releases/18.04.4/ubuntu-18.04-desktop-amd64.iso)
+[Ubuntu 18.04 LTE - IOS File](http://old-releases.ubuntu.com/releases/18.04.4/ubuntu-18.04-desktop-amd64.iso)
 
-[Xilinx Vivado v2019.1 Download Install File](https://www.xilinx.com/member/forms/download/xef-vivado.html?filename=Xilinx_Vivado_SDK_2019.1_0524_1430.tar.gz)
+[Xilinx Vivado v2019.1 Install File](https://www.xilinx.com/member/forms/download/xef-vivado.html?filename=Xilinx_Vivado_SDK_2019.1_0524_1430.tar.gz)
 
-[PYNQ Z1 v2.5 SD Card Downlaod Image File](http://bit.ly/2Oubpce)
+[PYNQ Z1 v2.5 SD Card Image File](http://bit.ly/2Oubpce)
 
 
 
