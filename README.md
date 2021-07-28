@@ -24,7 +24,7 @@
 
 [Xilinx Vivado v2019.1 Download Install File](https://www.xilinx.com/member/forms/download/xef-vivado.html?filename=Xilinx_Vivado_SDK_2019.1_0524_1430.tar.gz)
 
-[PYNQ Z1 SD Card Downlaod Image File](http://bit.ly/2Oubpce)
+[PYNQ Z1 v2.5 SD Card Downlaod Image File](http://bit.ly/2Oubpce)
 
 
 
@@ -34,7 +34,7 @@
 
 [Analog Devices ADALM-Pluto SDR](https://wiki.analog.com/university/tools/pluto/users)
 
-[PYNQ v2.5](https://pynq.readthedocs.io/en/v2.5/)
+[PYNQ v2.5 - Read The Docs](https://pynq.readthedocs.io/en/v2.5/)
 
 [PYNQ Z1 FPGA Development Board](https://reference.digilentinc.com/programmable-logic/pynq-z1/reference-manual?redirect=1)
 
