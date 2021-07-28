@@ -14,3 +14,9 @@
 
 <img align="center" src="./doc/puch-detailed-level-diagram.png">
 
+<br>
+<br>
+<br>
+## References
+
+[Pybombs](https://github.com/gnuradio/pybombs)
