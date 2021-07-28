@@ -24,7 +24,8 @@
 
 [Xilinx Vivado v2019.1 Download Install File](https://www.xilinx.com/member/forms/download/xef-vivado.html?filename=Xilinx_Vivado_SDK_2019.1_0524_1430.tar.gz)
 
-[PYNQ Z1 SD Card Downlaod Image File](http://bit.ly/2Oubpce}
+[PYNQ Z1 SD Card Downlaod Image File](http://bit.ly/2Oubpce)
+
 
 
 ## References
