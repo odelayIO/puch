@@ -22,9 +22,9 @@
 
 [Ubuntu 18.04 LTE - IOS Image File Download](http://old-releases.ubuntu.com/releases/18.04.4/ubuntu-18.04-desktop-amd64.iso)
 
-[Xilinx Vivado HLS v2019.1 HSL](https://www.xilinx.com/support/documentation/sw_manuals/xilinx2019_1/ug902-vivado-high-level-synthesis.pdf)
-
 [Xilinx Vivado v2019.1 Install Download File](https://www.xilinx.com/member/forms/download/xef-vivado.html?filename=Xilinx_Vivado_SDK_2019.1_0524_1430.tar.gz)
+
+[Xilinx Vivado HLS v2019.1 HSL Documentation](https://www.xilinx.com/support/documentation/sw_manuals/xilinx2019_1/ug902-vivado-high-level-synthesis.pdf)
 
 [Analog Devices ADALM-Pluto SDR](https://wiki.analog.com/university/tools/pluto/users)
 
