@@ -32,5 +32,5 @@
 
 [GNU Radio](https://www.gnuradio.org/)
 
-[Pybombs](https://github.com/gnuradio/pybombs)
+[PyBOMBS](https://github.com/gnuradio/pybombs)
 
