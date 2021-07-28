@@ -8,17 +8,13 @@
 
 ***puch*** is a framework that provides the glue logic between Analog Device Pluto SDR with support from GNU Radio and the PYNQ Z1 FPGA development platform to support communications Xilinx HLS IP core development.
 
-
-
+<br>
+<br>
 
 <img align="center" width="1163" height="556" src="./doc/puch-detailed-level-diagram.png">
 
+<br>
+<br>
 
-
-
-
-
-
-
-![puch-high-level-diagram](./doc/puch-high-level-diagram.png)
+<img align="center" width="664" height="374" src="./doc/puch-high-level-diagram.png">
 
