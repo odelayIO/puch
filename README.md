@@ -7,7 +7,7 @@
 <br>
 
 
-***puch*** is a framework the glue logic between Analog Devices Pluto SDR and the PYNQ Z1 FPGA development board with support from GNU Radio to provide a platform for communications Xilinx HLS </> VHDL </> Verilog IP core development.
+***puch*** is a framework the glue logic between Analog Devices ADALM-Pluto SDR and the PYNQ Z1 FPGA development board with support from GNU Radio to provide a platform for communications Xilinx HLS </> VHDL </> Verilog IP core development.
 
 <br>
 <br>
