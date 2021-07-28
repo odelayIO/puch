@@ -1,6 +1,10 @@
 
 <img align="center" width="264.75" height="78" src="./doc/puch-logo-1.png">
 
+<p align="center">
+<img src="./doc/puch-logo-1.png">
+</p>
+
 <br>
 <br>
 <br>
