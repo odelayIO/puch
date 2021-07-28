@@ -10,9 +10,9 @@
 
 
 
-<p align="center">
-  <img src="./doc/puch-detailed-level-diagram.png">
-</p>
+
+<img align="center" width="1163" height="556" src="./doc/puch-detailed-level-diagram.png">
+
 
 
 
