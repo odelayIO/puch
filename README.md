@@ -11,5 +11,5 @@
 <br>
 <br>
 
-<img align="center" width="1163" height="556" src="./doc/puch-detailed-level-diagram.png">
+<img align="center" width="992.25" height="474.75" src="./doc/puch-detailed-level-diagram.png">
 
