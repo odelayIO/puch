@@ -13,10 +13,3 @@
 
 <img align="center" width="1163" height="556" src="./doc/puch-detailed-level-diagram.png">
 
-<br>
-<br>
-
-<img align="center" width="664" height="374" src="./doc/puch-high-level-diagram.png">
-
-<br>
-<br>
