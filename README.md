@@ -21,7 +21,7 @@
 ## References
 <a href="https://www.xilinx.com/support/documentation/sw_manuals/xilinx2019_1/ug902-vivado-high-level-synthesis.pdf" target="_blank">Xilinx Vivado HLS 2019.1</a>
 
-[Xilinx Vivado 2019.1 HSL](https://www.xilinx.com/support/documentation/sw_manuals/xilinx2019_1/ug902-vivado-high-level-synthesis.pdf) 
+[Xilinx Vivado 2019.1 HSL](https://www.xilinx.com/support/documentation/sw_manuals/xilinx2019_1/ug902-vivado-high-level-synthesis.pdf){:target="_blank"}
 
 [Analog Devices ADALM-Pluto SDR](https://wiki.analog.com/university/tools/pluto/users)
 
