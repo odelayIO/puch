@@ -40,7 +40,5 @@
 
 [ZeroMQ Python](https://zeromq.org/languages/python/)
 
-[GNU Radio](https://www.gnuradio.org/)
-
-[PyBOMBS](https://github.com/gnuradio/pybombs)
+[GNU Radio](https://www.gnuradio.org/) install using [PyBOMBS](https://github.com/gnuradio/pybombs)
 
