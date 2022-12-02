@@ -30,6 +30,8 @@
 
 ## References
 
+### Firmware
+
 [Xilinx Vivado HLS v2019.1 HSL Documentation](https://www.xilinx.com/support/documentation/sw_manuals/xilinx2019_1/ug902-vivado-high-level-synthesis.pdf)
 
 [Analog Devices ADALM-Pluto SDR](https://wiki.analog.com/university/tools/pluto/users)
@@ -38,7 +40,15 @@
 
 [PYNQ Z1 FPGA Development Board](https://reference.digilentinc.com/programmable-logic/pynq-z1/reference-manual?redirect=1)
 
+
+
+### GNU Radio 
+
 [ZeroMQ Python](https://zeromq.org/languages/python/)
+
+[Understanding ZMQ GRC Blocks](https://wiki.gnuradio.org/index.php/Understanding_ZMQ_Blocks)
+
+[Creating Python OOT with gr-modtool](https://wiki.gnuradio.org/index.php?title=Creating_Python_OOT_with_gr-modtool)
 
 [GNU Radio](https://www.gnuradio.org/) install using [PyBOMBS](https://github.com/gnuradio/pybombs)
 
