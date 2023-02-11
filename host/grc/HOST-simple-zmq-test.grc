@@ -33,6 +33,48 @@ options:
     state: enabled
 
 blocks:
+- name: awgn_amp
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: ''
+    label: AWGN Gain
+    min_len: '200'
+    orient: QtCore.Qt.Horizontal
+    rangeType: float
+    start: '0'
+    step: '0.001'
+    stop: '1'
+    value: '0'
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [304, 12.0]
+    rotation: 0
+    state: true
+- name: freq
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: ''
+    label: Frequency
+    min_len: '200'
+    orient: QtCore.Qt.Horizontal
+    rangeType: float
+    start: '1000'
+    step: '100'
+    stop: samp_rate/4
+    value: '1000'
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [424, 12.0]
+    rotation: 0
+    state: true
 - name: samp_rate
   id: variable
   parameters:
@@ -45,6 +87,25 @@ blocks:
     coordinate: [184, 12]
     rotation: 0
     state: enabled
+- name: analog_noise_source_x_0
+  id: analog_noise_source_x
+  parameters:
+    affinity: ''
+    alias: ''
+    amp: awgn_amp
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    noise_type: analog.GR_GAUSSIAN
+    seed: '0'
+    type: complex
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [408, 260.0]
+    rotation: 0
+    state: true
 - name: analog_sig_source_x_0
   id: analog_sig_source_x
   parameters:
@@ -52,7 +113,7 @@ blocks:
     alias: ''
     amp: '1'
     comment: ''
-    freq: '1000'
+    freq: freq
     maxoutbuf: '0'
     minoutbuf: '0'
     offset: '0'
@@ -64,7 +125,25 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [344, 180.0]
+    coordinate: [200, 180.0]
+    rotation: 0
+    state: true
+- name: blocks_add_xx_0
+  id: blocks_add_xx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_inputs: '2'
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [656, 224.0]
     rotation: 0
     state: true
 - name: blocks_throttle_0
@@ -83,7 +162,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [584, 220.0]
+    coordinate: [776, 236.0]
     rotation: 0
     state: true
 - name: qtgui_time_sink_x_0
@@ -180,7 +259,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [792, 372.0]
+    coordinate: [1000, 372.0]
     rotation: 0
     state: true
 - name: zeromq_pull_source_0
@@ -220,12 +299,14 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [792, 204.0]
+    coordinate: [1008, 220.0]
     rotation: 0
     state: true
 
 connections:
-- [analog_sig_source_x_0, '0', blocks_throttle_0, '0']
+- [analog_noise_source_x_0, '0', blocks_add_xx_0, '1']
+- [analog_sig_source_x_0, '0', blocks_add_xx_0, '0']
+- [blocks_add_xx_0, '0', blocks_throttle_0, '0']
 - [blocks_throttle_0, '0', qtgui_time_sink_x_0, '0']
 - [blocks_throttle_0, '0', zeromq_push_sink_0, '0']
 - [zeromq_pull_source_0, '0', qtgui_time_sink_x_0, '1']
