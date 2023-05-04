@@ -1,0 +1,13 @@
+regmap:
+-   name: User_LEDs
+    description: User Leds on KR260 (user_leds[1:0])
+    address: 16
+    bitfields:
+    -   name: user_leds
+        description: User LEDs
+        reset: 0
+        width: 2
+        lsb: 0
+        access: rw
+        hardware: o
+        enums: []
