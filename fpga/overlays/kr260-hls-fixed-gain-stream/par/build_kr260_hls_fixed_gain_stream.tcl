@@ -43,15 +43,15 @@
 set OVERLAY_NAME "kr260_hls_fixed_gain_stream"
 set DESIGN_NAME "kr260_hls_fixed_gain_stream"
 set BOARD_DESIGN "kr260_hls_fixed_gain_stream_bd.tcl"
-set SPEW_DIR "./output"
-set REPORTS "./output/Reports"
+set SPEW_DIR "../output"
+set REPORTS "../output/Reports"
 set DEVICE "xck26-sfvc784-2LV-c"
 
 
 #----------------------------------------------------------------------------
 #   Create Project
 #----------------------------------------------------------------------------
-set_param board.repoPaths {../../XilinxBoardStore}
+set_param board.repoPaths {../../../..XilinxBoardStore}
 create_project ${OVERLAY_NAME} ${DESIGN_NAME} -part ${DEVICE}
 set_property BOARD_PART xilinx.com:kr260_som:part0:1.0 [current_project]
 set_property target_language VHDL [current_project]
@@ -61,14 +61,14 @@ set_property default_lib work [current_project]
 #----------------------------------------------------------------------------
 #   Adding Library to project
 #----------------------------------------------------------------------------
-set_property  ip_repo_paths  ../lib [current_project]
+set_property  ip_repo_paths  ../../../lib [current_project]
 update_ip_catalog
 
 
 #----------------------------------------------------------------------------
 #   Add VHDL File(s)
 #----------------------------------------------------------------------------
-add_files -norecurse ../lib/led_reg/hw/led_reg.vhd
+add_files -norecurse ../../../lib/led_reg/hw/led_reg.vhd
 
 
 #----------------------------------------------------------------------------
