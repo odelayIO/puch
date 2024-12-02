@@ -3,4 +3,7 @@
 	url = https://github.com/odelayIO/corsair-reg-map/
 [submodule "XilinxBoardStore"]
 	path = XilinxBoardStore
-	url = https://github.com/Xilinx/XilinxBoardStore/
+	url = git@github.com:Xilinx/XilinxBoardStore.git
+[submodule "consair-reg-map"]
+	path = consair-reg-map
+	url = git@github.com:odelayIO/corsair-reg-map.git
