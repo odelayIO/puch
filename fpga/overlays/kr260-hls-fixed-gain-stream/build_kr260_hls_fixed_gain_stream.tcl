@@ -47,6 +47,7 @@ set BOARD_DESIGN "kr260_hls_fixed_gain_stream_bd.tcl"
 set SPEW_DIR "./output"
 set REPORTS "./output/Reports"
 set DEVICE "xck26-sfvc784-2LV-c"
+set DOCKER_BASE "../../.."
 
 
 #----------------------------------------------------------------------------
@@ -68,12 +69,10 @@ update_ip_catalog
 
 
 #----------------------------------------------------------------------------
-#   Add VHDL File(s)
+#   Add VHDL File(s) in library folder
 #----------------------------------------------------------------------------
-add_files -norecurse ../../lib/led_reg/hw/led_reg.vhd
-add_files -norecurse ../../lib/timestamp/hw/timestamp_reg.vhd
-add_files -norecurse ../../lib/timestamp/Timestamp_Pkg.vhd
-add_files -norecurse ../../lib/timestamp/Timestamp.vhd
+source ../../lib/led_reg/sources.tcl
+source ../../lib/timestamp/sources.tcl
 
 
 #----------------------------------------------------------------------------
