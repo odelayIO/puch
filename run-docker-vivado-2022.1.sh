@@ -41,7 +41,7 @@
 ###########################################################################################
 
 export PROJECT_PATH=${PWD}
-export DOCKER_HOME=/home/docker/kr260-workspace
+export DOCKER_HOME=/home/docker/puch-workspace
 
 #-------------------------------------------------------------------------------
 # Helper Function
