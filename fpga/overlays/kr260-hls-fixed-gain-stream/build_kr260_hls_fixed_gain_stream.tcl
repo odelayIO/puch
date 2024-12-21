@@ -73,6 +73,7 @@ update_ip_catalog
 #----------------------------------------------------------------------------
 source ../../lib/led_reg/sources.tcl
 source ../../lib/timestamp/sources.tcl
+source ../../lib/AWGN_GNG/sources.tcl
 
 
 #----------------------------------------------------------------------------
