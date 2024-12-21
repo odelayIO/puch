@@ -33,6 +33,7 @@
 #     -----------   -----------------------------------------------------------------------
 #      2023-04-18    Original Creation
 #      2023-05-04    Clean up and added report generation statements
+#      2024-12-20    Merged into puch
 #
 ###########################################################################################
 
@@ -41,18 +42,19 @@
 #   System Variables
 #----------------------------------------------------------------------------
 set OVERLAY_NAME "kr260_hls_fixed_gain_stream"
-set DESIGN_NAME "kr260_hls_fixed_gain_stream"
+set PROJ_DIR "./xpr"
 set BOARD_DESIGN "kr260_hls_fixed_gain_stream_bd.tcl"
-set SPEW_DIR "../output"
-set REPORTS "../output/Reports"
+set SPEW_DIR "./output"
+set REPORTS "./output/Reports"
 set DEVICE "xck26-sfvc784-2LV-c"
 
 
 #----------------------------------------------------------------------------
 #   Create Project
 #----------------------------------------------------------------------------
-set_param board.repoPaths {../../../..XilinxBoardStore}
-create_project ${OVERLAY_NAME} ${DESIGN_NAME} -part ${DEVICE}
+set_param board.repoPaths {../../../XilinxBoardStore}
+# create_project [‑part <arg>] [‑force] [‑in_memory] [‑ip] [‑rtl_kernel] [‑quiet] [‑verbose] [<name>] [<dir>]
+create_project ${OVERLAY_NAME} ${PROJ_DIR} -part ${DEVICE}
 set_property BOARD_PART xilinx.com:kr260_som:part0:1.0 [current_project]
 set_property target_language VHDL [current_project]
 set_property default_lib work [current_project]
@@ -61,14 +63,17 @@ set_property default_lib work [current_project]
 #----------------------------------------------------------------------------
 #   Adding Library to project
 #----------------------------------------------------------------------------
-set_property  ip_repo_paths  ../../../lib [current_project]
+set_property  ip_repo_paths  ../../lib [current_project]
 update_ip_catalog
 
 
 #----------------------------------------------------------------------------
 #   Add VHDL File(s)
 #----------------------------------------------------------------------------
-add_files -norecurse ../../../lib/led_reg/hw/led_reg.vhd
+add_files -norecurse ../../lib/led_reg/hw/led_reg.vhd
+add_files -norecurse ../../lib/timestamp/hw/timestamp_reg.vhd
+add_files -norecurse ../../lib/timestamp/Timestamp_Pkg.vhd
+add_files -norecurse ../../lib/timestamp/Timestamp.vhd
 
 
 #----------------------------------------------------------------------------
@@ -80,15 +85,15 @@ source ${BOARD_DESIGN}
 #----------------------------------------------------------------------------
 #   open block design
 #----------------------------------------------------------------------------
-open_bd_design ./${OVERLAY_NAME}/${OVERLAY_NAME}.srcs/sources_1/bd/${DESIGN_NAME}/${DESIGN_NAME}.bd
+open_bd_design ./${PROJ_DIR}/${OVERLAY_NAME}.srcs/sources_1/bd/${OVERLAY_NAME}/${OVERLAY_NAME}.bd
 
 
 #----------------------------------------------------------------------------
 #   Add top wrapper and xdc files
 #----------------------------------------------------------------------------
-make_wrapper -files [get_files ./${OVERLAY_NAME}/${OVERLAY_NAME}.srcs/sources_1/bd/${DESIGN_NAME}/${DESIGN_NAME}.bd] -top
-add_files -norecurse ./${OVERLAY_NAME}/${OVERLAY_NAME}.gen/sources_1/bd/${DESIGN_NAME}/hdl/${DESIGN_NAME}_wrapper.vhd
-set_property top ${DESIGN_NAME}_wrapper [current_fileset]
+make_wrapper -files [get_files ./${PROJ_DIR}/${OVERLAY_NAME}.srcs/sources_1/bd/${OVERLAY_NAME}/${OVERLAY_NAME}.bd] -top
+add_files -norecurse ./${PROJ_DIR}/${OVERLAY_NAME}.gen/sources_1/bd/${OVERLAY_NAME}/hdl/${OVERLAY_NAME}_wrapper.vhd
+set_property top ${OVERLAY_NAME}_wrapper [current_fileset]
 
 
 #----------------------------------------------------------------------------
@@ -128,5 +133,5 @@ validate_hw_platform ./${OVERLAY_NAME}.xsa
 #----------------------------------------------------------------------------
 #   Copy and rename bitstream to final location
 #----------------------------------------------------------------------------
-file copy -force ./${OVERLAY_NAME}/${OVERLAY_NAME}.runs/impl_1/${DESIGN_NAME}_wrapper.bit ${SPEW_DIR}/${OVERLAY_NAME}.bit
-file copy -force ./${OVERLAY_NAME}/${OVERLAY_NAME}.gen/sources_1/bd/${DESIGN_NAME}/hw_handoff/${DESIGN_NAME}.hwh ${SPEW_DIR}/${OVERLAY_NAME}.hwh
+file copy -force ./${PROJ_DIR}/${OVERLAY_NAME}.runs/impl_1/${OVERLAY_NAME}_wrapper.bit ${SPEW_DIR}/${OVERLAY_NAME}.bit
+file copy -force ./${PROJ_DIR}/${OVERLAY_NAME}.gen/sources_1/bd/${OVERLAY_NAME}/hw_handoff/${OVERLAY_NAME}.hwh ${SPEW_DIR}/${OVERLAY_NAME}.hwh

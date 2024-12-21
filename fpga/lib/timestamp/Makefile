@@ -1,4 +1,4 @@
-export PYTHONPATH := ../../../corsair-reg-map/.:$(PYTHONPATH)
+export PYTHONPATH := ../../corsair-reg-map/.:$(PYTHONPATH)
 
 all: clean build
 

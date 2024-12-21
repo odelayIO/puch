@@ -39,10 +39,10 @@
 
 
 
-set overlay_name "kr260_hls_fixed_gain_stream"
-set design_name "kr260_hls_fixed_gain_stream"
+set OVERLAY_NAME "kr260_hls_fixed_gain_stream"
+set PROJ_DIR "xpr"
 
-set fd [open ./${overlay_name}/${overlay_name}.runs/impl_1/${design_name}_wrapper_timing_summary_routed.rpt r]
+set fd [open ./${PROJ_DIR}/${OVERLAY_NAME}.runs/impl_1/${OVERLAY_NAME}_wrapper_timing_summary_routed.rpt r]
 set timing_met 0
 while { [gets $fd line] >= 0 } {
     if [string match {All user specified timing constraints are met.} $line]  { 
@@ -51,7 +51,7 @@ while { [gets $fd line] >= 0 } {
     }
 }
 if {$timing_met == 0} {
-    puts "ERROR: ${overlay_name} bitstream generation does not meet timing."
+    puts "ERROR: ${OVERLAY_NAME} bitstream generation does not meet timing."
     exit 1
 }
 puts "Timing constraints are met."

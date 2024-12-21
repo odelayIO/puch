@@ -40,7 +40,7 @@
 #
 ###########################################################################################
 
-export PROJECT_PATH=${HOME}/workspace/kr260
+export PROJECT_PATH=${PWD}
 export DOCKER_HOME=/home/docker/kr260-workspace
 
 #-------------------------------------------------------------------------------
@@ -71,6 +71,7 @@ done
 #-------------------------------------------------------------------------------
 docker run -it --rm \
   --net host \
+  -e PYTHONPATH=${DOCKER_HOME}/consair-reg-map \
   -e LOCAL_UID=$(id -u ${USER}) \
   -e LOCAL_GID=$(id -g ${USER}) \
   -e USER=${USER} \

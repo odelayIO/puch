@@ -1,4 +1,5 @@
-export PYTHONPATH := ../../../corsair-reg-map/.:$(PYTHONPATH)
+# Moved to Docker Run script
+#export PYTHONPATH := $(PYTHONPATH):../../../corsair-reg-map
 
 all: clean build
 

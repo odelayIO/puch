@@ -6,7 +6,7 @@
 --****
 --****
 --****
---****    Auto Generated on Nov. 21, 2024 03:12:02 PM
+--****    Auto Generated on Dec. 21, 2024 03:03:43 PM
 --****
 --***********************************************************************************************************
 --***********************************************************************************************************
@@ -27,11 +27,11 @@ package Timestamp_Pkg is
   -- -------------------------------------------------------------------------------------------
   constant TS_YEAR_1    : std_logic_vector(7 downto 0) := x"20";
   constant TS_YEAR_0    : std_logic_vector(7 downto 0) := x"24";
-  constant TS_MONTH     : std_logic_vector(7 downto 0) := x"11";
+  constant TS_MONTH     : std_logic_vector(7 downto 0) := x"12";
   constant TS_DAY       : std_logic_vector(7 downto 0) := x"21";
   constant TS_HOUR      : std_logic_vector(7 downto 0) := x"15";
-  constant TS_MIN       : std_logic_vector(7 downto 0) := x"12";
-  constant TS_SEC       : std_logic_vector(7 downto 0) := x"02";
+  constant TS_MIN       : std_logic_vector(7 downto 0) := x"03";
+  constant TS_SEC       : std_logic_vector(7 downto 0) := x"43";
  
  
  
