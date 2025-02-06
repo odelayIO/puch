@@ -1,0 +1,70 @@
+regmap:
+-   name: F_in
+    description: Input data stream format 
+    address: 0
+    bitfields:
+    -   name: F_in_total
+        description: Input data stream format total bit width
+        reset: 0
+        width: 16
+        lsb: 0
+        access: ro
+        hardware: i
+        enums: []
+    -   name: F_in_fractional
+        description: Input data stream format fractional bits
+        reset: 0
+        width: 16
+        lsb: 16 
+        access: ro
+        hardware: i
+        enums: []
+-   name: F_out
+    description: Output data stream format 
+    bitfields:
+    -   name: F_out_total
+        description: Output data stream format total bit width
+        reset: 0
+        width: 16
+        lsb: 0
+        access: ro
+        hardware: i
+        enums: []
+    -   name: F_out_fractional
+        description: Output data stream format fractional bits
+        reset: 0
+        width: 16
+        lsb: 16 
+        access: ro
+        hardware: i
+        enums: []
+-   name: F_awgn
+    description: Output AWGN data stream format 
+    bitfields:
+    -   name: F_awgn_total
+        description: Output AWGN data stream format total bit width
+        reset: 0
+        width: 16
+        lsb: 0
+        access: ro
+        hardware: i
+        enums: []
+    -   name: F_awgn_fractional
+        description: Output AWGN data stream format fractional bits
+        reset: 0
+        width: 16
+        lsb: 16 
+        access: ro
+        hardware: i
+        enums: []
+-   name: awgn_noise_gain
+    description: AWGN Noise Gain
+    bitfields:
+    -   name: awgn_noise_gain
+        description: AWGN Noise Gain, same format as AWGN
+        reset: 0
+        width: 16
+        lsb: 0
+        access: rw
+        hardware: i
+        enums: []
