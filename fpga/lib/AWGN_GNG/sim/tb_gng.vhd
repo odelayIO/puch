@@ -54,7 +54,7 @@ architecture Behavioral of tb_gng is
     constant F_FRAC     : integer := 11; -- fractional bits output of GNG
 
     file fpOut          : text open write_mode is
-      "../../../../../../../lib/AWGN_GNG/sim/gng_data_out.txt";
+      "../../../../../../../lib/AWGN_GNG/sim/gng_data_out.csv";
 
     -- Signals
     signal clk          : std_logic := '0';
