@@ -33,9 +33,9 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.STD_LOGIC_ARITH.ALL;
-use IEEE.STD_LOGIC_UNSIGNED.ALL;
-use IEEE.STD_LOGIC_SIGNED.ALL;
+use ieee.numeric_std.all;
+use IEEE.STD_LOGIC_TEXTIO.all;
+use STD.TEXTIO.ALL;
 
 entity tb_gng is
 end tb_gng;
@@ -51,18 +51,28 @@ architecture Behavioral of tb_gng is
     signal clk        : std_logic := '0';
     signal rstn       : std_logic := '0';
     signal ce         : std_logic := '0';
-    signal valid_out  : std_logic := '0';
-    signal data_out   : std_logic_vector(15 downto 0);
+    signal valid_out_I  : std_logic := '0';
+    signal data_out_I   : std_logic_vector(15 downto 0);
+    signal valid_out_Q  : std_logic := '0';
+    signal data_out_Q   : std_logic_vector(15 downto 0);
+
+    file fpOut        : text;
+
 
     -- Instantiate the gng module for I and Q with different INIT_Z values
     component gng is
-        port (
-            clk         : in std_logic;
-            rstn        : in std_logic;
-            ce          : in std_logic;
-            valid_out   : out std_logic;
-            data_out    : out std_logic_vector(15 downto 0)
-        );
+      generic (
+        INIT_Z1     : std_logic_vector(63 downto 0) := x"6094bc1bd3d8db9a";
+        INIT_Z2     : std_logic_vector(63 downto 0) := x"d36035b0ca17e666";
+        INIT_Z3     : std_logic_vector(63 downto 0) := x"e2d0b140ab8ac10b"
+      );
+      port (
+        clk         : in std_logic;
+        rstn        : in std_logic;
+        ce          : in std_logic;
+        valid_out   : out std_logic;
+        data_out    : out std_logic_vector(15 downto 0)
+      );
     end component;
 
 begin
@@ -80,7 +90,7 @@ begin
     rstn_gen: process
     begin
         rstn <= '0';
-        wait for ClkPeriod * 2;
+        wait for ClkPeriod * 20;
         rstn <= '1';
         wait;
     end process rstn_gen;
@@ -94,67 +104,80 @@ begin
 
     -- Main Test Process
     process
-        variable fpOut : text;
     begin
         -- Open file for writing
         file_open(fpOut, "gng_data_out.txt", write_mode);
 
         -- Deassert ce initially
-        ce <= '0';
+        --ce <= '0';
 
         -- Wait some time and then activate ce for noise generation
         wait for ClkPeriod * 10;
         for i in 1 to N loop
             wait until rising_edge(clk);
             wait for Dly;
-            ce <= '1';
+            --ce <= '1';
         end loop;
 
         -- Deassert ce after noise generation
         wait until rising_edge(clk);
         wait for Dly;
-        ce <= '0';
+        --ce <= '0';
 
         -- Close the file after some time
-        wait for ClkPeriod * 20;
+        wait for ClkPeriod * 8192;
         file_close(fpOut);
 
         -- Stop simulation
-        assert false report "Simulation stopped" severity failure;
-
+        assert false report "Simulation stopped" severity note;
+        wait;
     end process;
 
     -- Record data
     process(clk)
+      variable v_line   : line;
     begin
         if rising_edge(clk) then
-            if valid_out = '1' then
+            if valid_out_I = '1' then
                 -- Write data to file
-                write(fpOut, data_out);
-                write_line(fpOut);
+                write(v_line, to_integer(signed(data_out_I)));
+                --write(v_line, ',');
+                write(v_line, string'(", "));
+                write(v_line, to_integer(signed(data_out_Q)));
+                writeline(fpOut, v_line);
             end if;
         end if;
     end process;
 
     -- Instantiate U_gng_I (example values for INIT_Z)
     u_gng_I : gng
-        port map (
-            clk => clk,
-            rstn => rstn,
-            ce => ce,
-            valid_out => valid_out,
-            data_out => data_out
-        );
+      generic map (
+        INIT_Z1     => x"6094bc1bd3d8db9a",
+        INIT_Z2     => x"d36035b0ca17e666",
+        INIT_Z3     => x"e2d0b140ab8ac10b"
+      )
+      port map (
+        clk         => clk,
+        rstn        => rstn,
+        ce          => ce,
+        valid_out   => valid_out_I,
+        data_out    => data_out_I
+      );
 
     -- Instantiate U_gng_Q (example values for INIT_Z)
     u_gng_Q : gng
-        port map (
-            clk => clk,
-            rstn => rstn,
-            ce => ce,
-            valid_out => valid_out,
-            data_out => data_out
-        );
+      generic map (
+        INIT_Z1     => x"bc6840786a43d19a",
+        INIT_Z2     => x"4756b3c2f33b8c9f",
+        INIT_Z3     => x"32b439953f41c5e7"
+      )
+      port map (
+        clk         => clk,
+        rstn        => rstn,
+        ce          => ce,
+        valid_out   => valid_out_Q,
+        data_out    => data_out_Q
+      );
 
 end Behavioral;
 
