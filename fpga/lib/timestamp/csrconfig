@@ -1,0 +1,32 @@
+[globcfg]
+base_address = 0
+data_width = 32
+address_width = 16
+register_reset = sync_pos
+address_increment = 4
+address_alignment = data_width
+force_name_case = none
+regmap_path = timestamp_reg.yaml
+
+[vhdl_module]
+path = hw/timestamp_reg.vhd
+read_filler = 0
+interface = axil
+generator = Vhdl
+
+[vhdl_header]
+path = hw/timestamp_pkg.vhd
+prefix = CSR
+generator = VhdlHeader
+
+[py]
+path = sw/timestamp_regmap.py
+generator = Python
+
+[md_doc]
+path = doc/timestamp_reg.md
+title = Register map
+print_images = True
+image_dir = md_img
+print_conventions = True
+generator = Markdown

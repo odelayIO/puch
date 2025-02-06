@@ -1,0 +1,68 @@
+regmap:
+-   name: Time_Stamp_Year
+    description: Time Stamp Year (Hex Value)
+    address: 16
+    bitfields:
+    -   name: ts_year 
+        description: Time Stamp Year (Hex Value)
+        reset: 0
+        width: 16
+        lsb: 0
+        access: ro
+        hardware: i
+        enums: []
+-   name: Time_Stamp_Month
+    description: Time Stamp Month (Hex Value)
+    bitfields:
+    -   name: ts_month
+        description: Time Stamp Month (Hex Value)
+        reset: 0
+        width: 8
+        lsb: 0
+        access: ro
+        hardware: i
+        enums: []
+-   name: Time_Stamp_Day
+    description: Time Stamp Day (Hex Value)
+    bitfields:
+    -   name: ts_day
+        description: Time Stamp Day (Hex Value)
+        reset: 0
+        width: 8
+        lsb: 0
+        access: ro
+        hardware: i
+        enums: []
+-   name: Time_Stamp_Hour
+    description: Time Stamp Hour (Hex Value)
+    bitfields:
+    -   name: ts_hour
+        description: Time Stamp Hour (Hex Value)
+        reset: 0
+        width: 8
+        lsb: 0
+        access: ro
+        hardware: i
+        enums: []
+-   name: Time_Stamp_Minute
+    description: Time Stamp Minute (Hex Value)
+    bitfields:
+    -   name: ts_min
+        description: Time Stamp Minute (Hex Value)
+        reset: 0
+        width: 8 
+        lsb: 0
+        access: ro
+        hardware: i
+        enums: []
+-   name: Time_Stamp_Seconds
+    description: Time Stamp Seconds (Hex Value)
+    bitfields:
+    -   name: ts_sec
+        description: Time Stamp Seconds (Hex Value)
+        reset: 0
+        width: 8 
+        lsb: 0
+        access: ro
+        hardware: i
+        enums: []

@@ -26,7 +26,7 @@ It is recommended to have both devices map to a the same development folder.  Th
 1. Clone `puch` on the Ubuntu host machine:
 
    ```bash
-   git clone git@github.com:odelayIO/puch.git
+   git clone --recursive git@github.com:odelayIO/puch.git
    ```
 
 2. SSH into the `PYNQ` device, and create a new folder named `push` at a desired location, then map the directory on the Ubuntu host machine on the `PYNQ` board:
@@ -62,9 +62,9 @@ It is recommended to have both devices map to a the same development folder.  Th
 
 [Ubuntu 22.04.1 LTE - IOS File](https://hr.releases.ubuntu.com/22.04/ubuntu-22.04.1-desktop-amd64.iso)
 
-[Xilinx Vivado v2019.1 Install File](https://www.xilinx.com/member/forms/download/xef-vivado.html?filename=Xilinx_Vivado_SDK_2019.1_0524_1430.tar.gz)
+[Xilinx Vivado v2022.1 Install File](https://www.xilinx.com/member/forms/download/xef.html?filename=Xilinx_Unified_2022.1_0420_0327.tar.gz)
 
-[PYNQ Z1 v2.5 SD Card Image File](http://bit.ly/2Oubpce)
+[PYNQ Z1 v3.0.1 SD Card Image File](https://bit.ly/pynqz1_v3_0_1)
 
 
 
@@ -76,7 +76,7 @@ It is recommended to have both devices map to a the same development folder.  Th
 
 [Analog Devices ADALM-Pluto SDR](https://wiki.analog.com/university/tools/pluto/users)
 
-[PYNQ v2.5 - Read The Docs](https://pynq.readthedocs.io/en/v2.5/)
+[PYNQ Read The Docs](https://pynq.readthedocs.io/en/latest/)
 
 [PYNQ Z1 FPGA Development Board](https://reference.digilentinc.com/programmable-logic/pynq-z1/reference-manual?redirect=1)
 
