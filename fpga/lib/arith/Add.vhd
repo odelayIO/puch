@@ -88,8 +88,8 @@ begin
   --bx <= grow(b, B_F, Q_F, SIGN) when (Q_F.tBits > B_F.tBits) else b;
   ax <= grow(a, A_F, Q_F, SIGN);
   bx <= grow(b, B_F, Q_F, SIGN);
-  ax_real <= slv2real(Q_F, SIGN, ax);
-  bx_real <= slv2real(Q_F, SIGN, bx);
+  --ax_real <= slv2real(Q_F, SIGN, ax);
+  --bx_real <= slv2real(Q_F, SIGN, bx);
 
 
   q <= std_logic_vector(ieee.numeric_std."+"(
