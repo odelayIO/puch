@@ -97,8 +97,7 @@ end entity;
 architecture rtl of gng_top is
 
   -- Constant and Top level signals
-  --constant F_AWGN         : format := (16,11);  -- AWGN is fixed format
-  constant F_AWGN         : format := (16,15);  -- KLUDGE, fixed attenuation
+  constant F_AWGN         : format := (16,11);  -- AWGN is fixed format
   constant F_IN           : format := (16,14);
   constant F_OUT          : format := (16,14);
   constant DLY            : natural := 1; -- Pipeline delay
@@ -111,6 +110,8 @@ architecture rtl of gng_top is
   --  Data Path Signals
   signal I_gng            : std_logic_vector(F_AWGN.tBits-1 downto 0);
   signal Q_gng            : std_logic_vector(F_AWGN.tBits-1 downto 0);
+  signal I_gng_d          : std_logic_vector(F_AWGN.tBits-1 downto 0);
+  signal Q_gng_d          : std_logic_vector(F_AWGN.tBits-1 downto 0);
 
   signal B_TVALID_int     : std_logic;
   signal B_TLAST_int      : std_logic;
@@ -189,7 +190,7 @@ begin
     );
 
   -- --------------------------------------------------------
-  -- Stage 0: Instantiate U_gng_I/Q 
+  -- Stage 0: Instantiate U_gng_I/Q and add gain 
   -- --------------------------------------------------------
   u_gng_I : entity work.gng
     generic map (
@@ -219,6 +220,64 @@ begin
       data_out    => Q_gng
     );
 
+  -- Gain Control
+  U_GAIN_AWGN_I : entity work.Mult
+    generic map (
+      a_f         => F_AWGN,
+      b_f         => F_AWGN,
+      c_f         => F_AWGN,
+      sign        => True,
+      satr        => True,
+      rnd         => True,
+      arst        => True,
+      dly         => 1
+    )
+    port map (
+      ------------+-------------------------
+      -- Clock and Reset
+      clk         => clk,
+      ce          => B_TREADY,
+      rst         => rst,
+      ------------+-------------------------
+      -- Input Signals
+      A           => awgn_gain,
+      B           => I_gng,
+      In_stb      => '1',
+      ------------+-------------------------
+      -- Output Signals
+      C           => I_gng_d,
+      Out_stb     => open
+    );
+
+  U_GAIN_AWGN_Q : entity work.Mult
+    generic map (
+      a_f         => F_AWGN,
+      b_f         => F_AWGN,
+      c_f         => F_AWGN,
+      sign        => True,
+      satr        => True,
+      rnd         => True,
+      arst        => True,
+      dly         => 1
+    )
+    port map (
+      ------------+-------------------------
+      -- Clock and Reset
+      clk         => clk,
+      ce          => B_TREADY,
+      rst         => rst,
+      ------------+-------------------------
+      -- Input Signals
+      A           => awgn_gain,
+      B           => Q_gng,
+      In_stb      => '1',
+      ------------+-------------------------
+      -- Output Signals
+      C           => Q_gng_d,
+      Out_stb     => open
+    );
+
+
   -- -------------------------------------------------
   --  Stage 1: Add Signals with AWGN Generator
   -- -------------------------------------------------
@@ -242,7 +301,7 @@ begin
       ------------+-------------------------
       -- Input Signals
       A           => A_TDATA(2*F_IN.tBits-1 downto F_IN.tBits),
-      B           => I_gng,
+      B           => I_gng_d,
       In_stb      => A_TVALID,
       ------------+-------------------------
       -- Output Signals
@@ -270,7 +329,7 @@ begin
       ------------+-------------------------
       -- Input Signals
       A           => A_TDATA(F_IN.tBits-1 downto 0),
-      B           => Q_gng,
+      B           => Q_gng_d,
       In_stb      => A_TVALID,
       ------------+-------------------------
       -- Output Signals
