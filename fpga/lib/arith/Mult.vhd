@@ -1,4 +1,3 @@
-
 --******************************************************************************
 --******************************************************************************
 --****
@@ -36,70 +35,62 @@ use ieee.numeric_std.all;
 
 use work.Arith_Pkg.all;
 
-entity Add is
-generic (
-  A_F       : format;
-  B_F       : format;
-  C_F       : format;
-  SIGN      : boolean := TRUE;
-  SATR      : boolean := TRUE;
-  RND       : boolean := TRUE;
-	ARST      : boolean := TRUE;
-  DLY       : natural := 1
-);
-port (
-  ----------+-------------------------
-  -- Clock and Reset
-  rst       : in  std_logic;
-  clk       : in  std_logic;
-  ce        : in  std_logic;
-  ----------+-------------------------
-  -- Input signals
-  a         : in  std_logic_vector;
-  b         : in  std_logic_vector;
-  in_stb    : in  std_logic;
-  ----------+-------------------------
-  -- Output Signals
-  c         : out std_logic_vector;
-  out_stb   : out std_logic
-);
-end Add;
+entity mult is
+  generic (
+    a_f, b_f, c_f     : format  := (8,4);
+    satr              : boolean := true;
+    rnd               : boolean := true;
+    sign              : boolean := false;
+    DLY               : natural := 1;
+    ARST              : boolean := false -- Async Reset
+  );
+  port (
+    ------------+-----------------------------------------------------------
+    -- Clock and Reset
+    rst         : in  std_logic;  -- active high reset
+    clk         : in  std_logic;
+    ce          : in  std_logic := '1';
+    ------------+-----------------------------------------------------------
+    -- Input Signals  
+    A           : in  std_logic_vector(a_f.tBits-1 downto 0);
+    B           : in  std_logic_vector(b_f.tBits-1 downto 0);
+    In_stb      : in  std_logic;
+    ------------+-----------------------------------------------------------
+    -- Output Signals 
+    C           : out std_logic_vector(c_f.tBits-1 downto 0);
+    Out_stb     : out std_logic
+  );
+  --attribute USE_DSP48 : string;
+  --attribute USE_DSP48 of mult : entity is "YES";
+end mult;
 
-architecture Add_a of Add is
+------------------------------------------------------------------
+-- Architecture for Mult
+------------------------------------------------------------------
+architecture RTL of mult is
 
+  constant Q_F          : format := (A_F.tBits+B_F.tBits, A_F.fBits+B_F.fBits);
+  signal q              : std_logic_vector(Q_F.tBits-1 downto 0);
+  signal q_reduced      : std_logic_vector(C_F.tBits-1 downto 0);
 
-  signal ax     : std_logic_vector(max(A_F.fBits, B_F.fBits) +
-                      max(A_F.tBits-A_F.fBits, B_F.tBits-B_F.fBits) downto 0);
-  signal bx     :  std_logic_vector(max(A_F.fBits, B_F.fBits) +
-                      max(A_F.tBits-A_F.fBits, B_F.tBits-B_F.fBits) downto 0);
-
-  signal q      : std_logic_vector(ax'length-1 downto 0);
-  constant Q_F  : format := (ax'length, max(A_F.fBits, B_F.fBits));
-
-  signal q_reduced    : std_logic_vector(C_F.tBits-1 downto 0);
-
-  --signal ax_real    : real;
-  --signal bx_real    : real;
+  signal q_real         : real;
+  signal q_reduced_real : real;
 
 begin
 
   -- ------------------------------------------------------
-  --  Add, then reduce
+  --  Multiple, then reduce
   -- ------------------------------------------------------
-
-  ax <= grow(a, A_F, Q_F, SIGN);
-  bx <= grow(b, B_F, Q_F, SIGN);
-  --ax_real <= slv2real(Q_F, SIGN, ax);
-  --bx_real <= slv2real(Q_F, SIGN, bx);
-
-
-  q <= std_logic_vector(ieee.numeric_std."+"(
-           signed(ax), signed(bx))) when SIGN else
-       std_logic_vector(ieee.numeric_std."+"(
-           unsigned(ax), unsigned(bx)));
-
+  q <= std_logic_vector(ieee.numeric_std."*"(
+           signed(A), signed(B))) when SIGN else
+       std_logic_vector(ieee.numeric_std."*"(
+           unsigned(B), unsigned(B)));
+  
 
   q_reduced <= reduce(q,Q_F,C_F,SIGN,SATR,RND);
+
+  q_real          <= slv2real(C_F,SIGN,q_reduced);
+  q_reduced_real  <= slv2real(Q_F,SIGN,q);
 
 
   -- -----------------------------------------------
@@ -133,5 +124,6 @@ begin
       slv_out => c 
     );
 
-  
-end Add_a;
+
+
+end RTL;

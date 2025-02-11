@@ -1,3 +1,5 @@
+# See consair ReadTheDocs for RegMap parameters https://corsair.readthedocs.io/en/latest/regmap.html
+
 regmap:
 -   name: F_in
     description: Input data stream format 

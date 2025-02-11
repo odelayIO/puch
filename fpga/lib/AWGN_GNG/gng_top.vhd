@@ -101,6 +101,7 @@ architecture rtl of gng_top is
   constant F_AWGN         : format := (16,15);  -- KLUDGE, fixed attenuation
   constant F_IN           : format := (16,14);
   constant F_OUT          : format := (16,14);
+  constant DLY            : natural := 1; -- Pipeline delay
   signal rst              : std_logic := '1';
 
   -- Register Signals
@@ -115,6 +116,8 @@ architecture rtl of gng_top is
   signal B_TLAST_int      : std_logic;
   signal B_TDATA_int      : std_logic_vector(2*F_OUT.tBits-1 downto 0);
 
+  signal tlast_pipe       : std_logic_vector(0 to DLY-1); -- Must be 1 or greater
+
 begin
 
   -- drive control signals
@@ -124,6 +127,22 @@ begin
   B_TVALID  <= B_TVALID_int when awgn_enable = '1' else A_TVALID;
   B_TDATA   <= B_TDATA_int  when awgn_enable = '1' else A_TDATA;
 
+
+  -- TLAST delay by DLY cc
+  process(clk,B_TREADY,rst)
+  begin
+    if(rst = '1') then
+      tlast_pipe        <= (others => '0');
+    elsif(rising_edge(clk) AND B_TREADY='1') then
+      if(A_TVALID = '1') then
+        tlast_pipe(0)   <= A_TLAST;
+      end if;
+      for  i in 1 to DLY-1 loop
+        tlast_pipe(i)   <= tlast_pipe(i-1);
+      end loop;
+    end if;
+  end process;
+  B_TLAST_int <= tlast_pipe(DLY-1);
 
   -- --------------------------------------------------------
   --  Host Interface
@@ -170,7 +189,7 @@ begin
     );
 
   -- --------------------------------------------------------
-  -- Instantiate U_gng_I/Q (example values for INIT_Z)
+  -- Stage 0: Instantiate U_gng_I/Q 
   -- --------------------------------------------------------
   u_gng_I : entity work.gng
     generic map (
@@ -201,7 +220,7 @@ begin
     );
 
   -- -------------------------------------------------
-  --  Add Signals with AWGN Generator
+  --  Stage 1: Add Signals with AWGN Generator
   -- -------------------------------------------------
   U_ADD_AWGN_I : entity work.Add
     generic map (
@@ -212,7 +231,7 @@ begin
       satr        => True,
       rnd         => True,
       arst        => True,
-      dly         => 1 
+      dly         => DLY 
     )
     port map (
       ------------+-------------------------
@@ -240,7 +259,7 @@ begin
       satr        => True,
       rnd         => True,
       arst        => True,
-      dly         => 1 
+      dly         => DLY
     )
     port map (
       ------------+-------------------------
@@ -258,14 +277,6 @@ begin
       C           => B_TDATA_int(F_OUT.tBits-1 downto 0),
       Out_stb     => open
     );
-
-  -- Account for Add pipeline delay
-  process(clk)
-  begin
-    if(rising_edge(clk)) then
-      B_TLAST_int  <= A_TLAST;
-    end if;
-  end process;
 
 
 end RTL;

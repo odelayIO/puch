@@ -78,6 +78,7 @@ docker run -it --rm \
   -e UART_GROUP_ID=20 \
   -e DISPLAY=${DISPLAY} \
   -e "QT_X11_NO_MITSHM=1" \
+  -e TZ="America/Los_Angeles" \
   -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
   -v ${HOME}/.Xauthority:${HOME}/.Xauthority:rw \
   -v ${PROJECT_PATH}:${DOCKER_HOME}:rw \

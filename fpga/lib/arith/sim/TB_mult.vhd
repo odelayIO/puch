@@ -36,11 +36,11 @@ library work;
 use work.Arith_Pkg.all;
 
 -- nothing to declare in testbench entity
-entity TB_Add is
-end TB_Add;
+entity TB_Mult is
+end TB_Mult;
 
 -- begining of architecture
-architecture inside of TB_Add is
+architecture inside of TB_Mult is
 
   -- -------------------------------------------------------------------------------
   -- Test Bench Parameters
@@ -66,8 +66,8 @@ architecture inside of TB_Add is
   -- -------------------------------------------------------------------------------
   -- UUT Signals
   -- -------------------------------------------------------------------------------
-  signal A                : std_logic_vector(A_F.tBits-1 downto 0) := real2slv(A_F,sign,-2.83);
-  signal B                : std_logic_vector(B_F.tBits-1 downto 0) := real2slv(B_F,sign,-1.13);
+  signal A                : std_logic_vector(A_F.tBits-1 downto 0) := real2slv(A_F,sign,-0.25);
+  signal B                : std_logic_vector(B_F.tBits-1 downto 0) := real2slv(B_F,sign,1.00);
   signal In_stb           : std_logic := '0';
   signal C                : std_logic_vector(C_F.tBits-1 downto 0);
   signal Out_stb          : std_logic;
@@ -110,9 +110,7 @@ begin
     In_stb  <= '1';
     wait until rising_edge(clk);
     In_stb  <= '0';
-    ce      <= '0';
-    wait until rising_edge(clk);
-    wait until rising_edge(clk);
+    ce      <= '1';
     wait until rising_edge(clk);
     ce      <= '1';
     wait;
@@ -122,7 +120,7 @@ begin
   -- -------------------------------------------------
   -- Unit Under Test
   -- -------------------------------------------------
-  UUT : entity work.Add
+  UUT : entity work.Mult
     generic map (
       a_f         => A_F,
       b_f         => B_F,
