@@ -97,7 +97,8 @@ end entity;
 architecture rtl of gng_top is
 
   -- Constant and Top level signals
-  constant F_AWGN         : format := (16,11);  -- AWGN is fixed format
+  --constant F_AWGN         : format := (16,11);  -- AWGN is fixed format
+  constant F_AWGN         : format := (16,15);  -- KLUDGE, fixed attenuation
   constant F_IN           : format := (16,14);
   constant F_OUT          : format := (16,14);
   signal rst              : std_logic := '1';
