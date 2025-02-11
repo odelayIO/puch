@@ -73,8 +73,8 @@ architecture RTL of mult is
   signal q              : std_logic_vector(Q_F.tBits-1 downto 0);
   signal q_reduced      : std_logic_vector(C_F.tBits-1 downto 0);
 
-  signal q_real         : real;
-  signal q_reduced_real : real;
+  --signal q_real         : real;
+  --signal q_reduced_real : real;
 
 begin
 
@@ -89,8 +89,8 @@ begin
 
   q_reduced <= reduce(q,Q_F,C_F,SIGN,SATR,RND);
 
-  q_real          <= slv2real(C_F,SIGN,q_reduced);
-  q_reduced_real  <= slv2real(Q_F,SIGN,q);
+  --q_real          <= slv2real(C_F,SIGN,q_reduced);
+  --q_reduced_real  <= slv2real(Q_F,SIGN,q);
 
 
   -- -----------------------------------------------
