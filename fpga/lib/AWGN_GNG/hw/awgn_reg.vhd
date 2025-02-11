@@ -30,7 +30,10 @@ port(
     csr_f_awgn_f_awgn_fractional_in : in std_logic_vector(15 downto 0);
 
     -- awgn_noise_gain.awgn_noise_gain
-    csr_awgn_noise_gain_awgn_noise_gain_in : in std_logic_vector(15 downto 0);
+    csr_awgn_noise_gain_awgn_noise_gain_out : out std_logic_vector(15 downto 0);
+
+    -- awgn_enable.awgn_enable
+    csr_awgn_enable_awgn_enable_out : out std_logic;
 
     -- AXI-Lite
     axil_awaddr   : in  std_logic_vector(ADDR_W-1 downto 0);
@@ -105,6 +108,12 @@ signal csr_awgn_noise_gain_wen : std_logic;
 signal csr_awgn_noise_gain_ren : std_logic;
 signal csr_awgn_noise_gain_ren_ff : std_logic;
 signal csr_awgn_noise_gain_awgn_noise_gain_ff : std_logic_vector(15 downto 0);
+
+signal csr_awgn_enable_rdata : std_logic_vector(31 downto 0);
+signal csr_awgn_enable_wen : std_logic;
+signal csr_awgn_enable_ren : std_logic;
+signal csr_awgn_enable_ren_ff : std_logic;
+signal csr_awgn_enable_awgn_enable_ff : std_logic;
 
 signal rdata_ff : std_logic_vector(31 downto 0);
 signal rvalid_ff : std_logic;
@@ -391,11 +400,12 @@ end process;
 -----------------------
 -- Bit field:
 -- awgn_noise_gain(15 downto 0) - awgn_noise_gain - AWGN Noise Gain, same format as AWGN
--- access: rw, hardware: i
+-- access: rw, hardware: o
 -----------------------
 
 csr_awgn_noise_gain_rdata(15 downto 0) <= csr_awgn_noise_gain_awgn_noise_gain_ff;
 
+csr_awgn_noise_gain_awgn_noise_gain_out <= csr_awgn_noise_gain_awgn_noise_gain_ff;
 
 process (clk) begin
 if rising_edge(clk) then
@@ -409,7 +419,55 @@ else
             if (wstrb(1) = '1') then
                 csr_awgn_noise_gain_awgn_noise_gain_ff(15 downto 8) <= wdata(15 downto 8);
             end if;
-            csr_awgn_noise_gain_awgn_noise_gain_ff <= csr_awgn_noise_gain_awgn_noise_gain_in;
+        else
+            csr_awgn_noise_gain_awgn_noise_gain_ff <= csr_awgn_noise_gain_awgn_noise_gain_ff;
+        end if;
+end if;
+end if;
+end process;
+
+
+
+--------------------------------------------------------------------------------
+-- CSR:
+-- [0x10] - awgn_enable - AWGN Noise Enable
+--------------------------------------------------------------------------------
+csr_awgn_enable_rdata(31 downto 1) <= (others => '0');
+
+csr_awgn_enable_wen <= wen when (waddr = "00010000") else '0'; -- 0x10
+
+csr_awgn_enable_ren <= ren when (raddr = "00010000") else '0'; -- 0x10
+process (clk) begin
+if rising_edge(clk) then
+if (rst = '1') then
+    csr_awgn_enable_ren_ff <= '0'; -- 0x0
+else
+        csr_awgn_enable_ren_ff <= csr_awgn_enable_ren;
+end if;
+end if;
+end process;
+
+-----------------------
+-- Bit field:
+-- awgn_enable(0) - awgn_enable - AWGN Noise Enable Control, '1' - Enabled, '0' - Bypassed (Default '0')
+-- access: rw, hardware: o
+-----------------------
+
+csr_awgn_enable_rdata(0) <= csr_awgn_enable_awgn_enable_ff;
+
+csr_awgn_enable_awgn_enable_out <= csr_awgn_enable_awgn_enable_ff;
+
+process (clk) begin
+if rising_edge(clk) then
+if (rst = '1') then
+    csr_awgn_enable_awgn_enable_ff <= '0'; -- 0x0
+else
+        if (csr_awgn_enable_wen = '1') then
+            if (wstrb(0) = '1') then
+                csr_awgn_enable_awgn_enable_ff <= wdata(0);
+            end if;
+        else
+            csr_awgn_enable_awgn_enable_ff <= csr_awgn_enable_awgn_enable_ff;
         end if;
 end if;
 end if;
@@ -436,6 +494,7 @@ else
             when "00000100" => rdata_ff <= csr_f_out_rdata; -- 0x4
             when "00001000" => rdata_ff <= csr_f_awgn_rdata; -- 0x8
             when "00001100" => rdata_ff <= csr_awgn_noise_gain_rdata; -- 0xc
+            when "00010000" => rdata_ff <= csr_awgn_enable_rdata; -- 0x10
             when others => rdata_ff <= "00000000000000000000000000000000"; -- 0x0
         end case;
     else

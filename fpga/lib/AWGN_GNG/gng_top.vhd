@@ -104,19 +104,24 @@ architecture rtl of gng_top is
 
   -- Register Signals
   signal awgn_gain        : std_logic_vector(F_AWGN.tBits-1 downto 0);
+  signal awgn_enable      : std_logic;
 
   --  Data Path Signals
   signal I_gng            : std_logic_vector(F_AWGN.tBits-1 downto 0);
   signal Q_gng            : std_logic_vector(F_AWGN.tBits-1 downto 0);
 
-
+  signal B_TVALID_int     : std_logic;
+  signal B_TLAST_int      : std_logic;
+  signal B_TDATA_int      : std_logic_vector(2*F_OUT.tBits-1 downto 0);
 
 begin
 
   -- drive control signals
   rst       <= NOT(rstn);
   A_TREADY  <= B_TREADY;
-  B_TLAST   <= A_TLAST;
+  B_TLAST   <= B_TLAST_int  when awgn_enable = '1' else A_TLAST;
+  B_TVALID  <= B_TVALID_int when awgn_enable = '1' else A_TVALID;
+  B_TDATA   <= B_TDATA_int  when awgn_enable = '1' else A_TDATA;
 
 
   -- --------------------------------------------------------
@@ -132,14 +137,14 @@ begin
       clk           => clk,
       rst           => rst, 
 
-      csr_f_in_f_in_total_in          => std_logic_vector(to_unsigned(F_IN.tBits,16)),
-      csr_f_in_f_in_fractional_in     => std_logic_vector(to_unsigned(F_IN.fBits,16)),
-      csr_f_out_f_out_total_in        => std_logic_vector(to_unsigned(F_OUT.tBits,16)),
-      csr_f_out_f_out_fractional_in   => std_logic_vector(to_unsigned(F_OUT.fBits,16)),
-      csr_f_awgn_f_awgn_total_in      => std_logic_vector(to_unsigned(F_AWGN.tBits,16)),
-      csr_f_awgn_f_awgn_fractional_in => std_logic_vector(to_unsigned(F_AWGN.fBits,16)),
-
-      csr_awgn_noise_gain_awgn_noise_gain_in => awgn_gain,
+      csr_f_in_f_in_total_in                  => std_logic_vector(to_unsigned(F_IN.tBits,16)),
+      csr_f_in_f_in_fractional_in             => std_logic_vector(to_unsigned(F_IN.fBits,16)),
+      csr_f_out_f_out_total_in                => std_logic_vector(to_unsigned(F_OUT.tBits,16)),
+      csr_f_out_f_out_fractional_in           => std_logic_vector(to_unsigned(F_OUT.fBits,16)),
+      csr_f_awgn_f_awgn_total_in              => std_logic_vector(to_unsigned(F_AWGN.tBits,16)),
+      csr_f_awgn_f_awgn_fractional_in         => std_logic_vector(to_unsigned(F_AWGN.fBits,16)),
+      csr_awgn_noise_gain_awgn_noise_gain_out => awgn_gain,
+      csr_awgn_enable_awgn_enable_out         => awgn_enable,
 
       -- AXI-Lite
       axil_awaddr       => axil_awaddr,   
@@ -221,8 +226,8 @@ begin
       In_stb      => A_TVALID,
       ------------+-------------------------
       -- Output Signals
-      C           => B_TDATA(2*F_OUT.tBits-1 downto F_OUT.tBits),
-      Out_stb     => B_TVALID
+      C           => B_TDATA_int(2*F_OUT.tBits-1 downto F_OUT.tBits),
+      Out_stb     => B_TVALID_int
     );
 
   U_ADD_AWGN_Q : entity work.Add
@@ -245,13 +250,22 @@ begin
       ------------+-------------------------
       -- Input Signals
       A           => A_TDATA(F_IN.tBits-1 downto 0),
-      B           => I_gng,
+      B           => Q_gng,
       In_stb      => A_TVALID,
       ------------+-------------------------
       -- Output Signals
-      C           => B_TDATA(F_OUT.tBits-1 downto 0),
-      Out_stb     => B_TVALID
+      C           => B_TDATA_int(F_OUT.tBits-1 downto 0),
+      Out_stb     => open
     );
+
+  -- Account for Add pipeline delay
+  process(clk)
+  begin
+    if(rising_edge(clk)) then
+      B_TLAST_int  <= A_TLAST;
+    end if;
+  end process;
+
 
 end RTL;
 

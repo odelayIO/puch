@@ -26,6 +26,7 @@ Base address: 0x00000000
 | [F_out](#f_out)          | 0x04       | Output data stream format |
 | [F_awgn](#f_awgn)        | 0x08       | Output AWGN data stream format |
 | [awgn_noise_gain](#awgn_noise_gain) | 0x0c       | AWGN Noise Gain |
+| [awgn_enable](#awgn_enable) | 0x10       | AWGN Noise Enable |
 
 ## F_in
 
@@ -92,5 +93,22 @@ Reset value: 0x00000000
 | :---             | :---   | :---            | :---       | :---        |
 | -                | 31:16  | -               | 0x0000     | Reserved |
 | awgn_noise_gain  | 15:0   | rw              | 0x0000     | AWGN Noise Gain, same format as AWGN |
+
+Back to [Register map](#register-map-summary).
+
+## awgn_enable
+
+AWGN Noise Enable
+
+Address offset: 0x10
+
+Reset value: 0x00000000
+
+![awgn_enable](md_img/awgn_enable.svg)
+
+| Name             | Bits   | Mode            | Reset      | Description |
+| :---             | :---   | :---            | :---       | :---        |
+| -                | 31:1   | -               | 0x0000000  | Reserved |
+| awgn_enable      | 0      | rw              | 0x0        | AWGN Noise Enable Control, '1' - Enabled, '0' - Bypassed (Default '0') |
 
 Back to [Register map](#register-map-summary).

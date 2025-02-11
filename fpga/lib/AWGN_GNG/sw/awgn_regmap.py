@@ -76,6 +76,24 @@ class _RegAwgn_noise_gain:
         self._rmap._if.write(self._rmap.AWGN_NOISE_GAIN_ADDR, rdata)
 
 
+class _RegAwgn_enable:
+    def __init__(self, rmap):
+        self._rmap = rmap
+
+    @property
+    def awgn_enable(self):
+        """AWGN Noise Enable Control, '1' - Enabled, '0' - Bypassed (Default '0')"""
+        rdata = self._rmap._if.read(self._rmap.AWGN_ENABLE_ADDR)
+        return (rdata >> self._rmap.AWGN_ENABLE_AWGN_ENABLE_POS) & self._rmap.AWGN_ENABLE_AWGN_ENABLE_MSK
+
+    @awgn_enable.setter
+    def awgn_enable(self, val):
+        rdata = self._rmap._if.read(self._rmap.AWGN_ENABLE_ADDR)
+        rdata = rdata & (~(self._rmap.AWGN_ENABLE_AWGN_ENABLE_MSK << self._rmap.AWGN_ENABLE_AWGN_ENABLE_POS))
+        rdata = rdata | (val << self._rmap.AWGN_ENABLE_AWGN_ENABLE_POS)
+        self._rmap._if.write(self._rmap.AWGN_ENABLE_ADDR, rdata)
+
+
 class RegMap:
     """Control/Status register map"""
 
@@ -104,6 +122,11 @@ class RegMap:
     AWGN_NOISE_GAIN_ADDR = 0x0c
     AWGN_NOISE_GAIN_AWGN_NOISE_GAIN_POS = 0
     AWGN_NOISE_GAIN_AWGN_NOISE_GAIN_MSK = 0xffff
+
+    # AWGN_ENABLE - AWGN Noise Enable
+    AWGN_ENABLE_ADDR = 0x10
+    AWGN_ENABLE_AWGN_ENABLE_POS = 0
+    AWGN_ENABLE_AWGN_ENABLE_MSK = 0x1
 
     def __init__(self, interface):
         self._if = interface
@@ -147,3 +170,16 @@ class RegMap:
     @property
     def awgn_noise_gain_bf(self):
         return _RegAwgn_noise_gain(self)
+
+    @property
+    def awgn_enable(self):
+        """AWGN Noise Enable"""
+        return self._if.read(self.AWGN_ENABLE_ADDR)
+
+    @awgn_enable.setter
+    def awgn_enable(self, val):
+        self._if.write(self.AWGN_ENABLE_ADDR, val)
+
+    @property
+    def awgn_enable_bf(self):
+        return _RegAwgn_enable(self)

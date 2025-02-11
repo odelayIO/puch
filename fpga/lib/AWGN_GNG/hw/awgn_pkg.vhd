@@ -28,6 +28,10 @@ package awgn_pkg is
   constant CSR_AWGN_NOISE_GAIN_ADDR : std_logic_vector(8-1 downto 0) := to_unsigned(12, 8);
   constant CSR_AWGN_NOISE_GAIN_RESET : std_logic_vector(32-1 downto 0) := to_unsigned(0, 32);
 
+  -- awgn_enable - AWGN Noise Enable
+  constant CSR_AWGN_ENABLE_ADDR : std_logic_vector(8-1 downto 0) := to_unsigned(16, 8);
+  constant CSR_AWGN_ENABLE_RESET : std_logic_vector(32-1 downto 0) := to_unsigned(0, 32);
+
 
 
 end package awgn_pkg;
