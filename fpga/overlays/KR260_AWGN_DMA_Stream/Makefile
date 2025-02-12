@@ -85,7 +85,7 @@ clean:
 	rm -rf ./${PROJ_DIR} *.jou *.log NA *.bit *.hwh *.xsa .Xil *.str
 	rm -fr ./output
 
-upload_all: upload_bit upload_regmaps upload_ipynb upload_kria_driver
+upload_all: upload_bit upload_regmaps upload_ipynb upload_py_driver
 ## upload_all: Upload image to KR260 board
 
 upload_bit:		
@@ -111,10 +111,10 @@ get_remote_ipynb:
 	scp ubuntu@kria:/home/root/jupyter_notebooks/${OVERLAY_NAME}/${OVERLAY_NAME}.ipynb ../../py/${OVERLAY_NAME}/.
 
 get_remote_py_driver:
-## get_remote_kria_driver: Copy Kria Python Driver from KR260
+## get_remote_py_driver: Copy PYNQ Python Driver from Dev Board
 	scp ubuntu@kria:/home/root/jupyter_notebooks/${OVERLAY_NAME}/kria.py ../../py/${OVERLAY_NAME}/.
 
-upload_kria_driver:
-## upload_kria_driver: Copy Kria Python Driver to KR260
+upload_py_driver:
+## upload_py_driver: Copy PYNQ Python Driver to Dev Board
 	scp ../../py/${OVERLAY_NAME}/kria.py \
 	ubuntu@kria:/home/root/jupyter_notebooks/${OVERLAY_NAME}
