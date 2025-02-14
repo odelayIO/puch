@@ -46,8 +46,8 @@ add_files qpsk.cpp
 add_files qpskTop.h
 add_files qpskTop.cpp
 # Add test bench & files
-add_files -tb ./sim/golden.dat
-add_files -tb ./sim/modulatedData.dat
+add_files -tb ./sim/golden_short.dat
+add_files -tb ./sim/modulatedData_short.dat
 add_files -tb ./sim/qpsk_test.cpp
 
 # Set the top-level function

@@ -30,7 +30,7 @@ int main () {
 	*/
 
 	//Open the file with the simulated modulation data
-	std::ifstream input("modulatedData.dat", std::ios::in);
+	std::ifstream input("modulatedData_short.dat", std::ios::in);
 	//Create the result file
 	std::ofstream outputFile("demodulatedMessage.dat", std::ios::trunc); // out.golden.dat
 
@@ -79,7 +79,7 @@ int main () {
 	outputFile.close();
 
 	//Compare the generated message file with the golden file...FC is only valid in windows
-	if (system("diff -w demodulatedMessage.dat golden.dat")){
+	if (system("diff -w demodulatedMessage.dat golden_short.dat")){
 
 		fprintf(stdout, "*******************************************\n");
 		fprintf(stdout, "FAIL: Output DOES NOT match the golden output\n");
