@@ -34,6 +34,12 @@ port(
 
     -- awgn_enable.awgn_enable
     csr_awgn_enable_awgn_enable_out : out std_logic;
+    -- awgn_enable.sat_I_ch
+    csr_awgn_enable_sat_i_ch_en : in std_logic;
+    csr_awgn_enable_sat_i_ch_in : in std_logic;
+    -- awgn_enable.sat_Q_ch
+    csr_awgn_enable_sat_q_ch_en : in std_logic;
+    csr_awgn_enable_sat_q_ch_in : in std_logic;
 
     -- AXI-Lite
     axil_awaddr   : in  std_logic_vector(ADDR_W-1 downto 0);
@@ -114,6 +120,8 @@ signal csr_awgn_enable_wen : std_logic;
 signal csr_awgn_enable_ren : std_logic;
 signal csr_awgn_enable_ren_ff : std_logic;
 signal csr_awgn_enable_awgn_enable_ff : std_logic;
+signal csr_awgn_enable_sat_i_ch_ff : std_logic;
+signal csr_awgn_enable_sat_q_ch_ff : std_logic;
 
 signal rdata_ff : std_logic_vector(31 downto 0);
 signal rvalid_ff : std_logic;
@@ -432,7 +440,7 @@ end process;
 -- CSR:
 -- [0x10] - awgn_enable - AWGN Noise Enable
 --------------------------------------------------------------------------------
-csr_awgn_enable_rdata(31 downto 1) <= (others => '0');
+csr_awgn_enable_rdata(31 downto 3) <= (others => '0');
 
 csr_awgn_enable_wen <= wen when (waddr = "00010000") else '0'; -- 0x10
 
@@ -468,6 +476,56 @@ else
             end if;
         else
             csr_awgn_enable_awgn_enable_ff <= csr_awgn_enable_awgn_enable_ff;
+        end if;
+end if;
+end if;
+end process;
+
+
+
+-----------------------
+-- Bit field:
+-- awgn_enable(1) - sat_I_ch - A '1' means I-Channel was Saturated since last read.  Read clear bit field
+-- access: roc, hardware: ie
+-----------------------
+
+csr_awgn_enable_rdata(1) <= csr_awgn_enable_sat_i_ch_ff;
+
+
+process (clk) begin
+if rising_edge(clk) then
+if (rst = '1') then
+    csr_awgn_enable_sat_i_ch_ff <= '0'; -- 0x0
+else
+        if (csr_awgn_enable_ren = '1') then
+            csr_awgn_enable_sat_i_ch_ff <= '0';
+        elsif (csr_awgn_enable_sat_i_ch_en = '1') then
+            csr_awgn_enable_sat_i_ch_ff <= csr_awgn_enable_sat_i_ch_in;
+        end if;
+end if;
+end if;
+end process;
+
+
+
+-----------------------
+-- Bit field:
+-- awgn_enable(2) - sat_Q_ch - A '1' means Q-Channel was Saturated since last read.  Read clear bit field
+-- access: roc, hardware: ie
+-----------------------
+
+csr_awgn_enable_rdata(2) <= csr_awgn_enable_sat_q_ch_ff;
+
+
+process (clk) begin
+if rising_edge(clk) then
+if (rst = '1') then
+    csr_awgn_enable_sat_q_ch_ff <= '0'; -- 0x0
+else
+        if (csr_awgn_enable_ren = '1') then
+            csr_awgn_enable_sat_q_ch_ff <= '0';
+        elsif (csr_awgn_enable_sat_q_ch_en = '1') then
+            csr_awgn_enable_sat_q_ch_ff <= csr_awgn_enable_sat_q_ch_in;
         end if;
 end if;
 end if;

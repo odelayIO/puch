@@ -51,8 +51,8 @@ package Arith_Pkg is
   function slv2real(F : format; sign : boolean; A : std_logic_vector) return real;
   function real2slv(F : format; sign : boolean; A : real) return std_logic_vector;
   function neg(A : std_logic_vector) return std_logic_vector;
-  function re(A : std_logic_vector; F : format) return std_logic_vector;
-  function im(A : std_logic_vector; F : format) return std_logic_vector;
+  function re(A : std_logic_vector) return std_logic_vector;
+  function im(A : std_logic_vector) return std_logic_vector;
 
   function zeros(n  : natural) return std_logic_vector;
   function ones(n  : natural) return std_logic_vector;
@@ -70,8 +70,7 @@ package Arith_Pkg is
   function grow(a   : std_logic_vector; a_f, r_f : format; sign : boolean := true) return std_logic_vector;
   function round(a  : std_logic_vector; n : natural; sat_check : boolean := true) return std_logic_vector;
   function sat(a    : std_logic_vector; sign, rnd : boolean; n : natural) return std_logic_vector;
-  function sat(a    : std_logic_vector; sign : boolean; n : natural) return std_logic_vector;
-  function is_sat(a : std_logic_vector; sign : boolean; n : natural) return std_logic;
+  function is_sat(a : std_logic_vector; sign : boolean := true) return std_logic;
 
   function reduce (
     a : std_logic_vector;
@@ -85,61 +84,11 @@ package Arith_Pkg is
   -- -------------------------------------------------------------------------
 
 
-  component Add 
-    generic (
-      A_F       : format;
-      B_F       : format;
-      C_F       : format;
-      SIGN      : boolean := TRUE;
-      SATR      : boolean := TRUE;
-      RND       : boolean := TRUE;
-    	ARST      : boolean := false;
-      DLY       : natural := 1
-    );
-    port (
-      ------------+-----------------------------------------------------------
-      -- Clock and Reset
-      clk       : in  std_logic;
-      ce        : in  std_logic;
-      rst       : in  std_logic;
-      ------------+-----------------------------------------------------------
-      -- Input signals
-      a         : in  std_logic_vector;
-      b         : in  std_logic_vector;
-      in_stb    : in  std_logic;
-      ------------+-----------------------------------------------------------
-      -- Output Signals
-      c         : out std_logic_vector;
-      out_stb   : out std_logic
-    );
-  end component;
-
-
-  component Mult
-    generic (
-      a_f, b_f, c_f     : format;
-      satr              : boolean := true;
-      rnd               : boolean := true;
-      sign              : boolean := false;
-      dly               : integer := 1
-    );
-    port (
-      ------------+-----------------------------------------------------------
-      -- Clock and Reset
-      rst         : in  std_logic;
-      clk         : in  std_logic;
-      ------------+-----------------------------------------------------------
-      -- Input signals
-      A           : in  std_logic_vector(a_f.tBits-1 downto 0);
-      B           : in  std_logic_vector(b_f.tBits-1 downto 0);
-      In_stb      : in  std_logic;
-      ------------+-----------------------------------------------------------
-      -- Output Signals
-      C           : out std_logic_vector(c_f.tBits-1 downto 0);
-      Out_stb     : out std_logic
-    );
-  end component;
-
+    --  Should instantiate the modules with library reference
+    --  Example:
+    -- 
+    --    U_DUT : entity work.Add 
+    --      ...
 
 
 end;
@@ -221,66 +170,32 @@ package body Arith_Pkg is
     return b;
   end sat;
 
-  function sat(a  : std_logic_vector; sign : boolean; n : natural) return std_logic_vector is
-    constant zero : std_logic_vector(a'length-n-1 downto 0) := ( others => '0' );
-    constant one  : std_logic_vector(a'length-n-1 downto 0) := ( others => '1' );
-    variable b    : std_logic_vector(n-1 downto 0);
+  function is_sat(a : std_logic_vector; sign : boolean := true) return std_logic is
+    constant one  : std_logic_vector(a'length-1 downto 0) := (others => '1');
+    constant zero : std_logic_vector(a'length-1 downto 0) := (others => '0');
   begin
-    if ( n = a'length ) then
-      return a;
-    end if;
-    if ( sign = true ) then
-      if ( a(a'length-1) = '0' ) then
-        if  (a((a'length-2) downto (n-1)) = zero) then
-          b := a(b'range);
+    if (sign = true) then
+      if(a(a'length-1) = '1') then
+        if (a(a'length-2 downto 0) = zero(a'length-2 downto 0)) then
+          -- Sign Value is min, e.g. 1000.0000 = -2 (8,6)
+          return '1';
         else
-          b := (others  => '1');
-          b(b'left) := '0';
+          return '0';
         end if;
       else
-        if (a((a'length-2) downto (n-1)) = one) then
-          b := a(b'range);
+        if (a(a'length-2 downto 0) = one(a'length-2 downto 0)) then
+          -- Sign Value is max, e.g. 0111.1111 = 1.9844 (8,6)
+          return '1';
         else
-          b := (others  => '0');
-          b(b'left) := '1';
+          return '0';
         end if;
       end if;
     else
-      -- saturate unsigned input a to unsigned output b
-      if (a((a'length-1) downto n) = zero) then
-        b := a(b'range);
-      else
-        b := ( others => '1' );
-      end if;
-    end if;
-    return b;
-  end sat;
-
-
-  function is_sat(a : std_logic_vector; sign : boolean; n : natural) return std_logic is
-    constant zero : std_logic_vector(a'length-n-1 downto 0) := ( others => '0' );
-    constant one  : std_logic_vector(a'length-n-1 downto 0) := ( others => '1' );
-  begin
-    if ( sign = true ) then
-      if ( a(a'length-1) = '0' ) then
-        if  (a((a'length-2) downto (n-1)) = zero) then
-          return '0';
-        else
-          return '1';
-        end if;
-      else
-        if (a((a'length-2) downto (n-1)) = one) then
-          return '0';
-        else
-          return '1';
-        end if;
-      end if;
-    else
-      -- saturate unsigned input a to unsigned output b
-      if (a((a'length-1) downto n) = zero) then
-        return '0';
-      else
+      if (a = one) then
+        -- Unsigned value is max, e.g. 1111.1111 = 3.9844 (8,6)
         return '1';
+      else
+        return '0';
       end if;
     end if;
     return '0';
@@ -324,14 +239,14 @@ package body Arith_Pkg is
     return std_logic_vector(unsigned(NOT(A))+1);
   end function neg;
 
-  function re(A : std_logic_vector; F : format) return std_logic_vector is
+  function re(A : std_logic_vector) return std_logic_vector is
   begin
-    return std_logic_vector(A(2*F.tBits-1 downto F.tBits));
+    return std_logic_vector(A(A'length-1 downto A'length/2));
   end function re;
 
-  function im(A : std_logic_vector; F : format) return std_logic_vector is
+  function im(A : std_logic_vector) return std_logic_vector is
   begin
-    return std_logic_vector(A(F.tBits-1 downto 0));
+    return std_logic_vector(A(A'length/2-1 downto 0));
   end function im;
 
   function zeros(n : natural) return std_logic_vector is

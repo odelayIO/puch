@@ -108,7 +108,9 @@ Reset value: 0x00000000
 
 | Name             | Bits   | Mode            | Reset      | Description |
 | :---             | :---   | :---            | :---       | :---        |
-| -                | 31:1   | -               | 0x0000000  | Reserved |
+| -                | 31:3   | -               | 0x0000000  | Reserved |
+| sat_Q_ch         | 2      | roc             | 0x0        | A '1' means Q-Channel was Saturated since last read.  Read clear bit field |
+| sat_I_ch         | 1      | roc             | 0x0        | A '1' means I-Channel was Saturated since last read.  Read clear bit field |
 | awgn_enable      | 0      | rw              | 0x0        | AWGN Noise Enable Control, '1' - Enabled, '0' - Bypassed (Default '0') |
 
 Back to [Register map](#register-map-summary).

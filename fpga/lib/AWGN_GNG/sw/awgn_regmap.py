@@ -93,6 +93,18 @@ class _RegAwgn_enable:
         rdata = rdata | (val << self._rmap.AWGN_ENABLE_AWGN_ENABLE_POS)
         self._rmap._if.write(self._rmap.AWGN_ENABLE_ADDR, rdata)
 
+    @property
+    def sat_i_ch(self):
+        """A '1' means I-Channel was Saturated since last read.  Read clear bit field"""
+        rdata = self._rmap._if.read(self._rmap.AWGN_ENABLE_ADDR)
+        return (rdata >> self._rmap.AWGN_ENABLE_SAT_I_CH_POS) & self._rmap.AWGN_ENABLE_SAT_I_CH_MSK
+
+    @property
+    def sat_q_ch(self):
+        """A '1' means Q-Channel was Saturated since last read.  Read clear bit field"""
+        rdata = self._rmap._if.read(self._rmap.AWGN_ENABLE_ADDR)
+        return (rdata >> self._rmap.AWGN_ENABLE_SAT_Q_CH_POS) & self._rmap.AWGN_ENABLE_SAT_Q_CH_MSK
+
 
 class RegMap:
     """Control/Status register map"""
@@ -127,6 +139,10 @@ class RegMap:
     AWGN_ENABLE_ADDR = 0x10
     AWGN_ENABLE_AWGN_ENABLE_POS = 0
     AWGN_ENABLE_AWGN_ENABLE_MSK = 0x1
+    AWGN_ENABLE_SAT_I_CH_POS = 1
+    AWGN_ENABLE_SAT_I_CH_MSK = 0x1
+    AWGN_ENABLE_SAT_Q_CH_POS = 2
+    AWGN_ENABLE_SAT_Q_CH_MSK = 0x1
 
     def __init__(self, interface):
         self._if = interface

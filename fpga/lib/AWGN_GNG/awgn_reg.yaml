@@ -81,3 +81,19 @@ regmap:
         access: rw
         hardware: o
         enums: []
+    -   name: sat_I_ch
+        description: A '1' means I-Channel was Saturated since last read.  Read clear bit field
+        reset: 0
+        width: 1
+        lsb: 1
+        access: roc
+        hardware: ie 
+        enums: []
+    -   name: sat_Q_ch
+        description: A '1' means Q-Channel was Saturated since last read.  Read clear bit field
+        reset: 0
+        width: 1
+        lsb: 2
+        access: roc 
+        hardware: ie 
+        enums: []

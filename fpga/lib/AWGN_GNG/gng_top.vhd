@@ -119,7 +119,17 @@ architecture rtl of gng_top is
 
   signal tlast_pipe       : std_logic_vector(0 to DLY-1); -- Must be 1 or greater
 
+  signal ch_I_sat         : std_logic;
+  signal ch_Q_sat         : std_logic;
+  signal ch_I             : std_logic_vector(F_OUT.tBits-1 downto 0);
+  signal ch_Q             : std_logic_vector(F_OUT.tBits-1 downto 0);
+
+
 begin
+
+  -- --------------------------------------------------------
+  --  Mux and flow control signals
+  -- --------------------------------------------------------
 
   -- drive control signals
   rst       <= NOT(rstn);
@@ -127,6 +137,12 @@ begin
   B_TLAST   <= B_TLAST_int  when awgn_enable = '1' else A_TLAST;
   B_TVALID  <= B_TVALID_int when awgn_enable = '1' else A_TVALID;
   B_TDATA   <= B_TDATA_int  when awgn_enable = '1' else A_TDATA;
+
+  -- Need to create std_logic_vector to pass to function of exact size 
+  ch_I      <= re(B_TDATA_int);
+  ch_Q      <= im(B_TDATA_int);
+  ch_I_sat  <= is_sat(ch_I);
+  ch_Q_sat  <= is_sat(ch_Q);
 
 
   -- TLAST delay by DLY cc
@@ -144,6 +160,7 @@ begin
     end if;
   end process;
   B_TLAST_int <= tlast_pipe(DLY-1);
+
 
   -- --------------------------------------------------------
   --  Host Interface
@@ -166,6 +183,11 @@ begin
       csr_f_awgn_f_awgn_fractional_in         => std_logic_vector(to_unsigned(F_AWGN.fBits,16)),
       csr_awgn_noise_gain_awgn_noise_gain_out => awgn_gain,
       csr_awgn_enable_awgn_enable_out         => awgn_enable,
+      csr_awgn_enable_sat_i_ch_in             => '1', 
+      csr_awgn_enable_sat_i_ch_en             => ch_I_sat,
+      csr_awgn_enable_sat_q_ch_in             => '1', 
+      csr_awgn_enable_sat_q_ch_en             => ch_Q_sat,
+
 
       -- AXI-Lite
       axil_awaddr       => axil_awaddr,   
