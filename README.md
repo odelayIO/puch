@@ -6,12 +6,12 @@
 <br>
 <br>
 
-***puch*** is the glue logic between Analog Devices ADALM-Pluto SDR Evaluation board and the PYNQ Z1 FPGA development board with support from GNU Radio to provide a FPGA IP core development platform in wireless communications utilizing Xilinx Vivado HLS </> VHDL </> Verilog register transfer language (RTL).
+***puch*** is the glue logic between Software Defined Radio (supporting Analog Devices ADALM-Pluto and HackRF SDR) Evaluation board and the PYNQ development boards (supporting PYNQ Z1 and KR260) with support from GNU Radio to provide a FPGA IP core development platform in wireless communications utilizing Xilinx Vivado HLS </> VHDL </> Verilog register transfer language (RTL).
 
 <br>
 <br>
 
-<img align="center" src="./doc/puch-detailed-level-diagram.png">
+![image-20250212155946539](./doc/puch-detailed-level-diagram.png)
 
 <br>
 <br>
@@ -46,15 +46,15 @@ It is recommended to have both devices map to a the same development folder.  Th
 
    ​		`/home/xilinx/puch` is the location to map the development folder on the `PYNQ` device
 
-   On the  `PYNQ` device, verify the folder was mapped:
-
-   ```
-   
-   ```
+   On the  `PYNQ` device, verify the folder was mapped.
 
    Please note you might have to install `sshfs` on the `PYNQ` device through the package manager, e.g. `sudo apt-get install sshfs`
 
 
+
+### Kria KR260 Board
+
+See [KR260 New Board Bring Up](./KR260-New-Board-Bring-up.md)
 
 
 

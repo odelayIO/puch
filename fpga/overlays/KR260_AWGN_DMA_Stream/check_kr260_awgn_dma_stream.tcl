@@ -1,4 +1,3 @@
-#!/bin/bash
 #############################################################################################
 #############################################################################################
 #
@@ -26,11 +25,7 @@
 #   
 #   Contact : <everett@odelay.io>
 #  
-#   Description : This script to the Docker Container start script.  It is
-#                 is assumed the system has vivado2022.1_docker image.
-#                 See the following repo for more information:
-#
-#                  https://github.com/odelayIO/vivado2022.1_docker 
+#   Description : Check timing script for the Fixed AXI Stream design 
 #
 #   Version History:
 #   
@@ -40,51 +35,23 @@
 #
 ###########################################################################################
 
-export PROJECT_PATH=${PWD}
-export DOCKER_HOME=/home/docker/puch-workspace
 
-#-------------------------------------------------------------------------------
-# Helper Function
-#-------------------------------------------------------------------------------
-helpFcn()
-{
-  echo ""
-  echo "Usage: "
-  echo -b "\t-d Base folder for project source code (default=$PROJECT_PATH)"
-  echo -d "\t-d Docker container home directory (default=$DOCKER_HOME)"
-  exit 1
+
+
+
+set OVERLAY_NAME "kr260_awgn_dma_stream"
+set PROJ_DIR "xpr"
+
+set fd [open ./${PROJ_DIR}/${OVERLAY_NAME}.runs/impl_1/${OVERLAY_NAME}_wrapper_timing_summary_routed.rpt r]
+set timing_met 0
+while { [gets $fd line] >= 0 } {
+    if [string match {All user specified timing constraints are met.} $line]  { 
+        set timing_met 1
+        break
+    }
 }
-
-
-while getopts "b:f:h" opt
-do
-  case "$opt" in 
-    b) PROJECT_PATH="$OPTARG" ;;
-    d) DOCKER_HOME="$OPTARG" ;;
-    h) helpFcn ;;   # print helpFcn is -h is specified
-  esac
-done
-
-
-#-------------------------------------------------------------------------------
-#   Start the Docker Container
-#-------------------------------------------------------------------------------
-docker run -it --rm \
-  --net host \
-  -e PYTHONPATH=${DOCKER_HOME}/consair-reg-map \
-  -e LOCAL_UID=$(id -u ${USER}) \
-  -e LOCAL_GID=$(id -g ${USER}) \
-  -e USER=${USER} \
-  -e UART_GROUP_ID=20 \
-  -e DISPLAY=${DISPLAY} \
-  -e "QT_X11_NO_MITSHM=1" \
-  -e TZ="America/Los_Angeles" \
-  -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
-  -v ${HOME}/.Xauthority:${HOME}/.Xauthority:rw \
-  -v ${PROJECT_PATH}:${DOCKER_HOME}:rw \
-  -v /dev/bus/usb:/dev/bus/usb:rw \
-  -v /sys:/sys:ro \
-  --device /dev/dri \
-  --privileged \
-  -w ${DOCKER_HOME} \
-  vivado:2022.1
+if {$timing_met == 0} {
+    puts "ERROR: ${OVERLAY_NAME} bitstream generation does not meet timing."
+    exit 1
+}
+puts "Timing constraints are met."
