@@ -8,7 +8,7 @@ typedef ap_uint<2> Symbol;
 typedef ap_uint<2> TwoBitCounter;
 typedef ap_uint<3> DownsampleCounter;
 typedef ap_int<2> Sign;//
-typedef ap_fixed<32,28> din_t;
+typedef ap_fixed<32,4> din_t;
 
 /***************************
 *		Constants          *
