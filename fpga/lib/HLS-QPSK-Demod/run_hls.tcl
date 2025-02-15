@@ -69,10 +69,13 @@ set ::AESL_AUTOSIM::gDebug 1
 # Set any optimization directives
 # End of directives
 csim_design -clean
-#csynth_design
+csynth_design
+
+# !!! This will take a long time to run !!!
 # capture all traces to VCD to plot in gtkWave
 #cosim_design -trace_level all  
-#export_design -flow syn -rtl vhdl -format ip_catalog -display_name "hls_qpsk_demod" -vendor "odelay.IO" -version "0.1" -library "work" -ipname "hls_qpsk_demod"
+
+export_design -flow syn -rtl vhdl -format ip_catalog -display_name "hls_qpsk_demod" -vendor "odelay.IO" -version "0.1" -library "work" -ipname "hls_qpsk_demod"
 
 exit
 
