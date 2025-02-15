@@ -71,7 +71,7 @@ set ::AESL_AUTOSIM::gDebug 1
 csim_design -clean
 csynth_design
 # capture all traces to VCD to plot in gtkWave
-cosim_design -trace_level all  
+#cosim_design -trace_level all  
 export_design -flow syn -rtl vhdl -format ip_catalog -display_name "hls_qpsk_demod" -vendor "odelay.IO" -version "0.1" -library "work" -ipname "hls_qpsk_demod"
 
 exit
