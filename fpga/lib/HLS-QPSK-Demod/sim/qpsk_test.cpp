@@ -38,9 +38,13 @@ int main () {
 		std::cout << "Error Opening File!" << std::endl;
 	}
 
+  // Create input/output HLS Streams
 	double nextSample = 0.0;
   hls::stream<pkt32> A_in;
+  hls::stream<pkt2> B_out;
   pkt32 A_tmp;
+  pkt2 B_tmp;
+
 	//short recievedSymbol[2] = { 0, 0 }, recv = 0;
 	int fillFilter = 0;
 	Symbol recievedSymbol;
@@ -51,7 +55,9 @@ int main () {
     A_tmp.data = nextSample;
     A_in.write(A_tmp);
 		//if (qpskElementDemodulatorTimingPhase(nextSample, &recievedSymbol)) { //returns true if the next sample is valid
-		if (qpskElementDemodulatorTimingPhase(A_in, &recievedSymbol)) { //returns true if the next sample is valid
+		if (qpskElementDemodulatorTimingPhase(A_in, B_out)) { //returns true if the next sample is valid
+      B_out.read(B_tmp);
+      recievedSymbol = B_tmp.data;
 			//recv = (recievedSymbol[0] << 1) | recievedSymbol[1];
 			if (fillFilter > 11){ //ignore the first few samples that we obtain, since we are waiting for the filter taps to fill up
 				outputFile << recievedSymbol << std::endl;
@@ -69,9 +75,11 @@ int main () {
   A_in.write(A_tmp);
 	while (true){
 		//if (qpskElementDemodulatorTimingPhase(nextSample, &recievedSymbol)) {
-		if (qpskElementDemodulatorTimingPhase(A_in, &recievedSymbol)) {
+		if (qpskElementDemodulatorTimingPhase(A_in, B_out)) {
 			//Convert the symbol to a number from 0-3
 			//recv = (recievedSymbol[0] << 1) | recievedSymbol[1];
+      B_out.read(B_tmp);
+      recievedSymbol = B_tmp.data;
 			outputFile << recievedSymbol << std::endl;
 
 			break;

@@ -5,21 +5,28 @@
 #include "hls_stream.h"
 
 
-bool qpskElementDemodulatorTimingPhase(hls::stream<pkt32> &A, Symbol *out){
+bool qpskElementDemodulatorTimingPhase(hls::stream<pkt32> &A, hls::stream<pkt2> &B){
 #pragma HLS INTERFACE axis port=A
+#pragma HLS INTERFACE axis port=B
 #pragma HLS INTERFACE s_axilite port=return bundle=control
 
+  // Define output port
+  Symbol out;
+  pkt2 dout_t;
+
+  // Define Input Stream and read
   pkt32 din_t;
   A.read(din_t);
 
-	static DownsampleCounter downsampleCount = 0; //carrierIndex = 0,
-	static TwoBitCounter carrierIndex = 0;
+	static DownsampleCounter downsampleCount = 0; // 3-bit counter
+	static TwoBitCounter carrierIndex = 0; // 2-bit counter
 
 	double Irec = 0.0, Qrec = 0.0, Ifir = 0.0, Qfir = 0.0;
 	double ICorrected = 0, QCorrected = 0;
 	bool strobe = false; //
   double sampleIn = din_t.data; //Convert Fixed Point to Double
 
+  // Signal is Fs/2, demodulating to baseband
 	Irec = sampleIn*Icarrier[carrierIndex];
 	Qrec = sampleIn*Qcarrier[carrierIndex];
 
@@ -36,8 +43,11 @@ bool qpskElementDemodulatorTimingPhase(hls::stream<pkt32> &A, Symbol *out){
 		//decision block -- perhaps I should make this its own function...so the reader can know what its doing
 		if (strobe){
 			//std::cout << ICorrected <<  " " << QCorrected << std::endl;
-			(*out)[1] = (ICorrected > 0.0 ? 1 : 0);
-			(*out)[0] = (QCorrected > 0.0 ? 1 : 0);
+			(out)[1] = (ICorrected > 0.0 ? 1 : 0);
+			(out)[0] = (QCorrected > 0.0 ? 1 : 0);
+      dout_t.data = out;
+      dout_t.strb = strobe;
+      B.write(dout_t);
 		}
 		downsampleCount++;
 
