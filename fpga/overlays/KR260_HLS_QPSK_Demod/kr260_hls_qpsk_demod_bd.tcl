@@ -288,9 +288,12 @@ proc create_root_design { parentCell } {
   # Create instance: system_ila_0, and set properties
   set system_ila_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:system_ila:1.1 system_ila_0 ]
   set_property -dict [ list \
+   CONFIG.ALL_PROBE_SAME_MU_CNT {2} \
    CONFIG.C_DATA_DEPTH {8192} \
+   CONFIG.C_EN_STRG_QUAL {1} \
    CONFIG.C_MON_TYPE {INTERFACE} \
    CONFIG.C_NUM_MONITOR_SLOTS {2} \
+   CONFIG.C_PROBE0_MU_CNT {2} \
    CONFIG.C_SLOT_0_APC_EN {0} \
    CONFIG.C_SLOT_0_AXI_DATA_SEL {1} \
    CONFIG.C_SLOT_0_AXI_TRIG_SEL {1} \
@@ -1937,9 +1940,6 @@ connect_bd_intf_net -intf_net [get_bd_intf_nets hls_qpsk_demod_0_B] [get_bd_intf
 ##################################################################
 # MAIN FLOW
 ##################################################################
-
-
-common::send_gid_msg -ssname BD::TCL -id 2052 -severity "CRITICAL WARNING" "This Tcl script was generated from a block design that is out-of-date/locked. It is possible that design <$design_name> may result in errors during construction."
 
 create_root_design ""
 
