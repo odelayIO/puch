@@ -67,9 +67,9 @@ void simple_fir_filterQ(double *y, double x){
 
 
 /************************************************
-*												*
-*		Timing and phase loop functions			*
-*												*
+*												                        *
+*		Timing and phase loop functions			        *
+*												                        *
 *************************************************/
 
 void timingPhaseCorrection(double MF_I, double MF_Q, double *ICorrected, double *QCorrected, bool *strobe){

@@ -6,28 +6,12 @@
 #include <cstdlib>
 
 /************************************************************************************************
- *																								*
+ *																								                                              *
  * Testbench used for testing the correctness of the qpsk design in both hardware and software  *
- *																								*
+ *																								                                              *
  ************************************************************************************************/
 
 int main () {
-
-/*
-	double data = 0, out1 = 0, out2 = 0;
-
-	std::ifstream input("modulatedData.dat", std::ios::in);
-
-	for(int i = 0; i < 1000; i++){
-		input >> data;
-		 simple_fir_filterI(&out1, data);
-		 simple_fir_filterQ(&out2, data);
-
-		 std::cout << out1 << ", " << out2 << std::endl;
-	}
-
-	return 0;
-	*/
 
 	//Open the file with the simulated modulation data
 	std::ifstream input("modulatedData_short.dat", std::ios::in);
@@ -45,21 +29,33 @@ int main () {
   pkt32 A_tmp;
   pkt2 B_tmp;
 
-	//short recievedSymbol[2] = { 0, 0 }, recv = 0;
+  // Debug Signal
 	int fillFilter = 0;
+	int Sample_Cnt = 0;
+	int Demod_Cnt = 0;
 	Symbol recievedSymbol;
 
 	//Pass each sample from the input file into the demodulator
 	std::cout << "Demodulating input signal..." << std::endl;
 	while (input >> nextSample){
+    Sample_Cnt += 1;
+
+    // Write sample from file to AXI Stream input port
     A_tmp.data = nextSample;
     A_in.write(A_tmp);
-		//if (qpskElementDemodulatorTimingPhase(nextSample, &recievedSymbol)) { //returns true if the next sample is valid
-		if (qpskElementDemodulatorTimingPhase(A_in, B_out)) { //returns true if the next sample is valid
+
+    // Demod QPSK wait when valid
+		if (qpskElementDemodulatorTimingPhase(A_in, B_out)) { 
+      // Read data from AXI Stream output port
       B_out.read(B_tmp);
       recievedSymbol = B_tmp.data;
-			//recv = (recievedSymbol[0] << 1) | recievedSymbol[1];
-			if (fillFilter > 11){ //ignore the first few samples that we obtain, since we are waiting for the filter taps to fill up
+
+      // Debug Print Statement
+      Demod_Cnt += 1;
+      std::cout << "Output = " << recievedSymbol << ", Demod_Cnt = " << Demod_Cnt << ", Sample_Cnt = " << Sample_Cnt << std::endl;
+
+      // Ignore the first few samples that we obtain, since we are waiting for the filter taps to fill up
+			if (fillFilter > 11){ 
 				outputFile << recievedSymbol << std::endl;
 			}
 			else{
@@ -70,17 +66,16 @@ int main () {
 
 	//For some reason, we don't get the last symbol of the message in the previous loop.
 	//So, we include this code so the last symbol is included and the file differencing will work
-	nextSample = 0;
-  A_tmp.data = 0;
-  A_in.write(A_tmp);
+  //A_tmp.data = 0;
+  //A_in.write(A_tmp);
 	while (true){
-		//if (qpskElementDemodulatorTimingPhase(nextSample, &recievedSymbol)) {
 		if (qpskElementDemodulatorTimingPhase(A_in, B_out)) {
 			//Convert the symbol to a number from 0-3
 			//recv = (recievedSymbol[0] << 1) | recievedSymbol[1];
       B_out.read(B_tmp);
       recievedSymbol = B_tmp.data;
 			outputFile << recievedSymbol << std::endl;
+      std::cout << "Read the last demod symbol: " << recievedSymbol << std::endl;
 
 			break;
 		}
