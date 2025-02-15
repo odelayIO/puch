@@ -1,9 +1,16 @@
 #include "qpskTop.h"
 #include "ap_fixed.h"
+#include "ap_int.h"
+#include "ap_axi_sdata.h"
+#include "hls_stream.h"
 
 
-//bool qpskElementDemodulatorTimingPhase(double sampleIn, Symbol *out){
-bool qpskElementDemodulatorTimingPhase(din_t fp_in, Symbol *out){
+bool qpskElementDemodulatorTimingPhase(hls::stream<pkt32> &A, Symbol *out){
+#pragma HLS INTERFACE axis port=A
+#pragma HLS INTERFACE s_axilite port=return bundle=control
+
+  pkt32 din_t;
+  A.read(din_t);
 
 	static DownsampleCounter downsampleCount = 0; //carrierIndex = 0,
 	static TwoBitCounter carrierIndex = 0;
@@ -11,7 +18,7 @@ bool qpskElementDemodulatorTimingPhase(din_t fp_in, Symbol *out){
 	double Irec = 0.0, Qrec = 0.0, Ifir = 0.0, Qfir = 0.0;
 	double ICorrected = 0, QCorrected = 0;
 	bool strobe = false; //
-  double sampleIn = fp_in; //Convert Fixed Point to Double
+  double sampleIn = din_t.data; //Convert Fixed Point to Double
 
 	Irec = sampleIn*Icarrier[carrierIndex];
 	Qrec = sampleIn*Qcarrier[carrierIndex];

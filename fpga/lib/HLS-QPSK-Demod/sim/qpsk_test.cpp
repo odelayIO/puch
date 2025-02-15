@@ -39,7 +39,8 @@ int main () {
 	}
 
 	double nextSample = 0.0;
-  din_t fp_din = 0;
+  hls::stream<pkt32> A_in;
+  pkt32 A_tmp;
 	//short recievedSymbol[2] = { 0, 0 }, recv = 0;
 	int fillFilter = 0;
 	Symbol recievedSymbol;
@@ -47,9 +48,10 @@ int main () {
 	//Pass each sample from the input file into the demodulator
 	std::cout << "Demodulating input signal..." << std::endl;
 	while (input >> nextSample){
-    din_t fp_din = nextSample;
+    A_tmp.data = nextSample;
+    A_in.write(A_tmp);
 		//if (qpskElementDemodulatorTimingPhase(nextSample, &recievedSymbol)) { //returns true if the next sample is valid
-		if (qpskElementDemodulatorTimingPhase(fp_din, &recievedSymbol)) { //returns true if the next sample is valid
+		if (qpskElementDemodulatorTimingPhase(A_in, &recievedSymbol)) { //returns true if the next sample is valid
 			//recv = (recievedSymbol[0] << 1) | recievedSymbol[1];
 			if (fillFilter > 11){ //ignore the first few samples that we obtain, since we are waiting for the filter taps to fill up
 				outputFile << recievedSymbol << std::endl;
@@ -63,10 +65,11 @@ int main () {
 	//For some reason, we don't get the last symbol of the message in the previous loop.
 	//So, we include this code so the last symbol is included and the file differencing will work
 	nextSample = 0;
-  fp_din = 0;
+  A_tmp.data = 0;
+  A_in.write(A_tmp);
 	while (true){
 		//if (qpskElementDemodulatorTimingPhase(nextSample, &recievedSymbol)) {
-		if (qpskElementDemodulatorTimingPhase(fp_din, &recievedSymbol)) {
+		if (qpskElementDemodulatorTimingPhase(A_in, &recievedSymbol)) {
 			//Convert the symbol to a number from 0-3
 			//recv = (recievedSymbol[0] << 1) | recievedSymbol[1];
 			outputFile << recievedSymbol << std::endl;
