@@ -17,9 +17,9 @@ typedef ap_uint<2> TwoBitCounter;
 typedef ap_uint<3> DownsampleCounter;
 typedef ap_int<2> Sign;//
 
-/***************************
-*		Constants          *
-****************************/
+//----------------------------------------
+//	Constants          
+//----------------------------------------
 //QPSK Variables
 #define SAMPLES_PER_SYMBOL 16
 #define FILTER_TAPS 193
