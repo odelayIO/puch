@@ -9,11 +9,9 @@
 			|
 */
 
-/*
-*	Matched filter element-by-element implementation
-*/
-//could implement the filter a different way since it is symmetric, but I
-//for now I am going to leave it like this.
+//***************************************************************
+//	  Matched filter element-by-element implementation          
+//***************************************************************
 void simple_fir_filterI(double *y, double x){
 	static ap_shift_reg<double,FILTER_TAPS> shiftRegister; //use predefined shift register class
 
@@ -28,7 +26,6 @@ void simple_fir_filterI(double *y, double x){
 	*y = acc;
 }
 
-//
 void simple_fir_filterQ(double *y, double x){
 	static ap_shift_reg<double,FILTER_TAPS> shiftRegister; //use predefined shift register class
 
@@ -42,35 +39,11 @@ void simple_fir_filterQ(double *y, double x){
 
 	*y = acc;
 }
-/*
-*	Need a second one for the static variable
-*/
-/*
-void simple_fir_filterQ(double *y, double x){
-	static ap_shift_reg<double,FILTER_TAPS> shiftRegister; //use predefined shift register class
-
-	double acc = 0.0, data = 0.0;
-	int j = FILTER_TAPS-1, i = 0;
-
-	shiftRegister.shift(x);
-
-	//96 is the filter coefficient that doesn't have a buddy
-	//for (i = FILTER_TAPS - 1; i >= 0; i--){
-	acc = shiftRegister.read(96);
-	for (i = 0; i < 96; i++){
-		acc += (shiftRegister.read(i)+shiftRegister.read(j))*firCoeff[i];
-	}
-
-	*y = acc;
-}
-*/
 
 
-/************************************************
-*												                        *
-*		Timing and phase loop functions			        *
-*												                        *
-*************************************************/
+//************************************************
+//		Timing and phase loop functions			        
+//************************************************
 
 void timingPhaseCorrection(double MF_I, double MF_Q, double *ICorrected, double *QCorrected, bool *strobe){
 	//registers used for this function
