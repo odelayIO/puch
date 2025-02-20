@@ -28,3 +28,15 @@ typedef ap_int<2> Sign;
 
 ```
 
+
+
+## Latency Measurements
+
+| pragma                                                       | Latency Min | Latency Max |
+| ------------------------------------------------------------ | ----------- | ----------- |
+| None                                                         | 1575        | 1695        |
+| #pragma HLS latency max=160                                  | 1575        | 1696        |
+| #pragma HLS latency max=160<br />#pragma HLS unroll          | 980         | 1102        |
+| #pragma HLS latency max=160<br />#pragma HLS unroll<br />#pragma HLS latency max=1 | 981         | 1086        |
+| #pragma HLS latency max=160<br />#pragma HLS unroll<br />#pragma HLS latency max=1<br />#pragma HLS pipeline II=16 | 981         | 1086        |
+

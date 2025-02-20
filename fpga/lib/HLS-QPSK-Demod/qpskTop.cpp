@@ -9,6 +9,9 @@ bool qpskElementDemodulatorTimingPhase(hls::stream<pkt32> &A, hls::stream<pkt2> 
 #pragma HLS INTERFACE axis port=A
 #pragma HLS INTERFACE axis port=B
 #pragma HLS INTERFACE s_axilite port=return bundle=control
+#pragma HLS inline recursive
+//#pragma HLS latency max=16
+//#pragma HLS pipeline II=16
 
   // Define output port
   Symbol out;

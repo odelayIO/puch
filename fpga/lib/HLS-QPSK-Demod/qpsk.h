@@ -54,6 +54,7 @@ const double Qcarrier[] = {
 /******************************************************************
 *		Function Declarations for complete demodulator			  *
 *******************************************************************/
+//void simple_fir_filter(double *y, double x);
 void simple_fir_filterI(double *y, double x);
 void simple_fir_filterQ(double *y, double x);
 void timingPhaseCorrection(double MF_I, double MF_Q, double *ICorrected, double *QCorrected, bool *strobe);

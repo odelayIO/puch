@@ -12,6 +12,23 @@
 //***************************************************************
 //	  Matched filter element-by-element implementation          
 //***************************************************************
+//    void simple_fir_filter(double *y, double x){
+//    #pragma HLS INLINE
+//    	static ap_shift_reg<double,FILTER_TAPS> shiftRegister; //use predefined shift register class
+//    
+//    	double acc = 0.0, data = 0.0;
+//    
+//    	shiftRegister.shift(x);
+//    
+//    	for (int i = FILTER_TAPS - 1; i >= 0; i--){
+//        #pragma HLS unroll
+//    		acc += shiftRegister.read(i)*firCoeff[i];
+//    	}
+//    
+//    	*y = acc;
+//    }
+
+
 void simple_fir_filterI(double *y, double x){
 	static ap_shift_reg<double,FILTER_TAPS> shiftRegister; //use predefined shift register class
 
@@ -20,6 +37,7 @@ void simple_fir_filterI(double *y, double x){
 	shiftRegister.shift(x);
 
 	for (int i = FILTER_TAPS - 1; i >= 0; i--){
+    #pragma HLS unroll
 		acc += shiftRegister.read(i)*firCoeff[i];
 	}
 
@@ -34,6 +52,7 @@ void simple_fir_filterQ(double *y, double x){
 	shiftRegister.shift(x);
 
 	for (int i = FILTER_TAPS - 1; i >= 0; i--){
+    #pragma HLS unroll
 		acc += shiftRegister.read(i)*firCoeff[i];
 	}
 
@@ -46,6 +65,7 @@ void simple_fir_filterQ(double *y, double x){
 //************************************************
 
 void timingPhaseCorrection(double MF_I, double MF_Q, double *ICorrected, double *QCorrected, bool *strobe){
+//#pragma HLS latency max=8
 	//registers used for this function
 	static double ccwC_d = 0.0, ccwS_d = 0.0, ccwIOut_d = 0.0, ccwQOut_d = 0.0;
 	static double interpolationIOut_d2 = 0.0, interpolationQOut_d2 = 0.0, timingControl_d = 0.0, mu_d = 0.0;
@@ -100,11 +120,13 @@ void timingPhaseCorrection(double MF_I, double MF_Q, double *ICorrected, double 
 }
 
 void ccwRotation(double I, double Q, double C, double S, double *Iprime, double *Qprime){
+//#pragma HLS latency max=1
 	*Iprime = I*C + Q*S;
 	*Qprime = Q*C - I*S;
 }
 
 void farrowInterpolationQuadraticI(double in, double mu, double *out){
+//#pragma HLS latency max=1
 	static double inputShiftReg[2] = { 0, 0 }, scaledShiftReg[3] = { 0, 0, 0 };
 
 	double nextScaled = 0.0, tmp1 = 0.0,  tmp2 = 0.0;
@@ -126,6 +148,7 @@ void farrowInterpolationQuadraticI(double in, double mu, double *out){
 }
 
 void farrowInterpolationQuadraticI2(double in, double mu, double *out){
+//#pragma HLS latency max=1
 	static double inputShiftReg[2] = { 0, 0 }, scaledShiftReg[3] = { 0, 0, 0 };
 
 	double nextScaled = 0.0, tmp1 = 0.0, tmp2 = 0.0;
@@ -147,6 +170,7 @@ void farrowInterpolationQuadraticI2(double in, double mu, double *out){
 }
 
 void farrowInterpolationQuadraticQ(double in, double mu, double *out){
+//#pragma HLS latency max=1
 	static double inputShiftReg[2] = { 0, 0 }, scaledShiftReg[3] = { 0, 0, 0 };
 
 	double nextScaled = 0.0, tmp1 = 0.0,  tmp2 = 0.0;
@@ -169,6 +193,7 @@ void farrowInterpolationQuadraticQ(double in, double mu, double *out){
 }
 
 void farrowInterpolationQuadraticQ2(double in, double mu, double *out){
+//#pragma HLS latency max=1
 	static double inputShiftReg[2] = { 0, 0 }, scaledShiftReg[3] = { 0, 0, 0 };
 
 	double nextScaled = 0.0, tmp1 = 0.0,  tmp2 = 0.0;
@@ -190,6 +215,7 @@ void farrowInterpolationQuadraticQ2(double in, double mu, double *out){
 }
 
 void TED(double x, double xd1, double xd2, double y, double yd1, double yd2, bool strobe, double *e){
+//#pragma HLS latency max=1
 	Sign x_sign = 0, xd2_sign = 0, y_sign = 0, yd2_sign = 0;
 
 	if (strobe){
@@ -207,6 +233,7 @@ void TED(double x, double xd1, double xd2, double y, double yd1, double yd2, boo
 }
 
 void PED(double I, double Q, bool strobe, double *out){
+//#pragma HLS latency max=1
 	Sign signI = 0, signQ = 0;
 
 	if (strobe){
@@ -221,6 +248,7 @@ void PED(double I, double Q, bool strobe, double *out){
 }
 
 void phaseLoop(double e, double *v){
+//#pragma HLS latency max=1
 	static double integratorFeedback = 0.0;
 
 	double integratorResult = 0.0, proportionalResult = 0;
@@ -233,6 +261,7 @@ void phaseLoop(double e, double *v){
 }
 
 void timingLoop(double e, double *v){
+//#pragma HLS latency max=1
 	static double integratorFeedback = 0.0;
 
 	double integratorResult = 0.0, proportionalResult = 0;
@@ -246,6 +275,8 @@ void timingLoop(double e, double *v){
 
 //decrementing mod-1 counter
 void interpolationControl(double w, double *reg, bool *underflow){
+//#pragma HLS latency max=1
+
 	static double delay = 0.0;
 
 	double remainder1 = 0;
@@ -265,6 +296,7 @@ void interpolationControl(double w, double *reg, bool *underflow){
 }
 
 void ddsFrequency(double F, double *cosine, double *sine){
+//#pragma HLS latency max=1
 	static double delay = 0.0;
 
 	double tmp = 0.0;
