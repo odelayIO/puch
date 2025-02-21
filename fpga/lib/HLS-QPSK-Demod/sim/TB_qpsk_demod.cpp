@@ -19,6 +19,7 @@ int main () {
   FILE *rx_samples = fopen("0xDEADBEEF_Rx_Samps.dat", "r");
   float Iin_float, Qin_float;
   std::ofstream outputFile("demodulatedMessage.dat", std::ios::trunc);
+  std::ofstream out_constellation("out_constellation.csv", std::ios::trunc);
 
 
   while(fscanf(rx_samples, "%f %f", &Iin_float, &Qin_float) == 2) {
@@ -34,11 +35,13 @@ int main () {
         //std::cout << "Demod_Cnt = " << Demod_Cnt << ", I_out = " << I_out << ", Q_out = " << Q_out << ", Out_Bits = " << Out_Bits << std::endl;
         //std::cout << "Demod_Cnt = " << Demod_Cnt << ", Out_Bits = " << Out_Bits << std::endl;
         outputFile << Out_Bits << std::endl;
+        out_constellation << I_out << ", " << Q_out << std::endl;
       }
     }
   }
   fclose(rx_samples);
   outputFile.close();
+  out_constellation.close();
   
   if(system("diff -w demodulatedMessage.dat 0xDEADBEEF_bit_out.dat")) {
     fprintf(stdout, "***********************************\n");
