@@ -43,15 +43,15 @@ open_project -reset proj_hls_qpsk_demod
 # Add design files
 add_files qpsk.h
 add_files qpsk.cpp
-add_files qpskTop.h
-add_files qpskTop.cpp
+add_files qpsk_demod.h
+add_files qpsk_demod.cpp
 # Add test bench & files
 add_files -tb ./sim/golden_short.dat
 add_files -tb ./sim/modulatedData_short.dat
 add_files -tb ./sim/qpsk_test.cpp
 
 # Set the top-level function
-set_top qpskElementDemodulatorTimingPhase
+set_top qpsk_demod
 
 # ########################################################
 # Create a solution
