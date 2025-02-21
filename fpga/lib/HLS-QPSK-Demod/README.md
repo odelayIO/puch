@@ -10,13 +10,12 @@ I have updated the ports to be AXI Stream interface, and have the `ap` control p
 //----------------------------------------
 //  Define AXI Stream Interface
 //----------------------------------------
-typedef hls::axis<ap_fixed<32,4>,0,0,0> pkt32;
-typedef hls::axis<ap_uint<2>,0,0,0> pkt2;
+typedef ap_fixed<16,4, AP_RND, AP_SAT> Fin;
+typedef ap_fixed<16,4, AP_RND, AP_SAT> Fout;
 
-typedef ap_uint<2> Symbol;
-typedef ap_uint<2> TwoBitCounter;
 typedef ap_uint<3> DownsampleCounter;
 typedef ap_int<2> Sign;
+
 
 //----------------------------------------
 //	Constants          
@@ -28,15 +27,38 @@ typedef ap_int<2> Sign;
 
 ```
 
+### Entity `qpsk_demod`
+
+```vhdl
+entity qpsk_demod is
+	port (
+    	ap_clk 			: IN STD_LOGIC;
+    	ap_rst 				: IN STD_LOGIC;
+    	ap_start 			: IN STD_LOGIC;
+    	ap_done 			: OUT STD_LOGIC;
+    	ap_idle 			: OUT STD_LOGIC;
+    	ap_ready 			: OUT STD_LOGIC;
+    	I_in 				: IN STD_LOGIC_VECTOR (15 downto 0);
+    	I_in_ap_vld 		: IN STD_LOGIC;
+    	Q_in 				: IN STD_LOGIC_VECTOR (15 downto 0);
+    	Q_in_ap_vld 		: IN STD_LOGIC;
+    	I_out 				: OUT STD_LOGIC_VECTOR (15 downto 0);
+    	I_out_ap_vld 		: OUT STD_LOGIC;
+    	Q_out 				: OUT STD_LOGIC_VECTOR (15 downto 0);
+    	Q_out_ap_vld 		: OUT STD_LOGIC;
+    	demod_bits 			: OUT STD_LOGIC_VECTOR (1 downto 0);
+    	demod_bits_ap_vld 	: OUT STD_LOGIC;
+    	ap_return 			: OUT STD_LOGIC_VECTOR (0 downto 0) );
+end;
+
+```
+
 
 
 ## Latency Measurements
 
-| pragma                                                       | Latency Min | Latency Max |
-| ------------------------------------------------------------ | ----------- | ----------- |
-| None                                                         | 1575        | 1695        |
-| #pragma HLS latency max=160                                  | 1575        | 1696        |
-| #pragma HLS latency max=160<br />#pragma HLS unroll          | 980         | 1102        |
-| #pragma HLS latency max=160<br />#pragma HLS unroll<br />#pragma HLS latency max=1 | 981         | 1086        |
-| #pragma HLS latency max=160<br />#pragma HLS unroll<br />#pragma HLS latency max=1<br />#pragma HLS pipeline II=16 | 981         | 1086        |
+| pragma     | Latency Clock Cycles | Notes                                                    |
+| ---------- | -------------------- | -------------------------------------------------------- |
+| qpsk_demod | 56                   | Enabled all the `pragma` .  This does increase the logic |
+| qpsk_demod | 123                  | Disabled all the `pragma`                                |
 
