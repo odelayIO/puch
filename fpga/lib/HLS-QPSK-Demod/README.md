@@ -2,6 +2,10 @@
 
 The QPSK HLS was copied from: https://github.com/ttown523/QPSK-VivadoHLS
 
+### Register Map
+
+See [QPSK Register Document](./doc/qpsk_reg.md)
+
 ### Entity `qpsk_demod`
 
 ```vhdl
