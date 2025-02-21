@@ -46,9 +46,10 @@ add_files qpsk.cpp
 add_files qpsk_demod.h
 add_files qpsk_demod.cpp
 # Add test bench & files
-add_files -tb ./sim/golden_short.dat
-add_files -tb ./sim/modulatedData_short.dat
-add_files -tb ./sim/qpsk_test.cpp
+add_files -tb ./sim/0xDEADBEEF_Rx_Samps.dat
+add_files -tb ./sim/0xDEADBEEF_bit_out.dat
+add_files -tb ./sim/TB_qpsk_demod.cpp
+
 
 # Set the top-level function
 set_top qpsk_demod

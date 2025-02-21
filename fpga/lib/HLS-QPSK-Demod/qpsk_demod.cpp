@@ -5,7 +5,9 @@
 #include "hls_stream.h"
 
 
-bool qpsk_demod(Fin I_in, Fin Q_in, Fout *I_out, Fout *Q_out){
+bool qpsk_demod(Fin I_in, Fin Q_in, Fout *I_out, Fout *Q_out, ap_uint<2> *demod_bits){
+#pragma HLS INTERFACE mode=ap_vld port=I_in
+#pragma HLS INTERFACE mode=ap_vld port=Q_in
 //#pragma HLS INTERFACE s_axilite port=return bundle=control
 //#pragma HLS inline recursive
 //#pragma HLS latency max=16
@@ -23,23 +25,12 @@ bool qpsk_demod(Fin I_in, Fin Q_in, Fout *I_out, Fout *Q_out){
   if (downsampleCount == 0){
     timingPhaseCorrection(Ifir, Qfir, &ICorrected, &QCorrected, &strobe);
 
-    //decision block -- perhaps I should make this its own function...so the reader can know what its doing
     if (strobe){
-      //std::cout << ICorrected <<  " " << QCorrected << std::endl;
-      //Fout I_tmp = ICorrected;
-      //Fout Q_tmp = QCorrected;
-      //I_out = I_tmp;
-      //Q_out = Q_tmp;
-      //I_out = 0;
-      //Q_out = 0;
-      //I_out = (ICorrected > 0.0 ? 1 : 0);
-      //Q_out = (QCorrected > 0.0 ? 1 : 0);
-      //*I_out = I_in;
-      //*Q_out = Q_in;
       *I_out = (Fout) ICorrected;
       *Q_out = (Fout) QCorrected;
+      (*demod_bits)[0] = (ICorrected > 0.0 ? 1 : 0);
+      (*demod_bits)[1] = (QCorrected > 0.0 ? 1 : 0);
 
-      //(out)[1] = (ICorrected > 0.0 ? 1 : 0);
     }
     downsampleCount++;
 

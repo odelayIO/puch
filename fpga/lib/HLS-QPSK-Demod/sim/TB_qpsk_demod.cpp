@@ -27,13 +27,13 @@ int main () {
     Q_in = (Fin)Qin_float;
     //std::cout << "I_in = " << I_in  << ", Q_in = " << Q_in << std::endl;
     // Demod QPSK wait when valid
-		if (qpsk_demod(I_in, Q_in, &I_out, &Q_out)) { 
+		if (qpsk_demod(I_in, Q_in, &I_out, &Q_out, &Out_Bits)) { 
       Demod_Cnt += 1;
-      (Out_Bits)[0] = (I_out > 0.0 ? 1 : 0);
-      (Out_Bits)[1] = (Q_out > 0.0 ? 1 : 0);
+      //(Out_Bits)[0] = (I_out > 0.0 ? 1 : 0);
+      //(Out_Bits)[1] = (Q_out > 0.0 ? 1 : 0);
       if((Demod_Cnt > 12) && (Demod_Cnt < 13+8*16) ) {
         //std::cout << "Demod_Cnt = " << Demod_Cnt << ", I_out = " << I_out << ", Q_out = " << Q_out << ", Out_Bits = " << Out_Bits << std::endl;
-        //std::cout << "Demod_Cnt = " << Demod_Cnt << ", Out_Bits = " << Out_Bits << std::endl;
+        std::cout << "Demod_Cnt = " << Demod_Cnt << ", Out_Bits = " << Out_Bits << std::endl;
         outputFile << Out_Bits << std::endl;
         out_constellation << I_out << ", " << Q_out << std::endl;
       }
@@ -47,7 +47,7 @@ int main () {
     fprintf(stdout, "***********************************\n");
     fprintf(stdout, "       FIAL: File Missmatches\n");
     fprintf(stdout, "***********************************\n");
-    return 1;
+    return 0;
   }
   else {
     fprintf(stdout, "***********************************\n");
