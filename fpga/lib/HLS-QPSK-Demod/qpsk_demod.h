@@ -3,10 +3,7 @@
 
 #include "qpsk.h"
 
-//bool qpskElementDemodulatorTimingPhase(double sampleIn, Symbol *out);
-//bool qpskElementDemodulatorTimingPhase(din_t fp_din, Symbol *out);
-//bool qpskElementDemodulatorTimingPhase(hls::stream<pkt32> &A, Symbol *out);
-bool qpskElementDemodulatorTimingPhase(hls::stream<pkt32> &A, hls::stream<pkt2> &B);
+bool qpsk_demod(Fin I_in, Fin Q_in, Fout *I_out, Fout *Q_out);
+
 
 #endif
-//
