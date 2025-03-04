@@ -67,7 +67,6 @@ set_property default_lib work [current_project]
 set_property  ip_repo_paths  ../../lib [current_project]
 update_ip_catalog
 
-
 #----------------------------------------------------------------------------
 #   Add VHDL File(s) in library folder
 #----------------------------------------------------------------------------
@@ -76,6 +75,7 @@ source ../../lib/timestamp/sources.tcl
 source ../../lib/AWGN_GNG/sources.tcl
 source ../../lib/arith/sources.tcl
 source ../../lib/util/sources.tcl
+source ../../lib/HLS-QPSK-Demod/sources.tcl
 
 
 #----------------------------------------------------------------------------

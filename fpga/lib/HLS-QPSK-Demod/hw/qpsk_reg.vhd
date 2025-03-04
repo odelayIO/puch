@@ -31,6 +31,21 @@ port(
     -- AP_Control.ap_idle
     csr_ap_control_ap_idle_in : in std_logic;
 
+    -- WR_Cap_CTRL.wr_addr
+    csr_wr_cap_ctrl_wr_addr_in : in std_logic_vector(15 downto 0);
+    -- WR_Cap_CTRL.wr_enable
+    csr_wr_cap_ctrl_wr_enable_out : out std_logic;
+    -- WR_Cap_CTRL.wr_addr_clr
+    csr_wr_cap_ctrl_wr_addr_clr_out : out std_logic;
+
+    -- RD_Cap_CTRL.rd_addr
+    csr_rd_cap_ctrl_rd_addr_out : out std_logic_vector(15 downto 0);
+    -- RD_Cap_CTRL.rd_enable
+    csr_rd_cap_ctrl_rd_enable_out : out std_logic;
+
+    -- RD_Cap_DATA.rd_data
+    csr_rd_cap_data_rd_data_in : in std_logic_vector(31 downto 0);
+
     -- AXI-Lite
     axil_awaddr   : in  std_logic_vector(ADDR_W-1 downto 0);
     axil_awprot   : in  std_logic_vector(2 downto 0);
@@ -100,6 +115,27 @@ signal csr_ap_control_ren_ff : std_logic;
 signal csr_ap_control_ap_start_ff : std_logic;
 signal csr_ap_control_ap_done_ff : std_logic;
 signal csr_ap_control_ap_idle_ff : std_logic;
+
+signal csr_wr_cap_ctrl_rdata : std_logic_vector(31 downto 0);
+signal csr_wr_cap_ctrl_wen : std_logic;
+signal csr_wr_cap_ctrl_ren : std_logic;
+signal csr_wr_cap_ctrl_ren_ff : std_logic;
+signal csr_wr_cap_ctrl_wr_addr_ff : std_logic_vector(15 downto 0);
+signal csr_wr_cap_ctrl_wr_enable_ff : std_logic;
+signal csr_wr_cap_ctrl_wr_addr_clr_ff : std_logic;
+
+signal csr_rd_cap_ctrl_rdata : std_logic_vector(31 downto 0);
+signal csr_rd_cap_ctrl_wen : std_logic;
+signal csr_rd_cap_ctrl_ren : std_logic;
+signal csr_rd_cap_ctrl_ren_ff : std_logic;
+signal csr_rd_cap_ctrl_rd_addr_ff : std_logic_vector(15 downto 0);
+signal csr_rd_cap_ctrl_rd_enable_ff : std_logic;
+
+signal csr_rd_cap_data_rdata : std_logic_vector(31 downto 0);
+signal csr_rd_cap_data_wen : std_logic;
+signal csr_rd_cap_data_ren : std_logic;
+signal csr_rd_cap_data_ren_ff : std_logic;
+signal csr_rd_cap_data_rd_data_ff : std_logic_vector(31 downto 0);
 
 signal rdata_ff : std_logic_vector(31 downto 0);
 signal rvalid_ff : std_logic;
@@ -395,6 +431,241 @@ end process;
 
 
 --------------------------------------------------------------------------------
+-- CSR:
+-- [0xc] - WR_Cap_CTRL - QPSK Demodulator write buffer control registers
+--------------------------------------------------------------------------------
+csr_wr_cap_ctrl_rdata(31 downto 18) <= (others => '0');
+
+csr_wr_cap_ctrl_wen <= wen when (waddr = "00001100") else '0'; -- 0xc
+
+csr_wr_cap_ctrl_ren <= ren when (raddr = "00001100") else '0'; -- 0xc
+process (clk) begin
+if rising_edge(clk) then
+if (rst = '1') then
+    csr_wr_cap_ctrl_ren_ff <= '0'; -- 0x0
+else
+        csr_wr_cap_ctrl_ren_ff <= csr_wr_cap_ctrl_ren;
+end if;
+end if;
+end process;
+
+-----------------------
+-- Bit field:
+-- WR_Cap_CTRL(15 downto 0) - wr_addr - The write address pointer.  Value is the number of samples written to BRAM and can reset the pointer
+-- access: rw, hardware: i
+-----------------------
+
+csr_wr_cap_ctrl_rdata(15 downto 0) <= csr_wr_cap_ctrl_wr_addr_ff;
+
+
+process (clk) begin
+if rising_edge(clk) then
+if (rst = '1') then
+    csr_wr_cap_ctrl_wr_addr_ff <= "0000000000000000"; -- 0x0
+else
+        if (csr_wr_cap_ctrl_wen = '1') then
+            if (wstrb(0) = '1') then
+                csr_wr_cap_ctrl_wr_addr_ff(7 downto 0) <= wdata(7 downto 0);
+            end if;
+            if (wstrb(1) = '1') then
+                csr_wr_cap_ctrl_wr_addr_ff(15 downto 8) <= wdata(15 downto 8);
+            end if;
+            csr_wr_cap_ctrl_wr_addr_ff <= csr_wr_cap_ctrl_wr_addr_in;
+        end if;
+end if;
+end if;
+end process;
+
+
+
+-----------------------
+-- Bit field:
+-- WR_Cap_CTRL(16) - wr_enable - The write enable to capture output of the QPSK Demodulator
+-- access: rw, hardware: o
+-----------------------
+
+csr_wr_cap_ctrl_rdata(16) <= csr_wr_cap_ctrl_wr_enable_ff;
+
+csr_wr_cap_ctrl_wr_enable_out <= csr_wr_cap_ctrl_wr_enable_ff;
+
+process (clk) begin
+if rising_edge(clk) then
+if (rst = '1') then
+    csr_wr_cap_ctrl_wr_enable_ff <= '0'; -- 0x0
+else
+        if (csr_wr_cap_ctrl_wen = '1') then
+            if (wstrb(2) = '1') then
+                csr_wr_cap_ctrl_wr_enable_ff <= wdata(16);
+            end if;
+        else
+            csr_wr_cap_ctrl_wr_enable_ff <= csr_wr_cap_ctrl_wr_enable_ff;
+        end if;
+end if;
+end if;
+end process;
+
+
+
+-----------------------
+-- Bit field:
+-- WR_Cap_CTRL(17) - wr_addr_clr - The write address pointer clear.  Strobed for 1 cc, self cleared
+-- access: wosc, hardware: o
+-----------------------
+
+csr_wr_cap_ctrl_rdata(17) <= '0';
+
+csr_wr_cap_ctrl_wr_addr_clr_out <= csr_wr_cap_ctrl_wr_addr_clr_ff;
+
+process (clk) begin
+if rising_edge(clk) then
+if (rst = '1') then
+    csr_wr_cap_ctrl_wr_addr_clr_ff <= '0'; -- 0x0
+else
+        if (csr_wr_cap_ctrl_wen = '1') then
+            if (wstrb(2) = '1') then
+                csr_wr_cap_ctrl_wr_addr_clr_ff <= wdata(17);
+            end if;
+        else
+            csr_wr_cap_ctrl_wr_addr_clr_ff <= '0';
+        end if;
+end if;
+end if;
+end process;
+
+
+
+--------------------------------------------------------------------------------
+-- CSR:
+-- [0x10] - RD_Cap_CTRL - QPSK Demodulator read buffer control registers
+--------------------------------------------------------------------------------
+csr_rd_cap_ctrl_rdata(31 downto 17) <= (others => '0');
+
+csr_rd_cap_ctrl_wen <= wen when (waddr = "00010000") else '0'; -- 0x10
+
+csr_rd_cap_ctrl_ren <= ren when (raddr = "00010000") else '0'; -- 0x10
+process (clk) begin
+if rising_edge(clk) then
+if (rst = '1') then
+    csr_rd_cap_ctrl_ren_ff <= '0'; -- 0x0
+else
+        csr_rd_cap_ctrl_ren_ff <= csr_rd_cap_ctrl_ren;
+end if;
+end if;
+end process;
+
+-----------------------
+-- Bit field:
+-- RD_Cap_CTRL(15 downto 0) - rd_addr - The read address pointer.
+-- access: rw, hardware: o
+-----------------------
+
+csr_rd_cap_ctrl_rdata(15 downto 0) <= csr_rd_cap_ctrl_rd_addr_ff;
+
+csr_rd_cap_ctrl_rd_addr_out <= csr_rd_cap_ctrl_rd_addr_ff;
+
+process (clk) begin
+if rising_edge(clk) then
+if (rst = '1') then
+    csr_rd_cap_ctrl_rd_addr_ff <= "0000000000000000"; -- 0x0
+else
+        if (csr_rd_cap_ctrl_wen = '1') then
+            if (wstrb(0) = '1') then
+                csr_rd_cap_ctrl_rd_addr_ff(7 downto 0) <= wdata(7 downto 0);
+            end if;
+            if (wstrb(1) = '1') then
+                csr_rd_cap_ctrl_rd_addr_ff(15 downto 8) <= wdata(15 downto 8);
+            end if;
+        else
+            csr_rd_cap_ctrl_rd_addr_ff <= csr_rd_cap_ctrl_rd_addr_ff;
+        end if;
+end if;
+end if;
+end process;
+
+
+
+-----------------------
+-- Bit field:
+-- RD_Cap_CTRL(16) - rd_enable - The read enable. Strobed for 1cc, self cleared
+-- access: wosc, hardware: o
+-----------------------
+
+csr_rd_cap_ctrl_rdata(16) <= '0';
+
+csr_rd_cap_ctrl_rd_enable_out <= csr_rd_cap_ctrl_rd_enable_ff;
+
+process (clk) begin
+if rising_edge(clk) then
+if (rst = '1') then
+    csr_rd_cap_ctrl_rd_enable_ff <= '0'; -- 0x0
+else
+        if (csr_rd_cap_ctrl_wen = '1') then
+            if (wstrb(2) = '1') then
+                csr_rd_cap_ctrl_rd_enable_ff <= wdata(16);
+            end if;
+        else
+            csr_rd_cap_ctrl_rd_enable_ff <= '0';
+        end if;
+end if;
+end if;
+end process;
+
+
+
+--------------------------------------------------------------------------------
+-- CSR:
+-- [0x14] - RD_Cap_DATA - QPSK Demodulator read buffer data register
+--------------------------------------------------------------------------------
+
+csr_rd_cap_data_wen <= wen when (waddr = "00010100") else '0'; -- 0x14
+
+csr_rd_cap_data_ren <= ren when (raddr = "00010100") else '0'; -- 0x14
+process (clk) begin
+if rising_edge(clk) then
+if (rst = '1') then
+    csr_rd_cap_data_ren_ff <= '0'; -- 0x0
+else
+        csr_rd_cap_data_ren_ff <= csr_rd_cap_data_ren;
+end if;
+end if;
+end process;
+
+-----------------------
+-- Bit field:
+-- RD_Cap_DATA(31 downto 0) - rd_data - The read data
+-- access: rw, hardware: i
+-----------------------
+
+csr_rd_cap_data_rdata(31 downto 0) <= csr_rd_cap_data_rd_data_ff;
+
+
+process (clk) begin
+if rising_edge(clk) then
+if (rst = '1') then
+    csr_rd_cap_data_rd_data_ff <= "00000000000000000000000000000000"; -- 0x0
+else
+        if (csr_rd_cap_data_wen = '1') then
+            if (wstrb(0) = '1') then
+                csr_rd_cap_data_rd_data_ff(7 downto 0) <= wdata(7 downto 0);
+            end if;
+            if (wstrb(1) = '1') then
+                csr_rd_cap_data_rd_data_ff(15 downto 8) <= wdata(15 downto 8);
+            end if;
+            if (wstrb(2) = '1') then
+                csr_rd_cap_data_rd_data_ff(23 downto 16) <= wdata(23 downto 16);
+            end if;
+            if (wstrb(3) = '1') then
+                csr_rd_cap_data_rd_data_ff(31 downto 24) <= wdata(31 downto 24);
+            end if;
+            csr_rd_cap_data_rd_data_ff <= csr_rd_cap_data_rd_data_in;
+        end if;
+end if;
+end if;
+end process;
+
+
+
+--------------------------------------------------------------------------------
 -- Write ready
 --------------------------------------------------------------------------------
 wready <= '1';
@@ -412,6 +683,9 @@ else
             when "00000000" => rdata_ff <= csr_f_in_rdata; -- 0x0
             when "00000100" => rdata_ff <= csr_f_out_rdata; -- 0x4
             when "00001000" => rdata_ff <= csr_ap_control_rdata; -- 0x8
+            when "00001100" => rdata_ff <= csr_wr_cap_ctrl_rdata; -- 0xc
+            when "00010000" => rdata_ff <= csr_rd_cap_ctrl_rdata; -- 0x10
+            when "00010100" => rdata_ff <= csr_rd_cap_data_rdata; -- 0x14
             when others => rdata_ff <= "00000000000000000000000000000000"; -- 0x0
         end case;
     else

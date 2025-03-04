@@ -41,10 +41,10 @@
 open_project -reset proj_hls_qpsk_demod
 
 # Add design files
-add_files qpsk.h
-add_files qpsk.cpp
-add_files qpsk_demod.h
-add_files qpsk_demod.cpp
+add_files ./src/qpsk.h
+add_files ./src/qpsk.cpp
+add_files ./src/qpsk_demod.h
+add_files ./src/qpsk_demod.cpp
 # Add test bench & files
 add_files -tb ./sim/0xDEADBEEF_Rx_Samps.dat
 add_files -tb ./sim/0xDEADBEEF_bit_out.dat
@@ -76,7 +76,8 @@ csynth_design
 # capture all traces to VCD to plot in gtkWave
 #cosim_design -trace_level all  
 
-export_design -flow syn -rtl vhdl -format ip_catalog -display_name "hls_qpsk_demod" -vendor "odelay.IO" -version "0.1" -library "work" -ipname "hls_qpsk_demod"
+export_design -flow syn -rtl vhdl -format ip_catalog -display_name "qpsk_demod" -vendor "odelay.IO" -version "0.1" -library "work" -ipname "qpsk_demod"
+#export_design -flow syn -rtl vhdl -format syn_dcp -output ./qpsk_demod
 
 exit
 

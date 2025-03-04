@@ -1,7 +1,7 @@
 #include <iostream>
 #include <stdio.h>
-#include "../qpsk_demod.h"
-#include "../qpsk.h"
+#include "../src/qpsk_demod.h"
+#include "../src/qpsk.h"
 #include <fstream>
 #include <cstdlib>
 

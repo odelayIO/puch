@@ -25,6 +25,9 @@ Base address: 0x00000000
 | [F_in](#f_in)            | 0x00       | Input data stream format |
 | [F_out](#f_out)          | 0x04       | Output data stream format |
 | [AP_Control](#ap_control) | 0x08       | HLS block level control protocol signals |
+| [WR_Cap_CTRL](#wr_cap_ctrl) | 0x0c       | QPSK Demodulator write buffer control registers |
+| [RD_Cap_CTRL](#rd_cap_ctrl) | 0x10       | QPSK Demodulator read buffer control registers |
+| [RD_Cap_DATA](#rd_cap_data) | 0x14       | QPSK Demodulator read buffer data register |
 
 ## F_in
 
@@ -76,5 +79,58 @@ Reset value: 0x00000000
 | ap_idle          | 2      | ro              | 0x0        | HLS ap_idle |
 | ap_done          | 1      | ro              | 0x0        | HLS ap_done |
 | ap_start         | 0      | rw              | 0x0        | The start of HLS processor |
+
+Back to [Register map](#register-map-summary).
+
+## WR_Cap_CTRL
+
+QPSK Demodulator write buffer control registers
+
+Address offset: 0x0c
+
+Reset value: 0x00000000
+
+![wr_cap_ctrl](md_img/wr_cap_ctrl.svg)
+
+| Name             | Bits   | Mode            | Reset      | Description |
+| :---             | :---   | :---            | :---       | :---        |
+| -                | 31:18  | -               | 0x000      | Reserved |
+| wr_addr_clr      | 17     | wosc            | 0x0        | The write address pointer clear.  Strobed for 1 cc, self cleared |
+| wr_enable        | 16     | rw              | 0x0        | The write enable to capture output of the QPSK Demodulator |
+| wr_addr          | 15:0   | rw              | 0x0000     | The write address pointer.  Value is the number of samples written to BRAM and can reset the pointer |
+
+Back to [Register map](#register-map-summary).
+
+## RD_Cap_CTRL
+
+QPSK Demodulator read buffer control registers
+
+Address offset: 0x10
+
+Reset value: 0x00000000
+
+![rd_cap_ctrl](md_img/rd_cap_ctrl.svg)
+
+| Name             | Bits   | Mode            | Reset      | Description |
+| :---             | :---   | :---            | :---       | :---        |
+| -                | 31:17  | -               | 0x000      | Reserved |
+| rd_enable        | 16     | wosc            | 0x0        | The read enable. Strobed for 1cc, self cleared |
+| rd_addr          | 15:0   | rw              | 0x0000     | The read address pointer. |
+
+Back to [Register map](#register-map-summary).
+
+## RD_Cap_DATA
+
+QPSK Demodulator read buffer data register
+
+Address offset: 0x14
+
+Reset value: 0x00000000
+
+![rd_cap_data](md_img/rd_cap_data.svg)
+
+| Name             | Bits   | Mode            | Reset      | Description |
+| :---             | :---   | :---            | :---       | :---        |
+| rd_data          | 31:0   | rw              | 0x00000000 | The read data |
 
 Back to [Register map](#register-map-summary).

@@ -41,10 +41,10 @@
 open_project -reset csim
 
 # Add design files
-add_files qpsk.h
-add_files qpsk.cpp
-add_files qpsk_demod.h
-add_files qpsk_demod.cpp
+add_files ./src/qpsk.h
+add_files ./src/qpsk.cpp
+add_files ./src/qpsk_demod.h
+add_files ./src/qpsk_demod.cpp
 # Add test bench & files
 add_files -tb ./sim/0xDEADBEEF_Rx_Samps.dat
 add_files -tb ./sim/0xDEADBEEF_bit_out.dat

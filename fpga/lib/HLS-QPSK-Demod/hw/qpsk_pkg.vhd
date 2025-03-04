@@ -24,6 +24,18 @@ package qpsk_pkg is
   constant CSR_AP_CONTROL_ADDR : std_logic_vector(8-1 downto 0) := to_unsigned(8, 8);
   constant CSR_AP_CONTROL_RESET : std_logic_vector(32-1 downto 0) := to_unsigned(0, 32);
 
+  -- WR_Cap_CTRL - QPSK Demodulator write buffer control registers
+  constant CSR_WR_CAP_CTRL_ADDR : std_logic_vector(8-1 downto 0) := to_unsigned(12, 8);
+  constant CSR_WR_CAP_CTRL_RESET : std_logic_vector(32-1 downto 0) := to_unsigned(0, 32);
+
+  -- RD_Cap_CTRL - QPSK Demodulator read buffer control registers
+  constant CSR_RD_CAP_CTRL_ADDR : std_logic_vector(8-1 downto 0) := to_unsigned(16, 8);
+  constant CSR_RD_CAP_CTRL_RESET : std_logic_vector(32-1 downto 0) := to_unsigned(0, 32);
+
+  -- RD_Cap_DATA - QPSK Demodulator read buffer data register
+  constant CSR_RD_CAP_DATA_ADDR : std_logic_vector(8-1 downto 0) := to_unsigned(20, 8);
+  constant CSR_RD_CAP_DATA_RESET : std_logic_vector(32-1 downto 0) := to_unsigned(0, 32);
+
 
 
 end package qpsk_pkg;
