@@ -7,6 +7,7 @@ add_files -norecurse ${DOCKER_BASE}/fpga/lib/HLS-QPSK-Demod/src/QPSK_Demod_Top.v
 
 # HLS will update revision value based on the date, so we need to upgrade the QPSK Demodulator IP Core
 upgrade_ip -vlnv odelay.IO:work:qpsk_demod:0.1 [get_ips  QPSK_Demodulator] -log ip_upgrade.log
+#export_ip_user_files -of_objects [get_ips QPSK_Demodulator]
 
 
 # Set compile parameters and generate output IP cores
