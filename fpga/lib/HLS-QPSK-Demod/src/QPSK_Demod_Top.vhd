@@ -99,12 +99,17 @@ architecture RTL of QPSK_Demod_Top is
   constant F_OUT            : format := (16,12);
 
   -- Control Signals
+  signal A_TDATA_q          : std_logic_vector(31 downto 0);
+  signal A_TVALID_q         : std_logic;
+
   signal ap_start           : std_logic;
   signal ap_done            : std_logic;
   signal ap_idle            : std_logic;
 
   signal demod_bits_stb     : std_logic;
   signal demod_bits         : std_logic_vector( 1 downto 0);
+  signal demod_bits_stb_q   : std_logic;
+  signal demod_bits_q       : std_logic_vector( 1 downto 0);
 
   signal BRAM_wr_addr       : std_logic_vector(15 downto 0);
   signal BRAM_addr_clr      : std_logic;
@@ -236,10 +241,10 @@ begin
       -- ---------------------------------------------------
       --    QPSK Data Path Signals
       -- ---------------------------------------------------
-      I_in              => A_TDATA(31 downto 16),
-      I_in_ap_vld       => A_TVALID,
-      Q_in              => A_TDATA(15 downto 0),
-      Q_in_ap_vld       => A_TVALID,
+      I_in              => A_TDATA_q(31 downto 16),
+      I_in_ap_vld       => A_TVALID_q,
+      Q_in              => A_TDATA_q(15 downto 0),
+      Q_in_ap_vld       => A_TVALID_q,
       I_out             => open,
       I_out_ap_vld      => open,
       Q_out             => open,
@@ -248,7 +253,15 @@ begin
       demod_bits_ap_vld => demod_bits_stb
     );
 
-
+  process(clk)
+  begin
+    if(rising_edge(clk)) then
+      A_TDATA_q         <= A_TDATA;
+      A_TVALID_q        <= A_TVALID;
+      demod_bits_q      <= demod_bits;
+      demod_bits_stb_q  <= demod_bits_stb;
+    end if;
+  end process;
 
   -- -------------------------------------------------------------------
   --    HLS QPSK Demodulator
@@ -258,9 +271,9 @@ begin
       -- Write Port, Connected to QPSK Demod
       clka    => clk,
       ena     => '1',
-      wea(0)  => demod_bits_stb,
+      wea(0)  => demod_bits_stb_q,
       addra   => BRAM_wr_addr,
-      dina    => demod_bits,
+      dina    => demod_bits_q,
       douta   => open,
       -- Read Port, Connected to Host IF
       clkb    => clk,
@@ -281,7 +294,7 @@ begin
       if(rst='1' OR BRAM_addr_clr='1') then
         BRAM_wr_addr   <= (others => '0');
       else
-        if(demod_bits_stb = '1') then
+        if(demod_bits_stb_q = '1') then
           BRAM_wr_addr  <= std_logic_vector(unsigned(BRAM_wr_addr) + 1);
         end if;
       end if;

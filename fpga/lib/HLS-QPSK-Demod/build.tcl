@@ -38,7 +38,7 @@
 
 
 # Create a project
-open_project -reset proj_hls_qpsk_demod
+open_project -reset xpr
 
 # Add design files
 add_files ./src/qpsk.h

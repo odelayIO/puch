@@ -16,7 +16,7 @@ csim: clean
 
 clean:
 	@rm -fr doc hw sw
-	@rm -rf proj_hls_qpsk_demod
+	@rm -rf xpr
 	@rm -rf csim
 	@rm -rf proj
 	@rm -rf *.jou *.log

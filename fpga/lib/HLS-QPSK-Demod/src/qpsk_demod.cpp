@@ -9,8 +9,8 @@ bool qpsk_demod(Fin I_in, Fin Q_in, Fout *I_out, Fout *Q_out, ap_uint<2> *demod_
 #pragma HLS INTERFACE mode=ap_vld port=I_in
 #pragma HLS INTERFACE mode=ap_vld port=Q_in
 #pragma HLS inline recursive
-#pragma HLS latency max=16
-#pragma HLS pipeline II=16
+//#pragma HLS latency max=16
+//#pragma HLS pipeline II=16
 // Uncomment to wrap the control protocols to AXI Lite bus
 //#pragma HLS INTERFACE s_axilite port=return bundle=control
 
