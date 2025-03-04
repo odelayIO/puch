@@ -6,7 +6,8 @@ build:
 	python3 -m corsair
 	vitis_hls -f build.tcl	
 
-reg_if: clean
+reg_if: 
+	@rm -fr doc hw sw
 	python3 -m corsair
 
 csim: clean
