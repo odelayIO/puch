@@ -72,7 +72,13 @@ See [KR260 New Board Bring Up](./KR260-New-Board-Bring-up.md)
 
 ### Firmware
 
-[Xilinx Vivado HLS v2019.1 HSL Documentation](https://www.xilinx.com/support/documentation/sw_manuals/xilinx2019_1/ug902-vivado-high-level-synthesis.pdf)
+[Vitis High-Level Synthesis User Guide (UG1399)](https://docs.amd.com/r/2022.1-English/ug1399-vitis-hls/)
+
+[Vivado Design Suite User Guide: System-Level Design Entry (UG895)](https://docs.amd.com/r/2022.1-English/ug895-vivado-system-level-design-entry/)
+
+[Vivado Design Suite User Guide : Designing with IP (UG896)](https://docs.amd.com/r/2022.1-English/ug896-vivado-ip/)
+
+[Vivado Design Suite Tcl Command Reference Guide (UG835)](https://docs.amd.com/r/2022.1-English/ug835-vivado-tcl-commands)
 
 [Analog Devices ADALM-Pluto SDR](https://wiki.analog.com/university/tools/pluto/users)
 

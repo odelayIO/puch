@@ -102,6 +102,7 @@ set_property top ${OVERLAY_NAME}_wrapper [current_fileset]
 #   Add XDC File(s)
 #----------------------------------------------------------------------------
 import_files -fileset constrs_1 -norecurse ./leds_pinout.xdc
+import_files -fileset constrs_1 -norecurse ./ILA.xdc
 update_compile_order -fileset sources_1
 
 
