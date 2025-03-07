@@ -66,6 +66,9 @@ create_clock -period "99.999001MHz"
 
 set ::AESL_AUTOSIM::gDebug 1
 
+# Increase number of CPUs used during build
+set_param general.maxThreads 16
+
 #csim_design
 # Set any optimization directives
 # End of directives

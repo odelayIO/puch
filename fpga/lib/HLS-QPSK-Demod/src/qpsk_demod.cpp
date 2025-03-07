@@ -4,13 +4,19 @@
 #include "ap_axi_sdata.h"
 #include "hls_stream.h"
 
+//**********************************************************************************
+// Assumptions:
+//    1. Inputs samples have passed through Matched Filter.
+//    2. Samples Per Symbol is defined in "qpsk_demod.h", SAMPLES_PER_SYMBOL
+//
+//**********************************************************************************
 
 bool qpsk_demod(Fin I_in, Fin Q_in, Fout *I_out, Fout *Q_out, ap_uint<2> *demod_bits){
 #pragma HLS INTERFACE mode=ap_vld port=I_in
 #pragma HLS INTERFACE mode=ap_vld port=Q_in
 #pragma HLS inline recursive
 //#pragma HLS latency max=16
-//#pragma HLS pipeline II=16
+#pragma HLS pipeline II=64
 // Uncomment to wrap the control protocols to AXI Lite bus
 //#pragma HLS INTERFACE s_axilite port=return bundle=control
 
@@ -23,6 +29,7 @@ bool qpsk_demod(Fin I_in, Fin Q_in, Fout *I_out, Fout *Q_out, ap_uint<2> *demod_
   double Ifir = I_in;
   double Qfir = Q_in;
 
+  // TODO: Remove down sample circuit, should down sample in Matched Filter
   if (downsampleCount == 0){
     timingPhaseCorrection(Ifir, Qfir, &ICorrected, &QCorrected, &strobe);
 

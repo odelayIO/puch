@@ -9,55 +9,6 @@
 			|
 */
 
-//***************************************************************
-//	  Matched filter element-by-element implementation          
-//***************************************************************
-//    void simple_fir_filter(double *y, double x){
-//    #pragma HLS INLINE
-//    	static ap_shift_reg<double,FILTER_TAPS> shiftRegister; //use predefined shift register class
-//    
-//    	double acc = 0.0, data = 0.0;
-//    
-//    	shiftRegister.shift(x);
-//    
-//    	for (int i = FILTER_TAPS - 1; i >= 0; i--){
-//        #pragma HLS unroll
-//    		acc += shiftRegister.read(i)*firCoeff[i];
-//    	}
-//    
-//    	*y = acc;
-//    }
-
-
-void simple_fir_filterI(double *y, double x){
-	static ap_shift_reg<double,FILTER_TAPS> shiftRegister; //use predefined shift register class
-
-	double acc = 0.0, data = 0.0;
-
-	shiftRegister.shift(x);
-
-	for (int i = FILTER_TAPS - 1; i >= 0; i--){
-    #pragma HLS unroll
-		acc += shiftRegister.read(i)*firCoeff[i];
-	}
-
-	*y = acc;
-}
-
-void simple_fir_filterQ(double *y, double x){
-	static ap_shift_reg<double,FILTER_TAPS> shiftRegister; //use predefined shift register class
-
-	double acc = 0.0, data = 0.0;
-
-	shiftRegister.shift(x);
-
-	for (int i = FILTER_TAPS - 1; i >= 0; i--){
-    #pragma HLS unroll
-		acc += shiftRegister.read(i)*firCoeff[i];
-	}
-
-	*y = acc;
-}
 
 
 //************************************************
