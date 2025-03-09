@@ -105,6 +105,8 @@ architecture RTL of QPSK_Demod_Top is
 
   signal demod_bits_stb     : std_logic;
   signal demod_bits         : std_logic_vector( 1 downto 0);
+  signal demod_bits_stb_q   : std_logic;
+  signal demod_bits_q       : std_logic_vector( 1 downto 0);
 
   signal BRAM_wr_addr       : std_logic_vector(15 downto 0);
   signal BRAM_wr_addr_clr   : std_logic;
@@ -150,6 +152,17 @@ architecture RTL of QPSK_Demod_Top is
       ap_return : OUT STD_LOGIC_VECTOR (0 downto 0) );
   end component;
 
+  attribute mark_debug : string;
+  attribute mark_debug of demod_bits_stb    : signal is "true";
+  attribute mark_debug of demod_bits_stb_q  : signal is "true";
+  attribute mark_debug of demod_bits        : signal is "true";
+  attribute mark_debug of demod_bits_q      : signal is "true";
+
+  attribute mark_debug of BRAM_wr_addr      : signal is "true"; 
+  attribute mark_debug of BRAM_wr_addr_clr  : signal is "true"; 
+  attribute mark_debug of BRAM_rd_addr      : signal is "true"; 
+  attribute mark_debug of BRAM_rd_data      : signal is "true"; 
+
 begin
 
 
@@ -181,13 +194,11 @@ begin
       csr_ap_control_ap_done_in       => ap_done,
       csr_ap_control_ap_idle_in       => ap_idle,
       ---------------------------------+-----------------------------------------------
-      csr_wr_cap_ctrl_wr_addr_in      => BRAM_wr_addr,
-      csr_wr_cap_ctrl_wr_enable_out   => open,
-      csr_wr_cap_ctrl_wr_addr_clr_out => BRAM_wr_addr_clr,
+      csr_wr_ram_addr_in              => BRAM_wr_addr,
+      csr_wr_ram_addr_ctrl_clr_out    => BRAM_wr_addr_clr,
       ---------------------------------+-----------------------------------------------
-      csr_rd_cap_ctrl_rd_addr_out     => BRAM_rd_addr,
-      csr_rd_cap_ctrl_rd_enable_out   => open,
-      csr_rd_cap_data_rd_data_in      => BRAM_rd_data,
+      csr_rd_ram_addr_value_out       => BRAM_rd_addr,
+      csr_rd_ram_data_value_in        => BRAM_rd_data,
       -- ---------------------------------------------------
       --    AXI-Lite Bus
       -- ---------------------------------------------------
@@ -249,6 +260,15 @@ begin
     );
 
 
+  process(clk)
+  begin
+    if(rising_edge(clk)) then
+      demod_bits_stb_q    <= demod_bits_stb;
+      if(demod_bits_stb = '1') then
+        demod_bits_q      <= demod_bits;
+      end if;
+    end if;
+  end process;
 
   -- -------------------------------------------------------------------
   --    HLS QPSK Demodulator
@@ -258,9 +278,9 @@ begin
       -- Write Port, Connected to QPSK Demod
       clka    => clk,
       ena     => '1',
-      wea(0)  => demod_bits_stb,
+      wea(0)  => demod_bits_stb_q,
       addra   => BRAM_wr_addr,
-      dina    => demod_bits,
+      dina    => demod_bits_q,
       douta   => open,
       -- Read Port, Connected to Host IF
       clkb    => clk,
@@ -281,7 +301,7 @@ begin
       if(rst='1' OR BRAM_wr_addr_clr='1') then
         BRAM_wr_addr   <= (others => '0');
       else
-        if(demod_bits_stb = '1') then
+        if((demod_bits_stb_q = '1') AND (BRAM_wr_addr /= x"ffff")) then
           BRAM_wr_addr  <= std_logic_vector(unsigned(BRAM_wr_addr) + 1);
         end if;
       end if;

@@ -71,95 +71,61 @@ class _RegAp_control:
         return (rdata >> self._rmap.AP_CONTROL_AP_IDLE_POS) & self._rmap.AP_CONTROL_AP_IDLE_MSK
 
 
-class _RegWr_cap_ctrl:
+class _RegWr_ram:
     def __init__(self, rmap):
         self._rmap = rmap
 
     @property
-    def wr_addr(self):
+    def addr(self):
         """The write address pointer.  Value is the number of samples written to BRAM and can reset the pointer"""
-        rdata = self._rmap._if.read(self._rmap.WR_CAP_CTRL_ADDR)
-        return (rdata >> self._rmap.WR_CAP_CTRL_WR_ADDR_POS) & self._rmap.WR_CAP_CTRL_WR_ADDR_MSK
+        rdata = self._rmap._if.read(self._rmap.WR_RAM_ADDR)
+        return (rdata >> self._rmap.WR_RAM_ADDR_POS) & self._rmap.WR_RAM_ADDR_MSK
 
-    @wr_addr.setter
-    def wr_addr(self, val):
-        rdata = self._rmap._if.read(self._rmap.WR_CAP_CTRL_ADDR)
-        rdata = rdata & (~(self._rmap.WR_CAP_CTRL_WR_ADDR_MSK << self._rmap.WR_CAP_CTRL_WR_ADDR_POS))
-        rdata = rdata | (val << self._rmap.WR_CAP_CTRL_WR_ADDR_POS)
-        self._rmap._if.write(self._rmap.WR_CAP_CTRL_ADDR, rdata)
+
+class _RegWr_ram_addr_ctrl:
+    def __init__(self, rmap):
+        self._rmap = rmap
 
     @property
-    def wr_enable(self):
-        """The write enable to capture output of the QPSK Demodulator"""
-        rdata = self._rmap._if.read(self._rmap.WR_CAP_CTRL_ADDR)
-        return (rdata >> self._rmap.WR_CAP_CTRL_WR_ENABLE_POS) & self._rmap.WR_CAP_CTRL_WR_ENABLE_MSK
-
-    @wr_enable.setter
-    def wr_enable(self, val):
-        rdata = self._rmap._if.read(self._rmap.WR_CAP_CTRL_ADDR)
-        rdata = rdata & (~(self._rmap.WR_CAP_CTRL_WR_ENABLE_MSK << self._rmap.WR_CAP_CTRL_WR_ENABLE_POS))
-        rdata = rdata | (val << self._rmap.WR_CAP_CTRL_WR_ENABLE_POS)
-        self._rmap._if.write(self._rmap.WR_CAP_CTRL_ADDR, rdata)
-
-    @property
-    def wr_addr_clr(self):
+    def clr(self):
         """The write address pointer clear.  Strobed for 1 cc, self cleared"""
         return 0
 
-    @wr_addr_clr.setter
-    def wr_addr_clr(self, val):
-        rdata = self._rmap._if.read(self._rmap.WR_CAP_CTRL_ADDR)
-        rdata = rdata & (~(self._rmap.WR_CAP_CTRL_WR_ADDR_CLR_MSK << self._rmap.WR_CAP_CTRL_WR_ADDR_CLR_POS))
-        rdata = rdata | (val << self._rmap.WR_CAP_CTRL_WR_ADDR_CLR_POS)
-        self._rmap._if.write(self._rmap.WR_CAP_CTRL_ADDR, rdata)
+    @clr.setter
+    def clr(self, val):
+        rdata = self._rmap._if.read(self._rmap.WR_RAM_ADDR_CTRL_ADDR)
+        rdata = rdata & (~(self._rmap.WR_RAM_ADDR_CTRL_CLR_MSK << self._rmap.WR_RAM_ADDR_CTRL_CLR_POS))
+        rdata = rdata | (val << self._rmap.WR_RAM_ADDR_CTRL_CLR_POS)
+        self._rmap._if.write(self._rmap.WR_RAM_ADDR_CTRL_ADDR, rdata)
 
 
-class _RegRd_cap_ctrl:
+class _RegRd_ram_addr:
     def __init__(self, rmap):
         self._rmap = rmap
 
     @property
-    def rd_addr(self):
+    def value(self):
         """The read address pointer."""
-        rdata = self._rmap._if.read(self._rmap.RD_CAP_CTRL_ADDR)
-        return (rdata >> self._rmap.RD_CAP_CTRL_RD_ADDR_POS) & self._rmap.RD_CAP_CTRL_RD_ADDR_MSK
+        rdata = self._rmap._if.read(self._rmap.RD_RAM_ADDR_ADDR)
+        return (rdata >> self._rmap.RD_RAM_ADDR_VALUE_POS) & self._rmap.RD_RAM_ADDR_VALUE_MSK
 
-    @rd_addr.setter
-    def rd_addr(self, val):
-        rdata = self._rmap._if.read(self._rmap.RD_CAP_CTRL_ADDR)
-        rdata = rdata & (~(self._rmap.RD_CAP_CTRL_RD_ADDR_MSK << self._rmap.RD_CAP_CTRL_RD_ADDR_POS))
-        rdata = rdata | (val << self._rmap.RD_CAP_CTRL_RD_ADDR_POS)
-        self._rmap._if.write(self._rmap.RD_CAP_CTRL_ADDR, rdata)
-
-    @property
-    def rd_enable(self):
-        """The read enable. Strobed for 1cc, self cleared"""
-        return 0
-
-    @rd_enable.setter
-    def rd_enable(self, val):
-        rdata = self._rmap._if.read(self._rmap.RD_CAP_CTRL_ADDR)
-        rdata = rdata & (~(self._rmap.RD_CAP_CTRL_RD_ENABLE_MSK << self._rmap.RD_CAP_CTRL_RD_ENABLE_POS))
-        rdata = rdata | (val << self._rmap.RD_CAP_CTRL_RD_ENABLE_POS)
-        self._rmap._if.write(self._rmap.RD_CAP_CTRL_ADDR, rdata)
+    @value.setter
+    def value(self, val):
+        rdata = self._rmap._if.read(self._rmap.RD_RAM_ADDR_ADDR)
+        rdata = rdata & (~(self._rmap.RD_RAM_ADDR_VALUE_MSK << self._rmap.RD_RAM_ADDR_VALUE_POS))
+        rdata = rdata | (val << self._rmap.RD_RAM_ADDR_VALUE_POS)
+        self._rmap._if.write(self._rmap.RD_RAM_ADDR_ADDR, rdata)
 
 
-class _RegRd_cap_data:
+class _RegRd_ram_data:
     def __init__(self, rmap):
         self._rmap = rmap
 
     @property
-    def rd_data(self):
+    def value(self):
         """The read data"""
-        rdata = self._rmap._if.read(self._rmap.RD_CAP_DATA_ADDR)
-        return (rdata >> self._rmap.RD_CAP_DATA_RD_DATA_POS) & self._rmap.RD_CAP_DATA_RD_DATA_MSK
-
-    @rd_data.setter
-    def rd_data(self, val):
-        rdata = self._rmap._if.read(self._rmap.RD_CAP_DATA_ADDR)
-        rdata = rdata & (~(self._rmap.RD_CAP_DATA_RD_DATA_MSK << self._rmap.RD_CAP_DATA_RD_DATA_POS))
-        rdata = rdata | (val << self._rmap.RD_CAP_DATA_RD_DATA_POS)
-        self._rmap._if.write(self._rmap.RD_CAP_DATA_ADDR, rdata)
+        rdata = self._rmap._if.read(self._rmap.RD_RAM_DATA_ADDR)
+        return (rdata >> self._rmap.RD_RAM_DATA_VALUE_POS) & self._rmap.RD_RAM_DATA_VALUE_MSK
 
 
 class RegMap:
@@ -188,26 +154,25 @@ class RegMap:
     AP_CONTROL_AP_IDLE_POS = 2
     AP_CONTROL_AP_IDLE_MSK = 0x1
 
-    # WR_CAP_CTRL - QPSK Demodulator write buffer control registers
-    WR_CAP_CTRL_ADDR = 0x0c
-    WR_CAP_CTRL_WR_ADDR_POS = 0
-    WR_CAP_CTRL_WR_ADDR_MSK = 0xffff
-    WR_CAP_CTRL_WR_ENABLE_POS = 16
-    WR_CAP_CTRL_WR_ENABLE_MSK = 0x1
-    WR_CAP_CTRL_WR_ADDR_CLR_POS = 17
-    WR_CAP_CTRL_WR_ADDR_CLR_MSK = 0x1
+    # WR_RAM - QPSK Demodulator write buffer address register
+    WR_RAM_ADDR = 0x0c
+    WR_RAM_ADDR_POS = 0
+    WR_RAM_ADDR_MSK = 0xffff
 
-    # RD_CAP_CTRL - QPSK Demodulator read buffer control registers
-    RD_CAP_CTRL_ADDR = 0x10
-    RD_CAP_CTRL_RD_ADDR_POS = 0
-    RD_CAP_CTRL_RD_ADDR_MSK = 0xffff
-    RD_CAP_CTRL_RD_ENABLE_POS = 16
-    RD_CAP_CTRL_RD_ENABLE_MSK = 0x1
+    # WR_RAM_ADDR_CTRL - QPSK Demodulator write address clear
+    WR_RAM_ADDR_CTRL_ADDR = 0x10
+    WR_RAM_ADDR_CTRL_CLR_POS = 0
+    WR_RAM_ADDR_CTRL_CLR_MSK = 0x1
 
-    # RD_CAP_DATA - QPSK Demodulator read buffer data register
-    RD_CAP_DATA_ADDR = 0x14
-    RD_CAP_DATA_RD_DATA_POS = 0
-    RD_CAP_DATA_RD_DATA_MSK = 0xffffffff
+    # RD_RAM_ADDR - QPSK Demodulator read buffer address register
+    RD_RAM_ADDR_ADDR = 0x14
+    RD_RAM_ADDR_VALUE_POS = 0
+    RD_RAM_ADDR_VALUE_MSK = 0xffff
+
+    # RD_RAM_DATA - QPSK Demodulator read buffer data register
+    RD_RAM_DATA_ADDR = 0x18
+    RD_RAM_DATA_VALUE_POS = 0
+    RD_RAM_DATA_VALUE_MSK = 0xffffffff
 
     def __init__(self, interface):
         self._if = interface
@@ -244,40 +209,45 @@ class RegMap:
         return _RegAp_control(self)
 
     @property
-    def wr_cap_ctrl(self):
-        """QPSK Demodulator write buffer control registers"""
-        return self._if.read(self.WR_CAP_CTRL_ADDR)
-
-    @wr_cap_ctrl.setter
-    def wr_cap_ctrl(self, val):
-        self._if.write(self.WR_CAP_CTRL_ADDR, val)
+    def wr_ram(self):
+        """QPSK Demodulator write buffer address register"""
+        return self._if.read(self.WR_RAM_ADDR)
 
     @property
-    def wr_cap_ctrl_bf(self):
-        return _RegWr_cap_ctrl(self)
+    def wr_ram_bf(self):
+        return _RegWr_ram(self)
 
     @property
-    def rd_cap_ctrl(self):
-        """QPSK Demodulator read buffer control registers"""
-        return self._if.read(self.RD_CAP_CTRL_ADDR)
+    def wr_ram_addr_ctrl(self):
+        """QPSK Demodulator write address clear"""
+        return 0
 
-    @rd_cap_ctrl.setter
-    def rd_cap_ctrl(self, val):
-        self._if.write(self.RD_CAP_CTRL_ADDR, val)
-
-    @property
-    def rd_cap_ctrl_bf(self):
-        return _RegRd_cap_ctrl(self)
+    @wr_ram_addr_ctrl.setter
+    def wr_ram_addr_ctrl(self, val):
+        self._if.write(self.WR_RAM_ADDR_CTRL_ADDR, val)
 
     @property
-    def rd_cap_data(self):
+    def wr_ram_addr_ctrl_bf(self):
+        return _RegWr_ram_addr_ctrl(self)
+
+    @property
+    def rd_ram_addr(self):
+        """QPSK Demodulator read buffer address register"""
+        return self._if.read(self.RD_RAM_ADDR_ADDR)
+
+    @rd_ram_addr.setter
+    def rd_ram_addr(self, val):
+        self._if.write(self.RD_RAM_ADDR_ADDR, val)
+
+    @property
+    def rd_ram_addr_bf(self):
+        return _RegRd_ram_addr(self)
+
+    @property
+    def rd_ram_data(self):
         """QPSK Demodulator read buffer data register"""
-        return self._if.read(self.RD_CAP_DATA_ADDR)
-
-    @rd_cap_data.setter
-    def rd_cap_data(self, val):
-        self._if.write(self.RD_CAP_DATA_ADDR, val)
+        return self._if.read(self.RD_RAM_DATA_ADDR)
 
     @property
-    def rd_cap_data_bf(self):
-        return _RegRd_cap_data(self)
+    def rd_ram_data_bf(self):
+        return _RegRd_ram_data(self)

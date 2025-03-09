@@ -224,14 +224,14 @@ print("Number of Coef         : " + str(len(firCoef)))
 #--     Create 0xDEADBEEF Message
 #-- ------------------------------------------------
 hex_msg = "DEADBEEF"
-#print(hex_msg)
+print(hex_msg)
 bin_msg = bin(int(hex_msg,16))[2:].zfill(32)
 bin_msg_rev = bin_msg[::-1] # LSB transmitted first
 
 #print(bin_msg)
 #print(bin_msg_rev)
 bin_msg = bin_msg_rev
-#print(bin_msg)
+print(bin_msg)
 
 #-- Create Bit Symbol 
 sym_msg = []
@@ -268,7 +268,8 @@ if(C_SAVE_WF):
 #--
 #--
 #-- ------------------------------------------------
-iq_sym = np.zeros((len(sym_msg)),dtype=np.complex_)
+#iq_sym = np.zeros((len(sym_msg)),dtype=np.complex_)
+iq_sym = np.zeros((len(sym_msg)),dtype=np.complex128)
 for i in range(len(sym_msg)):
     if(sym_msg[i] == 3):
         iq_sym[i] = 1+1j
@@ -290,7 +291,8 @@ print("Bits Per Symbol (QPSK) : " + str(2))
 #-- ------------------------------------------------
 iq_upsamp = np.array([])
 for sym in iq_sym:
-    pulse = np.zeros(C_SampsPerSym,dtype=np.complex_)
+    #pulse = np.zeros(C_SampsPerSym,dtype=np.complex_)
+    pulse = np.zeros(C_SampsPerSym,dtype=np.complex128)
     pulse[0] = sym
     iq_upsamp = np.concatenate((iq_upsamp,pulse))
 #print(iq_upsamp)

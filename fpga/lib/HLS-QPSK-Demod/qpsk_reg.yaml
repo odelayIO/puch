@@ -67,37 +67,32 @@ regmap:
         access: ro
         hardware: i
         enums: []
--   name: WR_Cap_CTRL
-    description: QPSK Demodulator write buffer control registers
+-   name: WR_RAM
+    description: QPSK Demodulator write buffer address register
     bitfields:
-    -   name: wr_addr
+    -   name: addr
         description: The write address pointer.  Value is the number of samples written to BRAM and can reset the pointer
         reset: 0
         width: 16
         lsb: 0
-        access: rw
+        access: ro
         hardware: i
         enums: []
-    -   name: wr_enable
-        description: The write enable to capture output of the QPSK Demodulator
-        reset: 0
-        width: 1
-        lsb: 16
-        access: rw
-        hardware: o
-        enums: []
-    -   name: wr_addr_clr
+-   name: WR_RAM_Addr_ctrl
+    description: QPSK Demodulator write address clear
+    bitfields:
+    -   name: clr
         description: The write address pointer clear.  Strobed for 1 cc, self cleared
         reset: 0
         width: 1
-        lsb: 17
+        lsb: 0
         access: wosc
         hardware: o
         enums: []
--   name: RD_Cap_CTRL
-    description: QPSK Demodulator read buffer control registers
+-   name: RD_RAM_ADDR
+    description: QPSK Demodulator read buffer address register
     bitfields:
-    -   name: rd_addr
+    -   name: value
         description: The read address pointer.  
         reset: 0
         width: 16
@@ -105,23 +100,15 @@ regmap:
         access: rw
         hardware: o
         enums: []
-    -   name: rd_enable
-        description: The read enable. Strobed for 1cc, self cleared
-        reset: 0
-        width: 1
-        lsb: 16
-        access: wosc
-        hardware: o
-        enums: []
--   name: RD_Cap_DATA
+-   name: RD_RAM_Data
     description: QPSK Demodulator read buffer data register
     bitfields:
-    -   name: rd_data
+    -   name: value
         description: The read data
         reset: 0
         width: 32
         lsb: 0
-        access: rw
+        access: ro
         hardware: i
         enums: []
 

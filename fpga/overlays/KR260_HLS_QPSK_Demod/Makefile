@@ -111,6 +111,7 @@ upload_regmaps:
 	scp ../../lib/led_reg/sw/led_regmap.py \
 	../../lib/timestamp/sw/timestamp_regmap.py \
 	../../lib/AWGN_GNG/sw/awgn_regmap.py \
+	../../lib/HLS-QPSK-Demod/sw/qpsk_regmap.py \
 	ubuntu@kria:/home/root/jupyter_notebooks/${OVERLAY_NAME}
 
 get_remote_ipynb:		
