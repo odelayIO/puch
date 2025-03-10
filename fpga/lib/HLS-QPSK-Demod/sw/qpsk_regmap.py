@@ -128,6 +128,52 @@ class _RegRd_ram_data:
         return (rdata >> self._rmap.RD_RAM_DATA_VALUE_POS) & self._rmap.RD_RAM_DATA_VALUE_MSK
 
 
+class _RegSync_word:
+    def __init__(self, rmap):
+        self._rmap = rmap
+
+    @property
+    def sync_word(self):
+        """The 32-bit Sync Word"""
+        rdata = self._rmap._if.read(self._rmap.SYNC_WORD_ADDR)
+        return (rdata >> self._rmap.SYNC_WORD_SYNC_WORD_POS) & self._rmap.SYNC_WORD_SYNC_WORD_MSK
+
+    @sync_word.setter
+    def sync_word(self, val):
+        rdata = self._rmap._if.read(self._rmap.SYNC_WORD_ADDR)
+        rdata = rdata & (~(self._rmap.SYNC_WORD_SYNC_WORD_MSK << self._rmap.SYNC_WORD_SYNC_WORD_POS))
+        rdata = rdata | (val << self._rmap.SYNC_WORD_SYNC_WORD_POS)
+        self._rmap._if.write(self._rmap.SYNC_WORD_ADDR, rdata)
+
+
+class _RegSync_lock:
+    def __init__(self, rmap):
+        self._rmap = rmap
+
+    @property
+    def sync_lock(self):
+        """Sync Lock"""
+        rdata = self._rmap._if.read(self._rmap.SYNC_LOCK_ADDR)
+        return (rdata >> self._rmap.SYNC_LOCK_SYNC_LOCK_POS) & self._rmap.SYNC_LOCK_SYNC_LOCK_MSK
+
+
+class _RegSync_reset:
+    def __init__(self, rmap):
+        self._rmap = rmap
+
+    @property
+    def sync_clr(self):
+        """The 32-bit Sync Word Clear/Reset Strobe.  Strobed for 1 cc, self cleared"""
+        return 0
+
+    @sync_clr.setter
+    def sync_clr(self, val):
+        rdata = self._rmap._if.read(self._rmap.SYNC_RESET_ADDR)
+        rdata = rdata & (~(self._rmap.SYNC_RESET_SYNC_CLR_MSK << self._rmap.SYNC_RESET_SYNC_CLR_POS))
+        rdata = rdata | (val << self._rmap.SYNC_RESET_SYNC_CLR_POS)
+        self._rmap._if.write(self._rmap.SYNC_RESET_ADDR, rdata)
+
+
 class RegMap:
     """Control/Status register map"""
 
@@ -173,6 +219,21 @@ class RegMap:
     RD_RAM_DATA_ADDR = 0x18
     RD_RAM_DATA_VALUE_POS = 0
     RD_RAM_DATA_VALUE_MSK = 0xffffffff
+
+    # SYNC_WORD - 32-bit Sync Word for frame start
+    SYNC_WORD_ADDR = 0x1c
+    SYNC_WORD_SYNC_WORD_POS = 0
+    SYNC_WORD_SYNC_WORD_MSK = 0xffffffff
+
+    # SYNC_LOCK - The 32-bit Sync Word Lock Indecator
+    SYNC_LOCK_ADDR = 0x20
+    SYNC_LOCK_SYNC_LOCK_POS = 0
+    SYNC_LOCK_SYNC_LOCK_MSK = 0x1
+
+    # SYNC_RESET - The 32-bit Sync Word Clear/Reset
+    SYNC_RESET_ADDR = 0x24
+    SYNC_RESET_SYNC_CLR_POS = 0
+    SYNC_RESET_SYNC_CLR_MSK = 0x1
 
     def __init__(self, interface):
         self._if = interface
@@ -251,3 +312,38 @@ class RegMap:
     @property
     def rd_ram_data_bf(self):
         return _RegRd_ram_data(self)
+
+    @property
+    def sync_word(self):
+        """32-bit Sync Word for frame start"""
+        return self._if.read(self.SYNC_WORD_ADDR)
+
+    @sync_word.setter
+    def sync_word(self, val):
+        self._if.write(self.SYNC_WORD_ADDR, val)
+
+    @property
+    def sync_word_bf(self):
+        return _RegSync_word(self)
+
+    @property
+    def sync_lock(self):
+        """The 32-bit Sync Word Lock Indecator"""
+        return self._if.read(self.SYNC_LOCK_ADDR)
+
+    @property
+    def sync_lock_bf(self):
+        return _RegSync_lock(self)
+
+    @property
+    def sync_reset(self):
+        """The 32-bit Sync Word Clear/Reset"""
+        return 0
+
+    @sync_reset.setter
+    def sync_reset(self, val):
+        self._if.write(self.SYNC_RESET_ADDR, val)
+
+    @property
+    def sync_reset_bf(self):
+        return _RegSync_reset(self)

@@ -40,6 +40,18 @@ package qpsk_pkg is
   constant CSR_RD_RAM_DATA_ADDR : std_logic_vector(8-1 downto 0) := to_unsigned(24, 8);
   constant CSR_RD_RAM_DATA_RESET : std_logic_vector(32-1 downto 0) := to_unsigned(0, 32);
 
+  -- Sync_Word - 32-bit Sync Word for frame start
+  constant CSR_SYNC_WORD_ADDR : std_logic_vector(8-1 downto 0) := to_unsigned(28, 8);
+  constant CSR_SYNC_WORD_RESET : std_logic_vector(32-1 downto 0) := to_unsigned(0, 32);
+
+  -- Sync_Lock - The 32-bit Sync Word Lock Indecator
+  constant CSR_SYNC_LOCK_ADDR : std_logic_vector(8-1 downto 0) := to_unsigned(32, 8);
+  constant CSR_SYNC_LOCK_RESET : std_logic_vector(32-1 downto 0) := to_unsigned(0, 32);
+
+  -- Sync_Reset - The 32-bit Sync Word Clear/Reset
+  constant CSR_SYNC_RESET_ADDR : std_logic_vector(8-1 downto 0) := to_unsigned(36, 8);
+  constant CSR_SYNC_RESET_RESET : std_logic_vector(32-1 downto 0) := to_unsigned(0, 32);
+
 
 
 end package qpsk_pkg;

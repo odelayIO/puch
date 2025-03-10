@@ -114,6 +114,12 @@ architecture RTL of QPSK_Demod_Top is
   signal BRAM_rd_addr       : std_logic_vector(15 downto 0);
   signal BRAM_rd_data       : std_logic_vector(31 downto 0);
 
+  signal shift_reg          : std_logic_vector(31 downto 0);
+  signal sync_word          : std_logic_vector(31 downto 0);
+  signal sync_lock          : std_logic := '0';
+  signal sync_clr           : std_logic;
+
+
   COMPONENT QPSK_Demod_Out_BRAM
     PORT (
       clka : IN STD_LOGIC;
@@ -163,6 +169,12 @@ architecture RTL of QPSK_Demod_Top is
   attribute mark_debug of BRAM_rd_addr      : signal is "true"; 
   attribute mark_debug of BRAM_rd_data      : signal is "true"; 
 
+  attribute mark_debug of shift_reg         : signal is "true";
+  attribute mark_debug of sync_word         : signal is "true"; 
+  attribute mark_debug of sync_lock         : signal is "true"; 
+  attribute mark_debug of sync_clr          : signal is "true";  
+
+
 begin
 
 
@@ -199,6 +211,10 @@ begin
       ---------------------------------+-----------------------------------------------
       csr_rd_ram_addr_value_out       => BRAM_rd_addr,
       csr_rd_ram_data_value_in        => BRAM_rd_data,
+      ---------------------------------+-----------------------------------------------
+      csr_sync_word_sync_word_out     => sync_word, 
+      csr_sync_lock_sync_lock_in      => sync_lock,
+      csr_sync_reset_sync_clr_out     => sync_clr,
       -- ---------------------------------------------------
       --    AXI-Lite Bus
       -- ---------------------------------------------------
@@ -260,6 +276,9 @@ begin
     );
 
 
+  -- -------------------------------------------------------------------
+  --    Register the Demodulator Bits
+  -- -------------------------------------------------------------------
   process(clk)
   begin
     if(rising_edge(clk)) then
@@ -270,6 +289,8 @@ begin
     end if;
   end process;
 
+
+
   -- -------------------------------------------------------------------
   --    HLS QPSK Demodulator
   -- -------------------------------------------------------------------
@@ -277,7 +298,7 @@ begin
     PORT MAP (
       -- Write Port, Connected to QPSK Demod
       clka    => clk,
-      ena     => '1',
+      ena     => sync_lock,
       wea(0)  => demod_bits_stb_q,
       addra   => BRAM_wr_addr,
       dina    => demod_bits_q,
@@ -292,23 +313,42 @@ begin
     );
 
 
+
   -- -----------------------------------------------------
   --    Write BRAM Address Logic
   -- -----------------------------------------------------
-  process(clk)
+  process(clk,rst,BRAM_wr_addr_clr)
   begin
-    if(rising_edge(clk)) then
-      if(rst='1' OR BRAM_wr_addr_clr='1') then
-        BRAM_wr_addr   <= (others => '0');
-      else
-        if((demod_bits_stb_q = '1') AND (BRAM_wr_addr /= x"ffff")) then
-          BRAM_wr_addr  <= std_logic_vector(unsigned(BRAM_wr_addr) + 1);
-        end if;
+    if(rst='1' OR BRAM_wr_addr_clr='1') then
+      BRAM_wr_addr   <= (others => '0');
+    elsif(rising_edge(clk)) then
+      if((demod_bits_stb_q = '1') AND (BRAM_wr_addr /= x"ffff") AND (sync_lock='1')) then
+        BRAM_wr_addr  <= std_logic_vector(unsigned(BRAM_wr_addr) + 1);
       end if;
     end if;
   end process;
 
 
+
+  -- -----------------------------------------------------
+  --    Packet Sync - Search for Sync Word
+  -- -----------------------------------------------------
+  process(clk,rst,sync_clr)
+  begin
+    if(rst='1' OR sync_clr='1') then
+      shift_reg     <= (others => '0');
+      sync_lock     <= '0';
+    elsif(rising_edge(clk)) then
+      if(demod_bits_stb_q = '1') then
+        shift_reg(31 downto 2) <= shift_reg(29 downto 0);
+        shift_reg( 1 downto 0) <= demod_bits_q;
+      end if;
+
+      if(shift_reg = sync_word) then
+        sync_lock   <= '1';
+      end if;
+    end if;
+  end process;
 
 
 end architecture;

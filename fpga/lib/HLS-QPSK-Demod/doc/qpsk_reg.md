@@ -29,6 +29,9 @@ Base address: 0x00000000
 | [WR_RAM_Addr_ctrl](#wr_ram_addr_ctrl) | 0x10       | QPSK Demodulator write address clear |
 | [RD_RAM_ADDR](#rd_ram_addr) | 0x14       | QPSK Demodulator read buffer address register |
 | [RD_RAM_Data](#rd_ram_data) | 0x18       | QPSK Demodulator read buffer data register |
+| [Sync_Word](#sync_word)  | 0x1c       | 32-bit Sync Word for frame start |
+| [Sync_Lock](#sync_lock)  | 0x20       | The 32-bit Sync Word Lock Indecator |
+| [Sync_Reset](#sync_reset) | 0x24       | The 32-bit Sync Word Clear/Reset |
 
 ## F_in
 
@@ -147,5 +150,55 @@ Reset value: 0x00000000
 | Name             | Bits   | Mode            | Reset      | Description |
 | :---             | :---   | :---            | :---       | :---        |
 | value            | 31:0   | ro              | 0x00000000 | The read data |
+
+Back to [Register map](#register-map-summary).
+
+## Sync_Word
+
+32-bit Sync Word for frame start
+
+Address offset: 0x1c
+
+Reset value: 0x00000000
+
+![sync_word](md_img/sync_word.svg)
+
+| Name             | Bits   | Mode            | Reset      | Description |
+| :---             | :---   | :---            | :---       | :---        |
+| sync_word        | 31:0   | rw              | 0x00000000 | The 32-bit Sync Word |
+
+Back to [Register map](#register-map-summary).
+
+## Sync_Lock
+
+The 32-bit Sync Word Lock Indecator
+
+Address offset: 0x20
+
+Reset value: 0x00000000
+
+![sync_lock](md_img/sync_lock.svg)
+
+| Name             | Bits   | Mode            | Reset      | Description |
+| :---             | :---   | :---            | :---       | :---        |
+| -                | 31:1   | -               | 0x0000000  | Reserved |
+| sync_lock        | 0      | ro              | 0x0        | Sync Lock |
+
+Back to [Register map](#register-map-summary).
+
+## Sync_Reset
+
+The 32-bit Sync Word Clear/Reset
+
+Address offset: 0x24
+
+Reset value: 0x00000000
+
+![sync_reset](md_img/sync_reset.svg)
+
+| Name             | Bits   | Mode            | Reset      | Description |
+| :---             | :---   | :---            | :---       | :---        |
+| -                | 31:1   | -               | 0x0000000  | Reserved |
+| sync_clr         | 0      | wosc            | 0x0        | The 32-bit Sync Word Clear/Reset Strobe.  Strobed for 1 cc, self cleared |
 
 Back to [Register map](#register-map-summary).

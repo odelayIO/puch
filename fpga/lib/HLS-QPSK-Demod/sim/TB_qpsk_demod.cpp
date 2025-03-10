@@ -1,3 +1,45 @@
+//#############################################################################################
+//#############################################################################################
+//#
+//#   The MIT License (MIT)
+//#   
+//#   Copyright (c) 2023 http://odelay.io 
+//#   
+//#   Permission is hereby granted, free of charge, to any person obtaining a copy
+//#   of this software and associated documentation files (the "Software"), to deal
+//#   in the Software without restriction, including without limitation the rights
+//#   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//#   copies of the Software, and to permit persons to whom the Software is
+//#   furnished to do so, subject to the following conditions:
+//#   
+//#   The above copyright notice and this permission notice shall be included in all
+//#   copies or substantial portions of the Software.
+//#   
+//#   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//#   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//#   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//#   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//#   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//#   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//#   SOFTWARE.
+//#   
+//#   Contact : <everett@odelay.io>
+//#  
+//#   Description : QPSK Demodulator
+//#
+//#   Version History:
+//#   
+//#       Date        Description
+//#     -----------   -----------------------------------------------------------------------
+//#      2025-02-22    Original Creation
+//#
+//###########################################################################################
+//###########################################################################################
+
+
+
+
+
 #include <iostream>
 #include <stdio.h>
 #include "../src/qpsk_demod.h"
@@ -31,7 +73,8 @@ int main () {
       Demod_Cnt += 1;
       //(Out_Bits)[0] = (I_out > 0.0 ? 1 : 0);
       //(Out_Bits)[1] = (Q_out > 0.0 ? 1 : 0);
-      if((Demod_Cnt > 12) && (Demod_Cnt < 13+8*16) ) {
+      // TODO: Need to update Number_Sym based on gen_test_vectors.py, currently:  13 + Number_Sym*SampPerSym
+      if((Demod_Cnt > 12) && (Demod_Cnt < 13+32*16) ) {
         //std::cout << "Demod_Cnt = " << Demod_Cnt << ", I_out = " << I_out << ", Q_out = " << Q_out << ", Out_Bits = " << Out_Bits << std::endl;
         std::cout << "Demod_Cnt = " << Demod_Cnt << ", Out_Bits = " << Out_Bits << std::endl;
         outputFile << Out_Bits << std::endl;

@@ -111,4 +111,37 @@ regmap:
         access: ro
         hardware: i
         enums: []
+-   name: Sync_Word
+    description: 32-bit Sync Word for frame start
+    bitfields:
+    -   name: sync_word
+        description: The 32-bit Sync Word
+        reset: 0
+        width: 32
+        lsb: 0
+        access: rw
+        hardware: o
+        enums: []
+-   name: Sync_Lock
+    description: The 32-bit Sync Word Lock Indecator
+    bitfields:
+    -   name: sync_lock
+        description: Sync Lock
+        reset: 0
+        width: 1
+        lsb: 0
+        access: ro
+        hardware: i
+        enums: []
+-   name: Sync_Reset
+    description: The 32-bit Sync Word Clear/Reset
+    bitfields:
+    -   name: sync_clr
+        description: The 32-bit Sync Word Clear/Reset Strobe.  Strobed for 1 cc, self cleared
+        reset: 0
+        width: 1
+        lsb: 0
+        access: wosc
+        hardware: o
+        enums: []
 
