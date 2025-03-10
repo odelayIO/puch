@@ -109,7 +109,7 @@ update_compile_order -fileset sources_1
 #----------------------------------------------------------------------------
 #   NOTE: You'll need to increase SWAP file size to 16GB to use 8 Processors
 #----------------------------------------------------------------------------
-launch_runs impl_1 -to_step write_bitstream -jobs 8
+launch_runs impl_1 -to_step write_bitstream -jobs 20
 wait_on_run impl_1
 
 
