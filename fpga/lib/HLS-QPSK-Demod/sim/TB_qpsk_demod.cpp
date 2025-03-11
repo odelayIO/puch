@@ -74,7 +74,8 @@ int main () {
       //(Out_Bits)[0] = (I_out > 0.0 ? 1 : 0);
       //(Out_Bits)[1] = (Q_out > 0.0 ? 1 : 0);
       // TODO: Need to update Number_Sym based on gen_test_vectors.py, currently:  13 + (Syncword+Number_Sym)*SampPerSym
-      if((Demod_Cnt > 12) && (Demod_Cnt < 13+33*16) ) {
+      //if((Demod_Cnt > 12) && (Demod_Cnt < 13+33*16) ) {
+      if((Demod_Cnt > 12) && (Demod_Cnt < 13+1025*16) ) {
         //std::cout << "Demod_Cnt = " << Demod_Cnt << ", I_out = " << I_out << ", Q_out = " << Q_out << ", Out_Bits = " << Out_Bits << std::endl;
         std::cout << "Demod_Cnt = " << Demod_Cnt << ", Out_Bits = " << Out_Bits << std::endl;
         outputFile << Out_Bits << std::endl;

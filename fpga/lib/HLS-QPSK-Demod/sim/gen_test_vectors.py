@@ -42,6 +42,22 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+def add_frequency_offset(signal, sample_rate, frequency_offset):
+  """
+  Adds a frequency offset to a signal.
+
+  Args:
+      signal (np.ndarray): The input signal array.
+      sample_rate (float): The sampling rate of the signal in Hz.
+      frequency_offset (float): The desired frequency offset in Hz.
+
+  Returns:
+      np.ndarray: The signal with the frequency offset applied.
+  """
+  time = np.arange(len(signal)) / sample_rate
+  offset_signal = signal * np.exp(1j * 2 * np.pi * frequency_offset * time)
+  return offset_signal
+
 
 #-- ------------------------------------------------
 #--     System Parameters
@@ -51,7 +67,9 @@ C_PLOT_COEF     = False
 C_PLOT_TX_SAMPS = False
 C_PLOT_RX_SAMPS = False
 C_SampsPerSym   = 16
-C_NUM_DWORD     = 32
+C_NUM_DWORD     = 1024
+C_FREQ_OFF      = 1e3
+C_SAMP_RATE     = 100e6
 
 
 
@@ -295,6 +313,7 @@ for i in range(0,len(bin_msg)-1,2):
 # Repeat Message and add syncword
 m = np.tile(sync_msg,1)
 n = np.tile(sym_msg,C_NUM_DWORD)
+#n = np.tile(sync_msg,C_NUM_DWORD)
 sym_msg = np.append(m,n)
 print(sym_msg)
 
@@ -359,6 +378,8 @@ rx_iq_samps = np.convolve(tx_iq_samps,firCoef)
 print("Samples in Tx Signals  : " + str(len(tx_iq_samps)))
 print("Samples in Rx Signals  : " + str(len(rx_iq_samps)))
 
+# Add frequency offset
+rx_iq_samps = add_frequency_offset(rx_iq_samps, C_SAMP_RATE, C_FREQ_OFF)
 
 if(C_PLOT_TX_SAMPS):
     plt.figure()
