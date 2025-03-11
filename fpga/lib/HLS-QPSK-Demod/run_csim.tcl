@@ -69,6 +69,9 @@ set ::AESL_AUTOSIM::gDebug 1
 # Set any optimization directives
 # End of directives
 csim_design -clean
+#csynth_design
+#cosim_design -rtl verilog -trace_level port
+
 
 exit
 

@@ -47,6 +47,12 @@
 #include <fstream>
 #include <cstdlib>
 
+//-----------------------------------------------------
+// Number of Symbols to verify from Gold Vectors File
+//-----------------------------------------------------
+const int C_DEMOD_SYM_LEN = 32;
+
+
 /************************************************************************************************
  *																								                                              *
  * Testbench used for testing the correctness of the qpsk design in both hardware and software  *
@@ -55,48 +61,57 @@
 
 int main () {
   int Demod_Cnt = 0;
+  int Sym_Error_Cnt = 0;
+  int Sym_Good_Cnt = 0;
+  int GOLD_Out_Sym = 0;
+  FILE *GOLD_Out_Bits = fopen("0xDEADBEEF_bit_out.dat", "r");
+
   Fin I_in, Q_in;
   Fout I_out, Q_out;
   ap_uint<2> Out_Bits;
+
   FILE *rx_samples = fopen("0xDEADBEEF_Rx_Samps.dat", "r");
   float Iin_float, Qin_float;
-  std::ofstream outputFile("demodulatedMessage.dat", std::ios::trunc);
+
   std::ofstream out_constellation("out_constellation.csv", std::ios::trunc);
 
 
   while(fscanf(rx_samples, "%f %f", &Iin_float, &Qin_float) == 2) {
     I_in = (Fin)Iin_float;
     Q_in = (Fin)Qin_float;
-    //std::cout << "I_in = " << I_in  << ", Q_in = " << Q_in << std::endl;
     // Demod QPSK wait when valid
 		if (qpsk_demod(I_in, Q_in, &I_out, &Q_out, &Out_Bits)) { 
       Demod_Cnt += 1;
-      //(Out_Bits)[0] = (I_out > 0.0 ? 1 : 0);
-      //(Out_Bits)[1] = (Q_out > 0.0 ? 1 : 0);
-      // TODO: Need to update Number_Sym based on gen_test_vectors.py, currently:  13 + (Syncword+Number_Sym)*SampPerSym
-      //if((Demod_Cnt > 12) && (Demod_Cnt < 13+33*16) ) {
-      if((Demod_Cnt > 12) && (Demod_Cnt < 13+1025*16) ) {
-        //std::cout << "Demod_Cnt = " << Demod_Cnt << ", I_out = " << I_out << ", Q_out = " << Q_out << ", Out_Bits = " << Out_Bits << std::endl;
-        std::cout << "Demod_Cnt = " << Demod_Cnt << ", Out_Bits = " << Out_Bits << std::endl;
-        outputFile << Out_Bits << std::endl;
+      // Allow symbol to pass through filter
+      if((Demod_Cnt > 12) && (Demod_Cnt < 13+(C_DEMOD_SYM_LEN)) ) {
+        // Read GOLD Vector Output
+        fscanf(GOLD_Out_Bits, "%d", &GOLD_Out_Sym);
+        std::cout << "Demod_Cnt = " << Demod_Cnt << ", Out_Bits = " << Out_Bits << ", GOLD_Out_Sym = " << GOLD_Out_Sym << std::endl;
         out_constellation << I_out << ", " << Q_out << std::endl;
+        // Determine Symbol Error
+        if(Out_Bits == GOLD_Out_Sym) {
+          ++Sym_Good_Cnt;
+        } else {
+          ++Sym_Error_Cnt;
+        }
       }
     }
   }
   fclose(rx_samples);
-  outputFile.close();
+  fclose(GOLD_Out_Bits);
   out_constellation.close();
-  
-  if(system("diff -w demodulatedMessage.dat 0xDEADBEEF_bit_out.dat")) {
+  std::cout << "Good Symbols = " << Sym_Good_Cnt << ", Symbol Errors = " << Sym_Error_Cnt << std::endl;
+ 
+  if(Sym_Error_Cnt == 0) {
     fprintf(stdout, "***********************************\n");
-    fprintf(stdout, "       FIAL: File Missmatches\n");
+    fprintf(stdout, "             PASSED!\n");
     fprintf(stdout, "***********************************\n");
     return 0;
   }
   else {
     fprintf(stdout, "***********************************\n");
-    fprintf(stdout, "       PASS: File Matches\n");
+    fprintf(stdout, "          *** FAILED ***\n");
     fprintf(stdout, "***********************************\n");
-    return 0;
+    return 1;
   }
 }
