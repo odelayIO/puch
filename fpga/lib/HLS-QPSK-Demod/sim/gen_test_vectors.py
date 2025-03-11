@@ -265,16 +265,25 @@ print("Number of Coef         : " + str(len(firCoef)))
 #--     Create 0xDEADBEEF Message
 #-- ------------------------------------------------
 hex_msg = "DEADBEEF"
-print(hex_msg)
+print("Message: " + str(hex_msg))
 bin_msg = bin(int(hex_msg,16))[2:].zfill(32)
-bin_msg_rev = bin_msg[::-1] # LSB transmitted first
+bin_msg = bin_msg[::-1] # LSB transmitted first
 
-#print(bin_msg)
-#print(bin_msg_rev)
-bin_msg = bin_msg_rev
-print(bin_msg)
+# openssl rand -hex 4
+syncword = "6D75521E"
+print("Syncword: " + str(syncword))
+syncword = bin(int(syncword,16))[2:].zfill(32)
+syncword = syncword[::-1] # LSB transmitted first
+print("Syncword: " + str(syncword))
 
 #-- Create Bit Symbol 
+sync_msg = []
+for i in range(0,len(syncword)-1,2):
+    if(int(syncword[i+1]) == 1):
+        sync_msg.append(2+int(syncword[i]))
+    else:
+        sync_msg.append(0+int(syncword[i]))
+
 sym_msg = []
 for i in range(0,len(bin_msg)-1,2):
     if(int(bin_msg[i+1]) == 1):
@@ -283,7 +292,12 @@ for i in range(0,len(bin_msg)-1,2):
         sym_msg.append(0+int(bin_msg[i]))
 
 #print(sym_msg)
-sym_msg = np.tile(sym_msg,C_NUM_DWORD)
+# Repeat Message and add syncword
+m = np.tile(sync_msg,1)
+n = np.tile(sym_msg,C_NUM_DWORD)
+sym_msg = np.append(m,n)
+print(sym_msg)
+
 #print(sym_msg)
 print("Number of Symbols      : " + str(len(sym_msg)))
 
