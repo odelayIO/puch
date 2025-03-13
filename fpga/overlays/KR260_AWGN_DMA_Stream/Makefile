@@ -71,9 +71,9 @@ start_gui:
 
 clean_all:		
 ## clean_all: Cleans everything, deletes all generated files
-	rm -fr ../../lib/fixed-gain-stream/proj_fixed_gain_stream
-	rm -fr ../../lib/fixed-gain-stream/*.log
-	rm -fr ../../lib/fixed-gain-stream/*.jou
+	rm -fr ../../lib/HLS_fixed_gain/xpr
+	rm -fr ../../lib/HLS_fixed_gain/*.log
+	rm -fr ../../lib/HLS_fixed_gain/*.jou
 	cd ../../lib/timestamp && make clean && pwd
 	cd ../../lib/AWGN_GNG && make clean && pwd
 	cd ../../lib/led_reg && make clean && pwd

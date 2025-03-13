@@ -52,14 +52,14 @@ help:
 
 hls_ip:  		
 ## hls_ip: Build the HLS QPSK Demod module
-	cd ../../lib/HLS-QPSK-Demod && make && pwd
+	cd ../../lib/HLS_QPSK_Demod && make && pwd
 
 reg_if:  		
 ## reg_if: Builds only the Corsair Register File Modules
 	cd ../../lib/led_reg && make && pwd
 	cd ../../lib/timestamp && make && pwd
 	cd ../../lib/AWGN_GNG && make && pwd
-	cd ../../lib/HLS-QPSK-Demod && make reg_if && pwd
+	cd ../../lib/HLS_QPSK_Demod && make reg_if && pwd
 
 build_design: clean 
 ## build_design: Builds the Vivado project without regenerating Lib
@@ -76,11 +76,11 @@ start_gui:
 
 clean_all:		
 ## clean_all: Cleans everything, deletes all generated files
-	rm -fr ../../lib/fixed-gain-stream/proj_fixed_gain_stream
-	rm -fr ../../lib/fixed-gain-stream/*.log
-	rm -fr ../../lib/fixed-gain-stream/*.jou
+	rm -fr ../../lib/HLS_fixed_gain/xpr
+	rm -fr ../../lib/HLS_fixed_gain/*.log
+	rm -fr ../../lib/HLS_fixed_gain/*.jou
 	cd ../../ip/KR260 && make clean && pwd
-	cd ../../lib/HLS-QPSK-Demod && make clean && pwd
+	cd ../../lib/HLS_QPSK_Demod && make clean && pwd
 	cd ../../lib/timestamp && make clean && pwd
 	cd ../../lib/AWGN_GNG && make clean && pwd
 	cd ../../lib/led_reg && make clean && pwd
@@ -111,7 +111,7 @@ upload_regmaps:
 	scp ../../lib/led_reg/sw/led_regmap.py \
 	../../lib/timestamp/sw/timestamp_regmap.py \
 	../../lib/AWGN_GNG/sw/awgn_regmap.py \
-	../../lib/HLS-QPSK-Demod/sw/qpsk_regmap.py \
+	../../lib/HLS_QPSK_Demod/sw/qpsk_regmap.py \
 	ubuntu@kria:/home/root/jupyter_notebooks/${OVERLAY_NAME}
 
 get_remote_ipynb:		

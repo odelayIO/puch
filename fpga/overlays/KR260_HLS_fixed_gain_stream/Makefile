@@ -54,7 +54,7 @@ help:
 
 hls_ip:  		
 ## hls_ip: Build only the HLS IP Cores
-	cd ../../lib/fixed-gain-stream && vitis_hls -f run_hls.tcl && pwd
+	cd ../../lib/HLS_fixed_gain && vitis_hls -f run_hls.tcl && pwd
 
 reg_if:  		
 ## reg_if: Builds only the Corsair Register File Modules
@@ -76,9 +76,9 @@ start_gui:
 
 clean_all:		
 ## clean_all: Cleans everything, deletes all generated files
-	rm -fr ../../lib/fixed-gain-stream/proj_fixed_gain_stream
-	rm -fr ../../lib/fixed-gain-stream/*.log
-	rm -fr ../../lib/fixed-gain-stream/*.jou
+	rm -fr ../../lib/HLS_fixed_gain/xpr
+	rm -fr ../../lib/HLS_fixed_gain/*.log
+	rm -fr ../../lib/HLS_fixed_gain/*.jou
 	cd ../../lib/timestamp && make clean && pwd
 	cd ../../lib/led_reg && make clean && pwd
 	rm -rf ./${PROJ_DIR} *.jou *.log NA *.bit *.hwh *.xsa .Xil *.str

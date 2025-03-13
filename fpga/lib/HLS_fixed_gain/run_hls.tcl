@@ -38,7 +38,7 @@
 
 
 # Create a project
-open_project -reset proj_fixed_gain_stream
+open_project -reset xpr
 
 # Add design files
 add_files fixed_gain_stream.cpp

@@ -75,7 +75,7 @@ source ../../lib/timestamp/sources.tcl
 source ../../lib/AWGN_GNG/sources.tcl
 source ../../lib/arith/sources.tcl
 source ../../lib/util/sources.tcl
-source ../../lib/HLS-QPSK-Demod/sources.tcl
+source ../../lib/HLS_QPSK_Demod/sources.tcl
 
 
 #----------------------------------------------------------------------------
