@@ -84,6 +84,8 @@ clean_all:
 	cd ../../lib/timestamp && make clean && pwd
 	cd ../../lib/AWGN_GNG && make clean && pwd
 	cd ../../lib/led_reg && make clean && pwd
+	rm -fr ../../py/KR260_HLS_QPSK_Demod/.ipynb_checkpoints
+	rm -fr ../../py/__pycache__
 	rm -rf ./${PROJ_DIR} *.jou *.log NA *.bit *.hwh *.xsa .Xil *.str
 	rm -fr ./output
 
