@@ -3,8 +3,8 @@ from pynq import MMIO
 import pynq.lib.dma
 import time
 
-import fpga.lib.timestamp.sw.timestamp_regmap
-import fpga.lib.led_reg.sw.led_regmap
+import fpga.lib.timestamp.sw.timestamp_regmap as timestamp_regmap
+#import fpga.lib.led_reg.sw.led_regmap
 
 
 
