@@ -342,6 +342,8 @@ begin
       if(demod_bits_stb_q = '1') then
         shift_reg(31 downto 30) <= demod_bits_q;
         shift_reg(29 downto  0) <= shift_reg(31 downto 2);
+        --shift_reg( 1 downto 0) <= demod_bits_q;
+        --shift_reg(31 downto 2) <= shift_reg(29 downto 0);
       end if;
 
       if(shift_reg = sync_word) then

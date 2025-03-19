@@ -91,8 +91,15 @@ clean_all:
 
 clean:				
 ## clean: Just cleans the Vivado build.  Lib is not cleaned
+	rm -fr ../../lib/HLS_fixed_gain/xpr
+	rm -fr ../../lib/HLS_fixed_gain/*.log
+	rm -fr ../../lib/HLS_fixed_gain/*.jou
+	rm -fr ../../lib/timestamp/*.log
+	rm -fr ../../lib/timestamp/*.jou
+	cd ../../ip/KR260 && make clean && pwd
 	rm -rf ./${PROJ_DIR} *.jou *.log NA *.bit *.hwh *.xsa .Xil *.str
-	rm -fr ./output
+	rm -fr ../../py/KR260_HLS_QPSK_Demod/.ipynb_checkpoints
+	rm -fr ../../py/__pycache__
 
 upload_all: upload_bit upload_regmaps upload_ipynb upload_py_driver
 ## upload_all: Upload image to KR260 board
