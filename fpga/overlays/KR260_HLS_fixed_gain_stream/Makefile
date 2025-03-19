@@ -31,12 +31,13 @@
 #   
 #       Date        Description
 #     -----------   -----------------------------------------------------------------------
-#      2025-02-05    Original Creation
+#      2023-04-18    Original Creation
+#      2024-12-20    Merged into puch
 #
 # ############################################################################################
 # ############################################################################################
 
-OVERLAY_NAME := kr260_hls_qpsk_demod
+OVERLAY_NAME := kr260_hls_fixed_gain_stream
 PROJ_DIR := xpr
 
 default: clean_all hls_ip reg_if build_design check_timing  
@@ -50,21 +51,20 @@ help:
 	@echo "Usage: \n"
 	@sed -n 's/^##//p' ${MAKEFILE_LIST} | column -t -s ':' | sed -e 's/^/-/'
 
+
 hls_ip:  		
-## hls_ip: Build the HLS QPSK Demod module
-	cd ../../lib/HLS_QPSK_Demod && make && pwd
+## hls_ip: Build only the HLS IP Cores
+	cd ../../lib/HLS_fixed_gain && vitis_hls -f run_hls.tcl && pwd
 
 reg_if:  		
 ## reg_if: Builds only the Corsair Register File Modules
 	cd ../../lib/led_reg && make && pwd
 	cd ../../lib/timestamp && make && pwd
-	cd ../../lib/AWGN_GNG && make && pwd
-	cd ../../lib/HLS_QPSK_Demod && make reg_if && pwd
 
 build_design: clean 
 ## build_design: Builds the Vivado project without regenerating Lib
 	mkdir -p ./output/Reports
-	vivado -mode batch -source build_kr260_hls_qpsk_demod.tcl
+	vivado -mode batch -source build_kr260_hls_fixed_gain_stream.tcl
 
 check_timing:  
 ## check_timing: Check FPGA Timing
@@ -79,59 +79,45 @@ clean_all:
 	rm -fr ../../lib/HLS_fixed_gain/xpr
 	rm -fr ../../lib/HLS_fixed_gain/*.log
 	rm -fr ../../lib/HLS_fixed_gain/*.jou
-	cd ../../ip/KR260 && make clean && pwd
-	cd ../../lib/HLS_QPSK_Demod && make clean && pwd
 	cd ../../lib/timestamp && make clean && pwd
-	cd ../../lib/AWGN_GNG && make clean && pwd
 	cd ../../lib/led_reg && make clean && pwd
-	rm -fr ../../py/KR260_HLS_QPSK_Demod/.ipynb_checkpoints
-	rm -fr ../../py/__pycache__
 	rm -rf ./${PROJ_DIR} *.jou *.log NA *.bit *.hwh *.xsa .Xil *.str
 	rm -fr ./output
 
 clean:				
 ## clean: Just cleans the Vivado build.  Lib is not cleaned
-	rm -fr ../../lib/HLS_fixed_gain/xpr
-	rm -fr ../../lib/HLS_fixed_gain/*.log
-	rm -fr ../../lib/HLS_fixed_gain/*.jou
-	rm -fr ../../lib/timestamp/*.log
-	rm -fr ../../lib/timestamp/*.jou
-	cd ../../ip/KR260 && make clean && pwd
 	rm -rf ./${PROJ_DIR} *.jou *.log NA *.bit *.hwh *.xsa .Xil *.str
-	rm -fr ../../py/KR260_HLS_QPSK_Demod/.ipynb_checkpoints
-	rm -fr ../../py/__pycache__
+	rm -fr ./output
 
-upload_all: upload_bit upload_regmaps upload_ipynb upload_py_driver
-## upload_all: Upload image to KR260 board
-
-upload_bit:		
-## upload_bit: Upload only the bitstream and hardware file
-	scp ./output/${OVERLAY_NAME}.bit \
-	./output/${OVERLAY_NAME}.hwh \
-	ubuntu@kria:/home/root/jupyter_notebooks/${OVERLAY_NAME}
-
-upload_ipynb:	
-## upload_ipynb: Uploads only the Jupyter notebooks
-	scp ../../py/${OVERLAY_NAME}/${OVERLAY_NAME}.ipynb \
-	ubuntu@kria:/home/root/jupyter_notebooks/${OVERLAY_NAME}
-
-upload_regmaps: 		
-## upload_regmaps: Uploads the Corsair Register Map Python Classes
-	scp ../../lib/led_reg/sw/led_regmap.py \
-	../../lib/timestamp/sw/timestamp_regmap.py \
-	../../lib/AWGN_GNG/sw/awgn_regmap.py \
-	../../lib/HLS_QPSK_Demod/sw/qpsk_regmap.py \
-	ubuntu@kria:/home/root/jupyter_notebooks/${OVERLAY_NAME}
-
-get_remote_ipynb:		
-## get_remote_ipynb: Copy the Jupyter Notebook from KR260 to host
-	scp ubuntu@kria:/home/root/jupyter_notebooks/${OVERLAY_NAME}/${OVERLAY_NAME}.ipynb ../../py/${OVERLAY_NAME}/.
-
-get_remote_py_driver:
-## get_remote_py_driver: Copy PYNQ Python Driver from Dev Board
-	scp ubuntu@kria:/home/root/jupyter_notebooks/${OVERLAY_NAME}/kria.py ../../py/${OVERLAY_NAME}/.
-
-upload_py_driver:
-## upload_py_driver: Copy PYNQ Python Driver to Dev Board
-	scp ../../py/${OVERLAY_NAME}/kria.py \
-	ubuntu@kria:/home/root/jupyter_notebooks/${OVERLAY_NAME}
+#			upload_all: upload_bit upload_regmaps upload_ipynb upload_kria_driver
+#			## upload_all: Upload image to KR260 board
+#			
+#			upload_bit:		
+#			## upload_bit: Upload only the bitstream and hardware file
+#				scp ./output/${OVERLAY_NAME}.bit \
+#				./output/${OVERLAY_NAME}.hwh \
+#				ubuntu@kria:/home/root/jupyter_notebooks/kr260_hls_fixed_gain_stream
+#			
+#			upload_ipynb:	
+#			## upload_ipynb: Uploads only the Jupyter notebooks
+#				scp ./host/py/${OVERLAY_NAME}.ipynb \
+#				ubuntu@kria:/home/root/jupyter_notebooks/kr260_hls_fixed_gain_stream
+#			
+#			upload_regmaps: 		
+#			## upload_regmaps: Uploads the Corsair Register Map Python Classes
+#				scp ./fpga/lib/led_reg/sw/led_regmap.py \
+#				./fpga/lib/timestamp/sw/timestamp_regmap.py \
+#				ubuntu@kria:/home/root/jupyter_notebooks/kr260_hls_fixed_gain_stream
+#			
+#			get_remote_ipynb:		
+#			## get_remote_ipynb: Copy the Jupyter Notebook from KR260 to host
+#				scp ubuntu@kria:/home/root/jupyter_notebooks/kr260_hls_fixed_gain_stream/${OVERLAY_NAME}.ipynb ./host/py/.
+#			
+#			get_remote_py_driver:
+#			## get_remote_kria_driver: Copy Kria Python Driver from KR260
+#				scp ubuntu@kria:/home/root/jupyter_notebooks/kr260_hls_fixed_gain_stream/kria.py ./host/py/.
+#			
+#			upload_kria_driver:
+#			## upload_kria_driver: Copy Kria Python Driver to KR260
+#				scp ./host/py/kria.py \
+#				ubuntu@kria:/home/root/jupyter_notebooks/kr260_hls_fixed_gain_stream

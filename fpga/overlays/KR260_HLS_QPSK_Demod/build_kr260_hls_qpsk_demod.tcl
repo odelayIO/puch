@@ -67,7 +67,6 @@ set_property default_lib work [current_project]
 set_property  ip_repo_paths  ../../lib [current_project]
 update_ip_catalog
 
-
 #----------------------------------------------------------------------------
 #   Add VHDL File(s) in library folder
 #----------------------------------------------------------------------------
@@ -76,6 +75,7 @@ source ../../lib/timestamp/sources.tcl
 source ../../lib/AWGN_GNG/sources.tcl
 source ../../lib/arith/sources.tcl
 source ../../lib/util/sources.tcl
+source ../../lib/HLS_QPSK_Demod/sources.tcl
 
 
 #----------------------------------------------------------------------------
@@ -102,13 +102,14 @@ set_property top ${OVERLAY_NAME}_wrapper [current_fileset]
 #   Add XDC File(s)
 #----------------------------------------------------------------------------
 import_files -fileset constrs_1 -norecurse ./leds_pinout.xdc
+import_files -fileset constrs_1 -norecurse ./ILA.xdc
 update_compile_order -fileset sources_1
 
 
 #----------------------------------------------------------------------------
 #   NOTE: You'll need to increase SWAP file size to 16GB to use 8 Processors
 #----------------------------------------------------------------------------
-launch_runs impl_1 -to_step write_bitstream -jobs 8
+launch_runs impl_1 -to_step write_bitstream -jobs 20
 wait_on_run impl_1
 
 
