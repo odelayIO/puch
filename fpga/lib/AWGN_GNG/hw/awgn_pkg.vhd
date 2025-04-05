@@ -32,6 +32,18 @@ package awgn_pkg is
   constant CSR_AWGN_ENABLE_ADDR : std_logic_vector(8-1 downto 0) := to_unsigned(16, 8);
   constant CSR_AWGN_ENABLE_RESET : std_logic_vector(32-1 downto 0) := to_unsigned(0, 32);
 
+  -- tvalid_cnt - Counter for TValid
+  constant CSR_TVALID_CNT_ADDR : std_logic_vector(8-1 downto 0) := to_unsigned(20, 8);
+  constant CSR_TVALID_CNT_RESET : std_logic_vector(32-1 downto 0) := to_unsigned(0, 32);
+
+  -- tlast_cnt - Counter for TLast
+  constant CSR_TLAST_CNT_ADDR : std_logic_vector(8-1 downto 0) := to_unsigned(24, 8);
+  constant CSR_TLAST_CNT_RESET : std_logic_vector(32-1 downto 0) := to_unsigned(0, 32);
+
+  -- cnt_ctrl - Control Signals for the Strobe Counters
+  constant CSR_CNT_CTRL_ADDR : std_logic_vector(8-1 downto 0) := to_unsigned(28, 8);
+  constant CSR_CNT_CTRL_RESET : std_logic_vector(32-1 downto 0) := to_unsigned(0, 32);
+
 
 
 end package awgn_pkg;

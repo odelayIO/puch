@@ -97,3 +97,45 @@ regmap:
         access: roc 
         hardware: ie 
         enums: []
+-   name: tvalid_cnt
+    description: Counter for TValid
+    bitfields:
+    -   name: tvalid_cnt
+        description: Counter of tvalids
+        reset: 0
+        width: 32
+        lsb: 0
+        access: ro
+        hardware: i
+        enums: []
+-   name: tlast_cnt
+    description: Counter for TLast
+    bitfields:
+    -   name: tlast_cnt
+        description: Counter of tlast
+        reset: 0
+        width: 32
+        lsb: 0
+        access: ro
+        hardware: i
+        enums: []
+-   name: cnt_ctrl
+    description: Control Signals for the Strobe Counters
+    bitfields:
+    -   name: clear_cnt
+        description: A '1' clears all counters
+        reset: 0
+        width: 1
+        lsb: 0
+        access: wosc
+        hardware: o 
+        enums: []
+    -   name: capture_cnt
+        description: A '1' captures all counter
+        reset: 0
+        width: 1
+        lsb: 1
+        access: wosc
+        hardware: o 
+        enums: []
+

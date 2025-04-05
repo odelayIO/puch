@@ -106,6 +106,57 @@ class _RegAwgn_enable:
         return (rdata >> self._rmap.AWGN_ENABLE_SAT_Q_CH_POS) & self._rmap.AWGN_ENABLE_SAT_Q_CH_MSK
 
 
+class _RegTvalid_cnt:
+    def __init__(self, rmap):
+        self._rmap = rmap
+
+    @property
+    def tvalid_cnt(self):
+        """Counter of tvalids"""
+        rdata = self._rmap._if.read(self._rmap.TVALID_CNT_ADDR)
+        return (rdata >> self._rmap.TVALID_CNT_TVALID_CNT_POS) & self._rmap.TVALID_CNT_TVALID_CNT_MSK
+
+
+class _RegTlast_cnt:
+    def __init__(self, rmap):
+        self._rmap = rmap
+
+    @property
+    def tlast_cnt(self):
+        """Counter of tlast"""
+        rdata = self._rmap._if.read(self._rmap.TLAST_CNT_ADDR)
+        return (rdata >> self._rmap.TLAST_CNT_TLAST_CNT_POS) & self._rmap.TLAST_CNT_TLAST_CNT_MSK
+
+
+class _RegCnt_ctrl:
+    def __init__(self, rmap):
+        self._rmap = rmap
+
+    @property
+    def clear_cnt(self):
+        """A '1' clears all counters"""
+        return 0
+
+    @clear_cnt.setter
+    def clear_cnt(self, val):
+        rdata = self._rmap._if.read(self._rmap.CNT_CTRL_ADDR)
+        rdata = rdata & (~(self._rmap.CNT_CTRL_CLEAR_CNT_MSK << self._rmap.CNT_CTRL_CLEAR_CNT_POS))
+        rdata = rdata | (val << self._rmap.CNT_CTRL_CLEAR_CNT_POS)
+        self._rmap._if.write(self._rmap.CNT_CTRL_ADDR, rdata)
+
+    @property
+    def capture_cnt(self):
+        """A '1' captures all counter"""
+        return 0
+
+    @capture_cnt.setter
+    def capture_cnt(self, val):
+        rdata = self._rmap._if.read(self._rmap.CNT_CTRL_ADDR)
+        rdata = rdata & (~(self._rmap.CNT_CTRL_CAPTURE_CNT_MSK << self._rmap.CNT_CTRL_CAPTURE_CNT_POS))
+        rdata = rdata | (val << self._rmap.CNT_CTRL_CAPTURE_CNT_POS)
+        self._rmap._if.write(self._rmap.CNT_CTRL_ADDR, rdata)
+
+
 class RegMap:
     """Control/Status register map"""
 
@@ -143,6 +194,23 @@ class RegMap:
     AWGN_ENABLE_SAT_I_CH_MSK = 0x1
     AWGN_ENABLE_SAT_Q_CH_POS = 2
     AWGN_ENABLE_SAT_Q_CH_MSK = 0x1
+
+    # TVALID_CNT - Counter for TValid
+    TVALID_CNT_ADDR = 0x14
+    TVALID_CNT_TVALID_CNT_POS = 0
+    TVALID_CNT_TVALID_CNT_MSK = 0xffffffff
+
+    # TLAST_CNT - Counter for TLast
+    TLAST_CNT_ADDR = 0x18
+    TLAST_CNT_TLAST_CNT_POS = 0
+    TLAST_CNT_TLAST_CNT_MSK = 0xffffffff
+
+    # CNT_CTRL - Control Signals for the Strobe Counters
+    CNT_CTRL_ADDR = 0x1c
+    CNT_CTRL_CLEAR_CNT_POS = 0
+    CNT_CTRL_CLEAR_CNT_MSK = 0x1
+    CNT_CTRL_CAPTURE_CNT_POS = 1
+    CNT_CTRL_CAPTURE_CNT_MSK = 0x1
 
     def __init__(self, interface):
         self._if = interface
@@ -199,3 +267,34 @@ class RegMap:
     @property
     def awgn_enable_bf(self):
         return _RegAwgn_enable(self)
+
+    @property
+    def tvalid_cnt(self):
+        """Counter for TValid"""
+        return self._if.read(self.TVALID_CNT_ADDR)
+
+    @property
+    def tvalid_cnt_bf(self):
+        return _RegTvalid_cnt(self)
+
+    @property
+    def tlast_cnt(self):
+        """Counter for TLast"""
+        return self._if.read(self.TLAST_CNT_ADDR)
+
+    @property
+    def tlast_cnt_bf(self):
+        return _RegTlast_cnt(self)
+
+    @property
+    def cnt_ctrl(self):
+        """Control Signals for the Strobe Counters"""
+        return 0
+
+    @cnt_ctrl.setter
+    def cnt_ctrl(self, val):
+        self._if.write(self.CNT_CTRL_ADDR, val)
+
+    @property
+    def cnt_ctrl_bf(self):
+        return _RegCnt_ctrl(self)

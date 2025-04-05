@@ -41,6 +41,17 @@ port(
     csr_awgn_enable_sat_q_ch_en : in std_logic;
     csr_awgn_enable_sat_q_ch_in : in std_logic;
 
+    -- tvalid_cnt.tvalid_cnt
+    csr_tvalid_cnt_tvalid_cnt_in : in std_logic_vector(31 downto 0);
+
+    -- tlast_cnt.tlast_cnt
+    csr_tlast_cnt_tlast_cnt_in : in std_logic_vector(31 downto 0);
+
+    -- cnt_ctrl.clear_cnt
+    csr_cnt_ctrl_clear_cnt_out : out std_logic;
+    -- cnt_ctrl.capture_cnt
+    csr_cnt_ctrl_capture_cnt_out : out std_logic;
+
     -- AXI-Lite
     axil_awaddr   : in  std_logic_vector(ADDR_W-1 downto 0);
     axil_awprot   : in  std_logic_vector(2 downto 0);
@@ -122,6 +133,21 @@ signal csr_awgn_enable_ren_ff : std_logic;
 signal csr_awgn_enable_awgn_enable_ff : std_logic;
 signal csr_awgn_enable_sat_i_ch_ff : std_logic;
 signal csr_awgn_enable_sat_q_ch_ff : std_logic;
+
+signal csr_tvalid_cnt_rdata : std_logic_vector(31 downto 0);
+signal csr_tvalid_cnt_ren : std_logic;
+signal csr_tvalid_cnt_ren_ff : std_logic;
+signal csr_tvalid_cnt_tvalid_cnt_ff : std_logic_vector(31 downto 0);
+
+signal csr_tlast_cnt_rdata : std_logic_vector(31 downto 0);
+signal csr_tlast_cnt_ren : std_logic;
+signal csr_tlast_cnt_ren_ff : std_logic;
+signal csr_tlast_cnt_tlast_cnt_ff : std_logic_vector(31 downto 0);
+
+signal csr_cnt_ctrl_rdata : std_logic_vector(31 downto 0);
+signal csr_cnt_ctrl_wen : std_logic;
+signal csr_cnt_ctrl_clear_cnt_ff : std_logic;
+signal csr_cnt_ctrl_capture_cnt_ff : std_logic;
 
 signal rdata_ff : std_logic_vector(31 downto 0);
 signal rvalid_ff : std_logic;
@@ -534,6 +560,146 @@ end process;
 
 
 --------------------------------------------------------------------------------
+-- CSR:
+-- [0x14] - tvalid_cnt - Counter for TValid
+--------------------------------------------------------------------------------
+
+
+csr_tvalid_cnt_ren <= ren when (raddr = "00010100") else '0'; -- 0x14
+process (clk) begin
+if rising_edge(clk) then
+if (rst = '1') then
+    csr_tvalid_cnt_ren_ff <= '0'; -- 0x0
+else
+        csr_tvalid_cnt_ren_ff <= csr_tvalid_cnt_ren;
+end if;
+end if;
+end process;
+
+-----------------------
+-- Bit field:
+-- tvalid_cnt(31 downto 0) - tvalid_cnt - Counter of tvalids
+-- access: ro, hardware: i
+-----------------------
+
+csr_tvalid_cnt_rdata(31 downto 0) <= csr_tvalid_cnt_tvalid_cnt_ff;
+
+
+process (clk) begin
+if rising_edge(clk) then
+if (rst = '1') then
+    csr_tvalid_cnt_tvalid_cnt_ff <= "00000000000000000000000000000000"; -- 0x0
+else
+            csr_tvalid_cnt_tvalid_cnt_ff <= csr_tvalid_cnt_tvalid_cnt_in;
+end if;
+end if;
+end process;
+
+
+
+--------------------------------------------------------------------------------
+-- CSR:
+-- [0x18] - tlast_cnt - Counter for TLast
+--------------------------------------------------------------------------------
+
+
+csr_tlast_cnt_ren <= ren when (raddr = "00011000") else '0'; -- 0x18
+process (clk) begin
+if rising_edge(clk) then
+if (rst = '1') then
+    csr_tlast_cnt_ren_ff <= '0'; -- 0x0
+else
+        csr_tlast_cnt_ren_ff <= csr_tlast_cnt_ren;
+end if;
+end if;
+end process;
+
+-----------------------
+-- Bit field:
+-- tlast_cnt(31 downto 0) - tlast_cnt - Counter of tlast
+-- access: ro, hardware: i
+-----------------------
+
+csr_tlast_cnt_rdata(31 downto 0) <= csr_tlast_cnt_tlast_cnt_ff;
+
+
+process (clk) begin
+if rising_edge(clk) then
+if (rst = '1') then
+    csr_tlast_cnt_tlast_cnt_ff <= "00000000000000000000000000000000"; -- 0x0
+else
+            csr_tlast_cnt_tlast_cnt_ff <= csr_tlast_cnt_tlast_cnt_in;
+end if;
+end if;
+end process;
+
+
+
+--------------------------------------------------------------------------------
+-- CSR:
+-- [0x1c] - cnt_ctrl - Control Signals for the Strobe Counters
+--------------------------------------------------------------------------------
+csr_cnt_ctrl_rdata(31 downto 2) <= (others => '0');
+
+csr_cnt_ctrl_wen <= wen when (waddr = "00011100") else '0'; -- 0x1c
+
+-----------------------
+-- Bit field:
+-- cnt_ctrl(0) - clear_cnt - A '1' clears all counters
+-- access: wosc, hardware: o
+-----------------------
+
+csr_cnt_ctrl_rdata(0) <= '0';
+
+csr_cnt_ctrl_clear_cnt_out <= csr_cnt_ctrl_clear_cnt_ff;
+
+process (clk) begin
+if rising_edge(clk) then
+if (rst = '1') then
+    csr_cnt_ctrl_clear_cnt_ff <= '0'; -- 0x0
+else
+        if (csr_cnt_ctrl_wen = '1') then
+            if (wstrb(0) = '1') then
+                csr_cnt_ctrl_clear_cnt_ff <= wdata(0);
+            end if;
+        else
+            csr_cnt_ctrl_clear_cnt_ff <= '0';
+        end if;
+end if;
+end if;
+end process;
+
+
+
+-----------------------
+-- Bit field:
+-- cnt_ctrl(1) - capture_cnt - A '1' captures all counter
+-- access: wosc, hardware: o
+-----------------------
+
+csr_cnt_ctrl_rdata(1) <= '0';
+
+csr_cnt_ctrl_capture_cnt_out <= csr_cnt_ctrl_capture_cnt_ff;
+
+process (clk) begin
+if rising_edge(clk) then
+if (rst = '1') then
+    csr_cnt_ctrl_capture_cnt_ff <= '0'; -- 0x0
+else
+        if (csr_cnt_ctrl_wen = '1') then
+            if (wstrb(0) = '1') then
+                csr_cnt_ctrl_capture_cnt_ff <= wdata(1);
+            end if;
+        else
+            csr_cnt_ctrl_capture_cnt_ff <= '0';
+        end if;
+end if;
+end if;
+end process;
+
+
+
+--------------------------------------------------------------------------------
 -- Write ready
 --------------------------------------------------------------------------------
 wready <= '1';
@@ -553,6 +719,9 @@ else
             when "00001000" => rdata_ff <= csr_f_awgn_rdata; -- 0x8
             when "00001100" => rdata_ff <= csr_awgn_noise_gain_rdata; -- 0xc
             when "00010000" => rdata_ff <= csr_awgn_enable_rdata; -- 0x10
+            when "00010100" => rdata_ff <= csr_tvalid_cnt_rdata; -- 0x14
+            when "00011000" => rdata_ff <= csr_tlast_cnt_rdata; -- 0x18
+            when "00011100" => rdata_ff <= csr_cnt_ctrl_rdata; -- 0x1c
             when others => rdata_ff <= "00000000000000000000000000000000"; -- 0x0
         end case;
     else

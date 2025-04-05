@@ -27,6 +27,9 @@ Base address: 0x00000000
 | [F_awgn](#f_awgn)        | 0x08       | Output AWGN data stream format |
 | [awgn_noise_gain](#awgn_noise_gain) | 0x0c       | AWGN Noise Gain |
 | [awgn_enable](#awgn_enable) | 0x10       | AWGN Noise Enable |
+| [tvalid_cnt](#tvalid_cnt) | 0x14       | Counter for TValid |
+| [tlast_cnt](#tlast_cnt)  | 0x18       | Counter for TLast |
+| [cnt_ctrl](#cnt_ctrl)    | 0x1c       | Control Signals for the Strobe Counters |
 
 ## F_in
 
@@ -112,5 +115,55 @@ Reset value: 0x00000000
 | sat_Q_ch         | 2      | roc             | 0x0        | A '1' means Q-Channel was Saturated since last read.  Read clear bit field |
 | sat_I_ch         | 1      | roc             | 0x0        | A '1' means I-Channel was Saturated since last read.  Read clear bit field |
 | awgn_enable      | 0      | rw              | 0x0        | AWGN Noise Enable Control, '1' - Enabled, '0' - Bypassed (Default '0') |
+
+Back to [Register map](#register-map-summary).
+
+## tvalid_cnt
+
+Counter for TValid
+
+Address offset: 0x14
+
+Reset value: 0x00000000
+
+![tvalid_cnt](md_img/tvalid_cnt.svg)
+
+| Name             | Bits   | Mode            | Reset      | Description |
+| :---             | :---   | :---            | :---       | :---        |
+| tvalid_cnt       | 31:0   | ro              | 0x00000000 | Counter of tvalids |
+
+Back to [Register map](#register-map-summary).
+
+## tlast_cnt
+
+Counter for TLast
+
+Address offset: 0x18
+
+Reset value: 0x00000000
+
+![tlast_cnt](md_img/tlast_cnt.svg)
+
+| Name             | Bits   | Mode            | Reset      | Description |
+| :---             | :---   | :---            | :---       | :---        |
+| tlast_cnt        | 31:0   | ro              | 0x00000000 | Counter of tlast |
+
+Back to [Register map](#register-map-summary).
+
+## cnt_ctrl
+
+Control Signals for the Strobe Counters
+
+Address offset: 0x1c
+
+Reset value: 0x00000000
+
+![cnt_ctrl](md_img/cnt_ctrl.svg)
+
+| Name             | Bits   | Mode            | Reset      | Description |
+| :---             | :---   | :---            | :---       | :---        |
+| -                | 31:2   | -               | 0x0000000  | Reserved |
+| capture_cnt      | 1      | wosc            | 0x0        | A '1' captures all counter |
+| clear_cnt        | 0      | wosc            | 0x0        | A '1' clears all counters |
 
 Back to [Register map](#register-map-summary).

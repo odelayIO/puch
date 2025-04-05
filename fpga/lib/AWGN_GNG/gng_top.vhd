@@ -124,6 +124,24 @@ architecture rtl of gng_top is
   signal ch_I             : std_logic_vector(F_OUT.tBits-1 downto 0);
   signal ch_Q             : std_logic_vector(F_OUT.tBits-1 downto 0);
 
+  -- Debug counters
+  signal cnt_tvalid               : std_logic_vector(31 downto 0);
+  signal cnt_tvalid_cap           : std_logic_vector(31 downto 0);
+  signal cnt_tlast                : std_logic_vector(31 downto 0);
+  signal cnt_tlast_cap            : std_logic_vector(31 downto 0);
+  signal clr_cnt                  : std_logic;
+  signal cap_cnt                  : std_logic;
+
+  -- ILA Signals
+  attribute mark_debug : string;
+  attribute mark_debug of cnt_tvalid    : signal is "true";
+  attribute mark_debug of cnt_tlast     : signal is "true";
+  attribute mark_debug of B_TVALID      : signal is "true";
+  attribute mark_debug of B_TREADY      : signal is "true";
+  attribute mark_debug of B_TLAST       : signal is "true";
+  attribute mark_debug of A_TVALID      : signal is "true";
+  --attribute mark_debug of A_TREADY      : signal is "true"; A_TREADY = B_TREADY;
+  attribute mark_debug of A_TLAST       : signal is "true";
 
 begin
 
@@ -187,6 +205,11 @@ begin
       csr_awgn_enable_sat_i_ch_en             => ch_I_sat,
       csr_awgn_enable_sat_q_ch_in             => '1', 
       csr_awgn_enable_sat_q_ch_en             => ch_Q_sat,
+      -- Debug Counters
+      csr_tvalid_cnt_tvalid_cnt_in            => cnt_tvalid_cap, 
+      csr_tlast_cnt_tlast_cnt_in              => cnt_tlast_cap,
+      csr_cnt_ctrl_clear_cnt_out              => clr_cnt, 
+      csr_cnt_ctrl_capture_cnt_out            => cap_cnt, 
 
 
       -- AXI-Lite
@@ -358,6 +381,37 @@ begin
       C           => B_TDATA_int(F_OUT.tBits-1 downto 0),
       Out_stb     => open
     );
+
+
+
+
+  -- ----------------------------------------------------------------
+  --    Debug Counters
+  -- ----------------------------------------------------------------
+  process(clk)
+  begin
+    if((rst = '1') OR (clr_cnt='1')) then
+      cnt_tvalid              <= (others => '0'); 
+      cnt_tvalid_cap          <= (others => '0'); 
+      cnt_tlast               <= (others => '0'); 
+      cnt_tlast_cap           <= (others => '0'); 
+    elsif(rising_edge(clk) AND B_TREADY='1') then
+      if(A_TVALID = '1') then
+        cnt_tvalid  <= std_logic_vector(unsigned(cnt_tvalid)+1);
+      end if;
+      if(A_TLAST = '1') then
+        cnt_tlast   <= std_logic_vector(unsigned(cnt_tlast)+1);
+      end if;
+
+      if(cap_cnt = '1') then
+        cnt_tvalid_cap    <= cnt_tvalid;
+        cnt_tlast_cap     <= cnt_tlast;
+      end if;
+
+    end if;
+  end process;
+
+
 
 
 end RTL;
