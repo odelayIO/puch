@@ -300,10 +300,12 @@ begin
       I_in_ap_vld       => A_TVALID,
       Q_in              => A_TDATA(15 downto 0),
       Q_in_ap_vld       => A_TVALID,
+      -------------------+-----------------------------
       I_out             => B_TDATA(31 downto 16),
-      I_out_ap_vld      => B_TVALID_i,
       Q_out             => B_TDATA(15 downto 0),
+      I_out_ap_vld      => B_TVALID_i,
       Q_out_ap_vld      => open,
+      -------------------+-----------------------------
       demod_bits        => demod_bits,
       demod_bits_ap_vld => demod_bits_stb
     );
