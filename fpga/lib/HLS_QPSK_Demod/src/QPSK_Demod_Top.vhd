@@ -32,6 +32,7 @@
 --#       Date        Description
 --#     -----------   -----------------------------------------------------------------------
 --#      2025-02-22    Original Creation
+--#      2025-04-05    Added DMA write channel for symbols
 --#
 --###########################################################################################
 --###########################################################################################
@@ -59,14 +60,19 @@ entity QPSK_Demod_Top is
     rst             : in  std_logic;
     ce              : in  std_logic := '1';
     -- ------------------------------------------------------
-    --    AXI Stream Input
+    --    AXI Stream Input (QPSK Demod Input)
     -- ------------------------------------------------------
     A_TDATA         : in  std_logic_vector(31 downto 0);
     A_TVALID        : in  std_logic;
     A_TREADY        : out std_logic;
-    A_TKEEP         : in  std_logic_vector(3 downto 0);
-    A_TSTRB         : in  std_logic_vector(3 downto 0);
-    A_TLAST         : in  std_logic_vector(0 downto 0);
+    A_TLAST         : in  std_logic;
+    -- ------------------------------------------------------
+    --    AXI Stream Output (QPSK Demod Const)
+    -- ------------------------------------------------------
+    B_TDATA         : out std_logic_vector(31 downto 0);
+    B_TVALID        : out std_logic;
+    B_TREADY        : in  std_logic;
+    B_TLAST         : out std_logic;
     -- ------------------------------------------------------
     --    AXI-Lite
     -- ------------------------------------------------------
@@ -94,15 +100,21 @@ end entity;
 
 architecture RTL of QPSK_Demod_Top is
 
-  -- Constant and Top level signals
+  -- ----------------------------------------
+  --  Constant and Top level signals
+  -- ----------------------------------------
   constant F_IN             : format := (16,12);
   constant F_OUT            : format := (16,12);
 
+  -- ----------------------------------------
+  --  Signals
+  -- ----------------------------------------
   -- Control Signals
   signal ap_start           : std_logic;
   signal ap_done            : std_logic;
   signal ap_idle            : std_logic;
 
+  -- Demod Signals
   signal demod_bits_stb     : std_logic;
   signal demod_bits         : std_logic_vector( 1 downto 0);
   signal demod_bits_stb_q   : std_logic;
@@ -119,7 +131,16 @@ architecture RTL of QPSK_Demod_Top is
   signal sync_lock          : std_logic := '0';
   signal sync_clr           : std_logic;
 
+  -- DMA Capture Buffer Signals
+  signal dma_length         : std_logic_vector(31 downto 0);
+  signal dma_dword_cnt      : std_logic_vector(31 downto 0);
+  signal dma_rst            : std_logic;
+  signal B_TVALID_i         : std_logic;
 
+
+  -- ----------------------------------------
+  --  Components
+  -- ----------------------------------------
   COMPONENT QPSK_Demod_Out_BRAM
     PORT (
       clka : IN STD_LOGIC;
@@ -158,6 +179,9 @@ architecture RTL of QPSK_Demod_Top is
       ap_return : OUT STD_LOGIC_VECTOR (0 downto 0) );
   end component;
 
+  -- ----------------------------------------
+  --  Debug Signals
+  -- ----------------------------------------
   attribute mark_debug : string;
   attribute mark_debug of demod_bits_stb    : signal is "true";
   attribute mark_debug of demod_bits_stb_q  : signal is "true";
@@ -174,6 +198,12 @@ architecture RTL of QPSK_Demod_Top is
   attribute mark_debug of sync_lock         : signal is "true"; 
   attribute mark_debug of sync_clr          : signal is "true";  
 
+  attribute mark_debug of dma_length        : signal is "true";  
+  attribute mark_debug of dma_dword_cnt     : signal is "true";  
+  attribute mark_debug of dma_rst           : signal is "true";  
+  attribute mark_debug of B_TVALID          : signal is "true";  
+  attribute mark_debug of B_TREADY          : signal is "true";  
+  attribute mark_debug of B_TLAST           : signal is "true";  
 
 begin
 
@@ -215,6 +245,9 @@ begin
       csr_sync_word_sync_word_out     => sync_word, 
       csr_sync_lock_sync_lock_in      => sync_lock,
       csr_sync_reset_sync_clr_out     => sync_clr,
+      ---------------------------------+-----------------------------------------------
+      csr_dma_length_dma_length_out   => dma_length,
+      csr_dma_rst_dma_rst_out         => dma_rst,
       -- ---------------------------------------------------
       --    AXI-Lite Bus
       -- ---------------------------------------------------
@@ -267,13 +300,29 @@ begin
       I_in_ap_vld       => A_TVALID,
       Q_in              => A_TDATA(15 downto 0),
       Q_in_ap_vld       => A_TVALID,
-      I_out             => open,
-      I_out_ap_vld      => open,
-      Q_out             => open,
+      I_out             => B_TDATA(31 downto 16),
+      I_out_ap_vld      => B_TVALID_i,
+      Q_out             => B_TDATA(15 downto 0),
       Q_out_ap_vld      => open,
       demod_bits        => demod_bits,
       demod_bits_ap_vld => demod_bits_stb
     );
+
+  -- -------------------------------------------------------------------
+  --  DMA Control Logic
+  -- -------------------------------------------------------------------
+  process(clk,rst,dma_rst,B_TREADY)
+  begin
+    if((rst = '1') AND (dma_rst='1')) then
+      dma_dword_cnt     <= (others => '0');
+    elsif(rising_edge(clk) AND (B_TREADY='1')) then
+      if(B_TVALID_i = '1') then
+        dma_dword_cnt   <= std_logic_vector(unsigned(dma_dword_cnt) + 1);
+      end if;
+    end if;
+  end process;
+  B_TLAST   <= '1' when (unsigned(dma_dword_cnt)-1 = unsigned(dma_length)) else '0';
+  B_TVALID  <= B_TVALID_i;
 
 
   -- -------------------------------------------------------------------
@@ -292,7 +341,7 @@ begin
 
 
   -- -------------------------------------------------------------------
-  --    HLS QPSK Demodulator
+  --    HLS QPSK Demodulator Capture RAM
   -- -------------------------------------------------------------------
   U_QPSK_DEMOD_OUT_BRAM : QPSK_Demod_Out_BRAM
     PORT MAP (

@@ -32,6 +32,8 @@ Base address: 0x00000000
 | [Sync_Word](#sync_word)  | 0x1c       | 32-bit Sync Word for frame start |
 | [Sync_Lock](#sync_lock)  | 0x20       | The 32-bit Sync Word Lock Indecator |
 | [Sync_Reset](#sync_reset) | 0x24       | The 32-bit Sync Word Clear/Reset |
+| [DMA_LENGTH](#dma_length) | 0x28       | DMA block size |
+| [DMA_RST](#dma_rst)      | 0x2c       | Reset the DMA logic for capture buffer |
 
 ## F_in
 
@@ -200,5 +202,38 @@ Reset value: 0x00000000
 | :---             | :---   | :---            | :---       | :---        |
 | -                | 31:1   | -               | 0x0000000  | Reserved |
 | sync_clr         | 0      | wosc            | 0x0        | The 32-bit Sync Word Clear/Reset Strobe.  Strobed for 1 cc, self cleared |
+
+Back to [Register map](#register-map-summary).
+
+## DMA_LENGTH
+
+DMA block size
+
+Address offset: 0x28
+
+Reset value: 0x00000000
+
+![dma_length](md_img/dma_length.svg)
+
+| Name             | Bits   | Mode            | Reset      | Description |
+| :---             | :---   | :---            | :---       | :---        |
+| dma_length       | 31:0   | rw              | 0x00000000 | Contrains the length of the DMA transfer block size |
+
+Back to [Register map](#register-map-summary).
+
+## DMA_RST
+
+Reset the DMA logic for capture buffer
+
+Address offset: 0x2c
+
+Reset value: 0x00000000
+
+![dma_rst](md_img/dma_rst.svg)
+
+| Name             | Bits   | Mode            | Reset      | Description |
+| :---             | :---   | :---            | :---       | :---        |
+| -                | 31:1   | -               | 0x0000000  | Reserved |
+| dma_rst          | 0      | wosc            | 0x0        | Reset the DMA logic for capture buffer |
 
 Back to [Register map](#register-map-summary).

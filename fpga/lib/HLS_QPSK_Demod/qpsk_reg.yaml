@@ -144,4 +144,26 @@ regmap:
         access: wosc
         hardware: o
         enums: []
+-   name: DMA_LENGTH
+    description: DMA block size
+    bitfields:
+    -   name: dma_length
+        description: Contrains the length of the DMA transfer block size
+        reset: 0
+        width: 32
+        lsb: 0
+        access: rw
+        hardware: o
+        enums: []
+-   name: DMA_RST
+    description: Reset the DMA logic for capture buffer
+    bitfields:
+    -   name: dma_rst
+        description: Reset the DMA logic for capture buffer
+        reset: 0
+        width: 1
+        lsb: 0
+        access: wosc
+        hardware: o
+        enums: []
 

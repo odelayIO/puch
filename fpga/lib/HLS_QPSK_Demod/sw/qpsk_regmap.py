@@ -174,6 +174,41 @@ class _RegSync_reset:
         self._rmap._if.write(self._rmap.SYNC_RESET_ADDR, rdata)
 
 
+class _RegDma_length:
+    def __init__(self, rmap):
+        self._rmap = rmap
+
+    @property
+    def dma_length(self):
+        """Contrains the length of the DMA transfer block size"""
+        rdata = self._rmap._if.read(self._rmap.DMA_LENGTH_ADDR)
+        return (rdata >> self._rmap.DMA_LENGTH_DMA_LENGTH_POS) & self._rmap.DMA_LENGTH_DMA_LENGTH_MSK
+
+    @dma_length.setter
+    def dma_length(self, val):
+        rdata = self._rmap._if.read(self._rmap.DMA_LENGTH_ADDR)
+        rdata = rdata & (~(self._rmap.DMA_LENGTH_DMA_LENGTH_MSK << self._rmap.DMA_LENGTH_DMA_LENGTH_POS))
+        rdata = rdata | (val << self._rmap.DMA_LENGTH_DMA_LENGTH_POS)
+        self._rmap._if.write(self._rmap.DMA_LENGTH_ADDR, rdata)
+
+
+class _RegDma_rst:
+    def __init__(self, rmap):
+        self._rmap = rmap
+
+    @property
+    def dma_rst(self):
+        """Reset the DMA logic for capture buffer"""
+        return 0
+
+    @dma_rst.setter
+    def dma_rst(self, val):
+        rdata = self._rmap._if.read(self._rmap.DMA_RST_ADDR)
+        rdata = rdata & (~(self._rmap.DMA_RST_DMA_RST_MSK << self._rmap.DMA_RST_DMA_RST_POS))
+        rdata = rdata | (val << self._rmap.DMA_RST_DMA_RST_POS)
+        self._rmap._if.write(self._rmap.DMA_RST_ADDR, rdata)
+
+
 class RegMap:
     """Control/Status register map"""
 
@@ -234,6 +269,16 @@ class RegMap:
     SYNC_RESET_ADDR = 0x24
     SYNC_RESET_SYNC_CLR_POS = 0
     SYNC_RESET_SYNC_CLR_MSK = 0x1
+
+    # DMA_LENGTH - DMA block size
+    DMA_LENGTH_ADDR = 0x28
+    DMA_LENGTH_DMA_LENGTH_POS = 0
+    DMA_LENGTH_DMA_LENGTH_MSK = 0xffffffff
+
+    # DMA_RST - Reset the DMA logic for capture buffer
+    DMA_RST_ADDR = 0x2c
+    DMA_RST_DMA_RST_POS = 0
+    DMA_RST_DMA_RST_MSK = 0x1
 
     def __init__(self, interface):
         self._if = interface
@@ -347,3 +392,29 @@ class RegMap:
     @property
     def sync_reset_bf(self):
         return _RegSync_reset(self)
+
+    @property
+    def dma_length(self):
+        """DMA block size"""
+        return self._if.read(self.DMA_LENGTH_ADDR)
+
+    @dma_length.setter
+    def dma_length(self, val):
+        self._if.write(self.DMA_LENGTH_ADDR, val)
+
+    @property
+    def dma_length_bf(self):
+        return _RegDma_length(self)
+
+    @property
+    def dma_rst(self):
+        """Reset the DMA logic for capture buffer"""
+        return 0
+
+    @dma_rst.setter
+    def dma_rst(self, val):
+        self._if.write(self.DMA_RST_ADDR, val)
+
+    @property
+    def dma_rst_bf(self):
+        return _RegDma_rst(self)
