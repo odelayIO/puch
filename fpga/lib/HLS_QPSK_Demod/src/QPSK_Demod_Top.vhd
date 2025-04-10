@@ -183,24 +183,27 @@ architecture RTL of QPSK_Demod_Top is
   --  Debug Signals
   -- ----------------------------------------
   attribute mark_debug : string;
-  attribute mark_debug of demod_bits_stb    : signal is "true";
-  attribute mark_debug of demod_bits_stb_q  : signal is "true";
-  attribute mark_debug of demod_bits        : signal is "true";
-  attribute mark_debug of demod_bits_q      : signal is "true";
+  --attribute mark_debug of demod_bits_stb    : signal is "true";
+  --attribute mark_debug of demod_bits_stb_q  : signal is "true";
+  --attribute mark_debug of demod_bits        : signal is "true";
+  --attribute mark_debug of demod_bits_q      : signal is "true";
 
-  attribute mark_debug of BRAM_wr_addr      : signal is "true"; 
-  attribute mark_debug of BRAM_wr_addr_clr  : signal is "true"; 
-  attribute mark_debug of BRAM_rd_addr      : signal is "true"; 
-  attribute mark_debug of BRAM_rd_data      : signal is "true"; 
+  --attribute mark_debug of BRAM_wr_addr      : signal is "true"; 
+  --attribute mark_debug of BRAM_wr_addr_clr  : signal is "true"; 
+  --attribute mark_debug of BRAM_rd_addr      : signal is "true"; 
+  --attribute mark_debug of BRAM_rd_data      : signal is "true"; 
 
-  attribute mark_debug of shift_reg         : signal is "true";
-  attribute mark_debug of sync_word         : signal is "true"; 
-  attribute mark_debug of sync_lock         : signal is "true"; 
-  attribute mark_debug of sync_clr          : signal is "true";  
+  --attribute mark_debug of shift_reg         : signal is "true";
+  --attribute mark_debug of sync_word         : signal is "true"; 
+  --attribute mark_debug of sync_lock         : signal is "true"; 
+  --attribute mark_debug of sync_clr          : signal is "true";  
 
   attribute mark_debug of dma_length        : signal is "true";  
   attribute mark_debug of dma_dword_cnt     : signal is "true";  
   attribute mark_debug of dma_rst           : signal is "true";  
+  attribute mark_debug of A_TVALID          : signal is "true";  
+  attribute mark_debug of A_TREADY          : signal is "true";  
+  attribute mark_debug of A_TLAST           : signal is "true";  
   attribute mark_debug of B_TVALID          : signal is "true";  
   attribute mark_debug of B_TREADY          : signal is "true";  
   attribute mark_debug of B_TLAST           : signal is "true";  

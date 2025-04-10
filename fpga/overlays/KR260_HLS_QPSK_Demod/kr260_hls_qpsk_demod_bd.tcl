@@ -40,7 +40,7 @@ if { [string first $scripts_vivado_version $current_vivado_version] == -1 } {
 
 # The design that will be created by this Tcl script contains the following 
 # module references:
-# QPSK_Demod_Top, Timestamp, led_reg
+# QPSK_Demod_Top, Timestamp, gng_top, led_reg
 
 # Please add the sources of those modules before sourcing this Tcl script.
 
@@ -131,9 +131,12 @@ set bCheckIPsPassed 1
 set bCheckIPs 1
 if { $bCheckIPs == 1 } {
    set list_check_ips "\ 
+xilinx.com:ip:fir_compiler:7.2\
 xilinx.com:ip:axi_dma:7.1\
 xilinx.com:ip:proc_sys_reset:5.0\
 xilinx.com:ip:smartconnect:1.0\
+xilinx.com:ip:xlconcat:2.1\
+xilinx.com:ip:xlslice:1.0\
 xilinx.com:ip:zynq_ultra_ps_e:3.4\
 "
 
@@ -162,6 +165,7 @@ if { $bCheckModules == 1 } {
    set list_check_mods "\ 
 QPSK_Demod_Top\
 Timestamp\
+gng_top\
 led_reg\
 "
 
@@ -229,6 +233,64 @@ proc create_root_design { parentCell } {
   # Create ports
   set user_leds [ create_bd_port -dir O -from 1 -to 0 -type data user_leds ]
 
+  # Create instance: Matched_FIR_I_0, and set properties
+  set Matched_FIR_I_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:fir_compiler:7.2 Matched_FIR_I_0 ]
+  set_property -dict [ list \
+   CONFIG.Clock_Frequency {300.0} \
+   CONFIG.CoefficientSource {COE_File} \
+   CONFIG.Coefficient_File {/home/docker/puch-workspace/fpga/lib/HLS_QPSK_Demod/sim/MF_FIR.coe} \
+   CONFIG.Coefficient_Fractional_Bits {0} \
+   CONFIG.Coefficient_Sets {1} \
+   CONFIG.Coefficient_Sign {Signed} \
+   CONFIG.Coefficient_Structure {Inferred} \
+   CONFIG.Coefficient_Width {16} \
+   CONFIG.ColumnConfig {25} \
+   CONFIG.DATA_Has_TLAST {Packet_Framing} \
+   CONFIG.Data_Width {16} \
+   CONFIG.Decimation_Rate {4} \
+   CONFIG.Filter_Architecture {Systolic_Multiply_Accumulate} \
+   CONFIG.Filter_Type {Decimation} \
+   CONFIG.Interpolation_Rate {1} \
+   CONFIG.M_DATA_Has_TREADY {true} \
+   CONFIG.Number_Channels {1} \
+   CONFIG.Output_Rounding_Mode {Truncate_LSBs} \
+   CONFIG.Output_Width {16} \
+   CONFIG.Quantization {Integer_Coefficients} \
+   CONFIG.RateSpecification {Input_Sample_Period} \
+   CONFIG.SamplePeriod {1} \
+   CONFIG.Sample_Frequency {0.001} \
+   CONFIG.Zero_Pack_Factor {1} \
+ ] $Matched_FIR_I_0
+
+  # Create instance: Matched_FIR_Q_0, and set properties
+  set Matched_FIR_Q_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:fir_compiler:7.2 Matched_FIR_Q_0 ]
+  set_property -dict [ list \
+   CONFIG.Clock_Frequency {300.0} \
+   CONFIG.CoefficientSource {COE_File} \
+   CONFIG.Coefficient_File {/home/docker/puch-workspace/fpga/lib/HLS_QPSK_Demod/sim/MF_FIR.coe} \
+   CONFIG.Coefficient_Fractional_Bits {0} \
+   CONFIG.Coefficient_Sets {1} \
+   CONFIG.Coefficient_Sign {Signed} \
+   CONFIG.Coefficient_Structure {Inferred} \
+   CONFIG.Coefficient_Width {16} \
+   CONFIG.ColumnConfig {25} \
+   CONFIG.DATA_Has_TLAST {Packet_Framing} \
+   CONFIG.Data_Width {16} \
+   CONFIG.Decimation_Rate {4} \
+   CONFIG.Filter_Architecture {Systolic_Multiply_Accumulate} \
+   CONFIG.Filter_Type {Decimation} \
+   CONFIG.Interpolation_Rate {1} \
+   CONFIG.M_DATA_Has_TREADY {true} \
+   CONFIG.Number_Channels {1} \
+   CONFIG.Output_Rounding_Mode {Truncate_LSBs} \
+   CONFIG.Output_Width {16} \
+   CONFIG.Quantization {Integer_Coefficients} \
+   CONFIG.RateSpecification {Input_Sample_Period} \
+   CONFIG.SamplePeriod {1} \
+   CONFIG.Sample_Frequency {0.001} \
+   CONFIG.Zero_Pack_Factor {1} \
+ ] $Matched_FIR_Q_0
+
   # Create instance: QPSK_Demod_Top_0, and set properties
   set block_name QPSK_Demod_Top
   set block_cell_name QPSK_Demod_Top_0
@@ -276,6 +338,17 @@ proc create_root_design { parentCell } {
    CONFIG.NUM_SI {1} \
  ] $axi_interconnect_0
 
+  # Create instance: gng_top_0, and set properties
+  set block_name gng_top
+  set block_cell_name gng_top_0
+  if { [catch {set gng_top_0 [create_bd_cell -type module -reference $block_name $block_cell_name] } errmsg] } {
+     catch {common::send_gid_msg -ssname BD::TCL -id 2095 -severity "ERROR" "Unable to add referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
+     return 1
+   } elseif { $gng_top_0 eq "" } {
+     catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
+     return 1
+   }
+  
   # Create instance: led_reg_0, and set properties
   set block_name led_reg
   set block_cell_name led_reg_0
@@ -295,6 +368,29 @@ proc create_root_design { parentCell } {
   set_property -dict [ list \
    CONFIG.NUM_SI {2} \
  ] $smartconnect_0
+
+  # Create instance: xlconcat_0, and set properties
+  set xlconcat_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconcat:2.1 xlconcat_0 ]
+  set_property -dict [ list \
+   CONFIG.IN0_WIDTH {16} \
+   CONFIG.IN1_WIDTH {16} \
+ ] $xlconcat_0
+
+  # Create instance: xlslice_0, and set properties
+  set xlslice_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 xlslice_0 ]
+  set_property -dict [ list \
+   CONFIG.DIN_FROM {15} \
+   CONFIG.DIN_TO {0} \
+   CONFIG.DOUT_WIDTH {16} \
+ ] $xlslice_0
+
+  # Create instance: xlslice_1, and set properties
+  set xlslice_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 xlslice_1 ]
+  set_property -dict [ list \
+   CONFIG.DIN_FROM {31} \
+   CONFIG.DIN_TO {16} \
+   CONFIG.DOUT_WIDTH {16} \
+ ] $xlslice_1
 
   # Create instance: zynq_ultra_ps_e_0, and set properties
   set zynq_ultra_ps_e_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:zynq_ultra_ps_e:3.4 zynq_ultra_ps_e_0 ]
@@ -1876,20 +1972,33 @@ Port;FD4A0000;FD4AFFFF;1|FPD;DPDMA;FD4C0000;FD4CFFFF;1|FPD;DDR_XMPU5_CFG;FD05000
   # Create interface connections
   connect_bd_intf_net -intf_net QPSK_Demod_Top_0_B [get_bd_intf_pins QPSK_Demod_Top_0/B] [get_bd_intf_pins axi_dma_0/S_AXIS_S2MM]
   connect_bd_intf_net -intf_net S00_AXI_1 [get_bd_intf_pins axi_interconnect_0/S00_AXI] [get_bd_intf_pins zynq_ultra_ps_e_0/M_AXI_HPM0_FPD]
-  connect_bd_intf_net -intf_net axi_dma_0_M_AXIS_MM2S [get_bd_intf_pins QPSK_Demod_Top_0/A] [get_bd_intf_pins axi_dma_0/M_AXIS_MM2S]
+  connect_bd_intf_net -intf_net axi_dma_0_M_AXIS_MM2S [get_bd_intf_pins axi_dma_0/M_AXIS_MM2S] [get_bd_intf_pins gng_top_0/A]
   connect_bd_intf_net -intf_net axi_dma_0_M_AXI_MM2S [get_bd_intf_pins axi_dma_0/M_AXI_MM2S] [get_bd_intf_pins smartconnect_0/S00_AXI]
   connect_bd_intf_net -intf_net axi_dma_0_M_AXI_S2MM [get_bd_intf_pins axi_dma_0/M_AXI_S2MM] [get_bd_intf_pins smartconnect_0/S01_AXI]
   connect_bd_intf_net -intf_net axi_interconnect_0_M00_AXI [get_bd_intf_pins axi_dma_0/S_AXI_LITE] [get_bd_intf_pins axi_interconnect_0/M00_AXI]
   connect_bd_intf_net -intf_net axi_interconnect_0_M01_AXI [get_bd_intf_pins QPSK_Demod_Top_0/axil] [get_bd_intf_pins axi_interconnect_0/M01_AXI]
   connect_bd_intf_net -intf_net axi_interconnect_0_M02_AXI [get_bd_intf_pins axi_interconnect_0/M02_AXI] [get_bd_intf_pins led_reg_0/axil]
   connect_bd_intf_net -intf_net axi_interconnect_0_M03_AXI [get_bd_intf_pins Timestamp_0/axil] [get_bd_intf_pins axi_interconnect_0/M03_AXI]
+  connect_bd_intf_net -intf_net axi_interconnect_0_M04_AXI [get_bd_intf_pins axi_interconnect_0/M04_AXI] [get_bd_intf_pins gng_top_0/axil]
   connect_bd_intf_net -intf_net smartconnect_0_M00_AXI [get_bd_intf_pins smartconnect_0/M00_AXI] [get_bd_intf_pins zynq_ultra_ps_e_0/S_AXI_HP0_FPD]
 
   # Create port connections
+  connect_bd_net -net Matched_FIR_0_s_axis_data_tready [get_bd_pins Matched_FIR_Q_0/s_axis_data_tready] [get_bd_pins gng_top_0/B_TREADY]
+  connect_bd_net -net Matched_FIR_I_0_m_axis_data_tdata [get_bd_pins Matched_FIR_I_0/m_axis_data_tdata] [get_bd_pins xlconcat_0/In0]
+  connect_bd_net -net Matched_FIR_Q_0_m_axis_data_tdata [get_bd_pins Matched_FIR_Q_0/m_axis_data_tdata] [get_bd_pins xlconcat_0/In1]
+  connect_bd_net -net Matched_FIR_Q_0_m_axis_data_tlast [get_bd_pins Matched_FIR_Q_0/m_axis_data_tlast] [get_bd_pins QPSK_Demod_Top_0/A_TLAST]
+  connect_bd_net -net Matched_FIR_Q_0_m_axis_data_tvalid [get_bd_pins Matched_FIR_Q_0/m_axis_data_tvalid] [get_bd_pins QPSK_Demod_Top_0/A_TVALID]
+  connect_bd_net -net QPSK_Demod_Top_0_A_TREADY [get_bd_pins Matched_FIR_I_0/m_axis_data_tready] [get_bd_pins Matched_FIR_Q_0/m_axis_data_tready] [get_bd_pins QPSK_Demod_Top_0/A_TREADY]
+  connect_bd_net -net gng_top_0_B_TDATA [get_bd_pins gng_top_0/B_TDATA] [get_bd_pins xlslice_0/Din] [get_bd_pins xlslice_1/Din]
+  connect_bd_net -net gng_top_0_B_TLAST [get_bd_pins Matched_FIR_I_0/s_axis_data_tlast] [get_bd_pins Matched_FIR_Q_0/s_axis_data_tlast] [get_bd_pins gng_top_0/B_TLAST]
+  connect_bd_net -net gng_top_0_B_TVALID [get_bd_pins Matched_FIR_I_0/s_axis_data_tvalid] [get_bd_pins Matched_FIR_Q_0/s_axis_data_tvalid] [get_bd_pins gng_top_0/B_TVALID]
   connect_bd_net -net led_reg_0_csr_user_leds_user_leds_out [get_bd_ports user_leds] [get_bd_pins led_reg_0/csr_user_leds_user_leds_out]
-  connect_bd_net -net proc_sys_reset_0_peripheral_aresetn [get_bd_pins axi_dma_0/axi_resetn] [get_bd_pins axi_interconnect_0/ARESETN] [get_bd_pins axi_interconnect_0/M00_ARESETN] [get_bd_pins axi_interconnect_0/M01_ARESETN] [get_bd_pins axi_interconnect_0/M02_ARESETN] [get_bd_pins axi_interconnect_0/M03_ARESETN] [get_bd_pins axi_interconnect_0/M04_ARESETN] [get_bd_pins axi_interconnect_0/S00_ARESETN] [get_bd_pins proc_sys_reset_0/peripheral_aresetn] [get_bd_pins smartconnect_0/aresetn]
+  connect_bd_net -net proc_sys_reset_0_peripheral_aresetn [get_bd_pins axi_dma_0/axi_resetn] [get_bd_pins axi_interconnect_0/ARESETN] [get_bd_pins axi_interconnect_0/M00_ARESETN] [get_bd_pins axi_interconnect_0/M01_ARESETN] [get_bd_pins axi_interconnect_0/M02_ARESETN] [get_bd_pins axi_interconnect_0/M03_ARESETN] [get_bd_pins axi_interconnect_0/M04_ARESETN] [get_bd_pins axi_interconnect_0/S00_ARESETN] [get_bd_pins gng_top_0/rstn] [get_bd_pins proc_sys_reset_0/peripheral_aresetn] [get_bd_pins smartconnect_0/aresetn]
   connect_bd_net -net proc_sys_reset_0_peripheral_reset [get_bd_pins QPSK_Demod_Top_0/rst] [get_bd_pins Timestamp_0/rst] [get_bd_pins led_reg_0/rst] [get_bd_pins proc_sys_reset_0/peripheral_reset]
-  connect_bd_net -net zynq_ultra_ps_e_0_pl_clk0 [get_bd_pins QPSK_Demod_Top_0/clk] [get_bd_pins Timestamp_0/clk] [get_bd_pins axi_dma_0/m_axi_mm2s_aclk] [get_bd_pins axi_dma_0/m_axi_s2mm_aclk] [get_bd_pins axi_dma_0/s_axi_lite_aclk] [get_bd_pins axi_interconnect_0/ACLK] [get_bd_pins axi_interconnect_0/M00_ACLK] [get_bd_pins axi_interconnect_0/M01_ACLK] [get_bd_pins axi_interconnect_0/M02_ACLK] [get_bd_pins axi_interconnect_0/M03_ACLK] [get_bd_pins axi_interconnect_0/M04_ACLK] [get_bd_pins axi_interconnect_0/S00_ACLK] [get_bd_pins led_reg_0/clk] [get_bd_pins proc_sys_reset_0/slowest_sync_clk] [get_bd_pins smartconnect_0/aclk] [get_bd_pins zynq_ultra_ps_e_0/maxihpm0_fpd_aclk] [get_bd_pins zynq_ultra_ps_e_0/pl_clk0] [get_bd_pins zynq_ultra_ps_e_0/saxihp0_fpd_aclk]
+  connect_bd_net -net xlconcat_0_dout [get_bd_pins QPSK_Demod_Top_0/A_TDATA] [get_bd_pins xlconcat_0/dout]
+  connect_bd_net -net xlslice_0_Dout [get_bd_pins Matched_FIR_Q_0/s_axis_data_tdata] [get_bd_pins xlslice_0/Dout]
+  connect_bd_net -net xlslice_1_Dout [get_bd_pins Matched_FIR_I_0/s_axis_data_tdata] [get_bd_pins xlslice_1/Dout]
+  connect_bd_net -net zynq_ultra_ps_e_0_pl_clk0 [get_bd_pins Matched_FIR_I_0/aclk] [get_bd_pins Matched_FIR_Q_0/aclk] [get_bd_pins QPSK_Demod_Top_0/clk] [get_bd_pins Timestamp_0/clk] [get_bd_pins axi_dma_0/m_axi_mm2s_aclk] [get_bd_pins axi_dma_0/m_axi_s2mm_aclk] [get_bd_pins axi_dma_0/s_axi_lite_aclk] [get_bd_pins axi_interconnect_0/ACLK] [get_bd_pins axi_interconnect_0/M00_ACLK] [get_bd_pins axi_interconnect_0/M01_ACLK] [get_bd_pins axi_interconnect_0/M02_ACLK] [get_bd_pins axi_interconnect_0/M03_ACLK] [get_bd_pins axi_interconnect_0/M04_ACLK] [get_bd_pins axi_interconnect_0/S00_ACLK] [get_bd_pins gng_top_0/clk] [get_bd_pins led_reg_0/clk] [get_bd_pins proc_sys_reset_0/slowest_sync_clk] [get_bd_pins smartconnect_0/aclk] [get_bd_pins zynq_ultra_ps_e_0/maxihpm0_fpd_aclk] [get_bd_pins zynq_ultra_ps_e_0/pl_clk0] [get_bd_pins zynq_ultra_ps_e_0/saxihp0_fpd_aclk]
   connect_bd_net -net zynq_ultra_ps_e_0_pl_resetn0 [get_bd_pins proc_sys_reset_0/ext_reset_in] [get_bd_pins zynq_ultra_ps_e_0/pl_resetn0]
 
   # Create address segments
@@ -1900,19 +2009,19 @@ Port;FD4A0000;FD4AFFFF;1|FPD;DPDMA;FD4C0000;FD4CFFFF;1|FPD;DDR_XMPU5_CFG;FD05000
   assign_bd_address -offset 0xA0010000 -range 0x00001000 -target_address_space [get_bd_addr_spaces zynq_ultra_ps_e_0/Data] [get_bd_addr_segs QPSK_Demod_Top_0/axil/reg0] -force
   assign_bd_address -offset 0xA0030000 -range 0x00010000 -target_address_space [get_bd_addr_spaces zynq_ultra_ps_e_0/Data] [get_bd_addr_segs Timestamp_0/axil/reg0] -force
   assign_bd_address -offset 0xA0000000 -range 0x00010000 -target_address_space [get_bd_addr_spaces zynq_ultra_ps_e_0/Data] [get_bd_addr_segs axi_dma_0/S_AXI_LITE/Reg] -force
+  assign_bd_address -offset 0xA0011000 -range 0x00001000 -target_address_space [get_bd_addr_spaces zynq_ultra_ps_e_0/Data] [get_bd_addr_segs gng_top_0/axil/reg0] -force
   assign_bd_address -offset 0xA0020000 -range 0x00010000 -target_address_space [get_bd_addr_spaces zynq_ultra_ps_e_0/Data] [get_bd_addr_segs led_reg_0/axil/reg0] -force
 
   # Exclude Address Segments
   exclude_bd_addr_seg -offset 0x000800000000 -range 0x000100000000 -target_address_space [get_bd_addr_spaces axi_dma_0/Data_MM2S] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP2/HP0_DDR_HIGH]
   exclude_bd_addr_seg -offset 0xFF000000 -range 0x01000000 -target_address_space [get_bd_addr_spaces axi_dma_0/Data_MM2S] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP2/HP0_LPS_OCM]
-  exclude_bd_addr_seg -target_address_space [get_bd_addr_spaces axi_dma_0/Data_S2MM] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP2/HP0_DDR_HIGH]
+  exclude_bd_addr_seg -offset 0x000800000000 -range 0x000100000000 -target_address_space [get_bd_addr_spaces axi_dma_0/Data_S2MM] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP2/HP0_DDR_HIGH]
   exclude_bd_addr_seg -offset 0xFF000000 -range 0x01000000 -target_address_space [get_bd_addr_spaces axi_dma_0/Data_S2MM] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP2/HP0_LPS_OCM]
 
 
   # Restore current instance
   current_bd_instance $oldCurInst
 
-  validate_bd_design
   save_bd_design
 }
 # End of create_root_design()
@@ -1924,4 +2033,6 @@ Port;FD4A0000;FD4AFFFF;1|FPD;DPDMA;FD4C0000;FD4CFFFF;1|FPD;DDR_XMPU5_CFG;FD05000
 
 create_root_design ""
 
+
+common::send_gid_msg -ssname BD::TCL -id 2053 -severity "WARNING" "This Tcl script was generated from a block design that has not been validated. It is possible that design <$design_name> may result in errors during validation."
 
