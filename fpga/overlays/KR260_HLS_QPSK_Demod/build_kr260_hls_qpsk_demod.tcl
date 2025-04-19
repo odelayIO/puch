@@ -110,7 +110,7 @@ update_compile_order -fileset sources_1
 #   NOTE: You'll need to increase SWAP file size to 16GB to use 8 Processors
 #----------------------------------------------------------------------------
 set_property STEPS.SYNTH_DESIGN.ARGS.RETIMING true [get_runs synth_1]
-launch_runs impl_1 -to_step write_bitstream -jobs 20
+launch_runs impl_1 -to_step write_bitstream -jobs 10
 wait_on_run impl_1
 
 
