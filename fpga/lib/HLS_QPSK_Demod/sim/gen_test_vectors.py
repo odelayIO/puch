@@ -233,16 +233,26 @@ if(C_PLOT_RX_SAMPS):
 
 # Used with Xilinx Vitis CSIM
 if(C_SAVE_WF):
+    # Rx samples after Matched Filter
     f = open("0xDEADBEEF_Rx_Samps.dat","w")
     for sample in rx_iq_samps:
         f.write(str(sample.real) + "\n" + str(sample.imag) + "\n")
     f.close()
+    # Tx samples after Pulse Shape Filter
+    f = open("0xDEADBEEF_Tx_Samps.dat","w")
+    for sample in tx_iq_samps:
+        f.write(str(sample.real) + "\n" + str(sample.imag) + "\n")
+    f.close()
+
 
 # Used with GNU Radio
 if(C_SAVE_WF):
-   rx_iq_samps = rx_iq_samps.astype(np.complex64)
-   rx_iq_samps.tofile('0xDEADBEEF_Rx_Samps.bin')
-
+    # Rx samples after Matched Filter
+    rx_iq_samps = rx_iq_samps.astype(np.complex64)
+    rx_iq_samps.tofile('0xDEADBEEF_Rx_Samps.bin')
+    # Tx samples after Pulse Shape Filter
+    tx_iq_samps = tx_iq_samps.astype(np.complex64)
+    tx_iq_samps.tofile('0xDEADBEEF_Tx_Samps.bin')
 
 
 
