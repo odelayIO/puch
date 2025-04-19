@@ -318,7 +318,7 @@ begin
   -- -------------------------------------------------------------------
   process(clk,rst,dma_rst,B_TREADY)
   begin
-    if((rst = '1') AND (dma_rst='1')) then
+    if((rst = '1') OR (dma_rst='1')) then
       dma_dword_cnt     <= (others => '0');
     elsif(rising_edge(clk) AND (B_TREADY='1')) then
       if(B_TVALID_i = '1') then
