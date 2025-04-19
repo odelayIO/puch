@@ -135,6 +135,7 @@ xilinx.com:ip:axi_dma:7.1\
 xilinx.com:ip:proc_sys_reset:5.0\
 xilinx.com:ip:smartconnect:1.0\
 xilinx.com:ip:zynq_ultra_ps_e:3.4\
+xilinx.com:ip:axis_data_fifo:2.0\
 xilinx.com:ip:axis_register_slice:1.1\
 xilinx.com:ip:fir_compiler:7.2\
 xilinx.com:ip:xlconcat:2.1\
@@ -408,6 +409,13 @@ proc create_hier_cell_Rx_QPSK { parentCell nameHier } {
    CONFIG.POLARITY {ACTIVE_HIGH} \
  ] [get_bd_pins /Rx_QPSK/QPSK_Demod_Top_0/rst]
 
+  # Create instance: axis_data_fifo_0, and set properties
+  set axis_data_fifo_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axis_data_fifo:2.0 axis_data_fifo_0 ]
+  set_property -dict [ list \
+   CONFIG.FIFO_DEPTH {4096} \
+   CONFIG.HAS_TLAST {1} \
+ ] $axis_data_fifo_0
+
   # Create instance: axis_register_slice_0, and set properties
   set axis_register_slice_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axis_register_slice:1.1 axis_register_slice_0 ]
   set_property -dict [ list \
@@ -417,8 +425,9 @@ proc create_hier_cell_Rx_QPSK { parentCell nameHier } {
 
   # Create interface connections
   connect_bd_intf_net -intf_net A_1 [get_bd_intf_pins A] [get_bd_intf_pins axis_register_slice_0/S_AXIS]
-  connect_bd_intf_net -intf_net QPSK_Demod_Top_0_B [get_bd_intf_pins B] [get_bd_intf_pins QPSK_Demod_Top_0/B]
+  connect_bd_intf_net -intf_net QPSK_Demod_Top_0_B [get_bd_intf_pins QPSK_Demod_Top_0/B] [get_bd_intf_pins axis_data_fifo_0/S_AXIS]
   connect_bd_intf_net -intf_net axi_interconnect_0_M01_AXI [get_bd_intf_pins S_AXI_LITE] [get_bd_intf_pins QPSK_Demod_Top_0/axil]
+  connect_bd_intf_net -intf_net axis_data_fifo_0_M_AXIS [get_bd_intf_pins B] [get_bd_intf_pins axis_data_fifo_0/M_AXIS]
 
   # Create port connections
   connect_bd_net -net MF_0_s_axis_tready [get_bd_pins MF_0/s_axis_tready] [get_bd_pins axis_register_slice_0/m_axis_tready]
@@ -428,10 +437,10 @@ proc create_hier_cell_Rx_QPSK { parentCell nameHier } {
   connect_bd_net -net axis_register_slice_0_m_axis_tlast [get_bd_pins MF_0/s_axis_tlast] [get_bd_pins axis_register_slice_0/m_axis_tlast]
   connect_bd_net -net axis_register_slice_0_m_axis_tvalid [get_bd_pins MF_0/s_axis_tvalid] [get_bd_pins axis_register_slice_0/m_axis_tvalid]
   connect_bd_net -net proc_sys_reset_0_peripheral_reset [get_bd_pins rst] [get_bd_pins QPSK_Demod_Top_0/rst]
-  connect_bd_net -net rstn_1 [get_bd_pins rstn] [get_bd_pins axis_register_slice_0/aresetn]
+  connect_bd_net -net rstn_1 [get_bd_pins rstn] [get_bd_pins axis_data_fifo_0/s_axis_aresetn] [get_bd_pins axis_register_slice_0/aresetn]
   connect_bd_net -net s_axis_tdata_1 [get_bd_pins MF_0/s_axis_tdata] [get_bd_pins axis_register_slice_0/m_axis_tdata]
   connect_bd_net -net xlconcat_0_dout [get_bd_pins MF_0/m_axis_tdata] [get_bd_pins QPSK_Demod_Top_0/A_TDATA]
-  connect_bd_net -net zynq_ultra_ps_e_0_pl_clk0 [get_bd_pins aclk] [get_bd_pins MF_0/aclk] [get_bd_pins QPSK_Demod_Top_0/clk] [get_bd_pins axis_register_slice_0/aclk]
+  connect_bd_net -net zynq_ultra_ps_e_0_pl_clk0 [get_bd_pins aclk] [get_bd_pins MF_0/aclk] [get_bd_pins QPSK_Demod_Top_0/clk] [get_bd_pins axis_data_fifo_0/s_axis_aclk] [get_bd_pins axis_register_slice_0/aclk]
 
   # Restore current instance
   current_bd_instance $oldCurInst
