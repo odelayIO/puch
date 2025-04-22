@@ -32,7 +32,8 @@
 --#       Date        Description
 --#     -----------   -----------------------------------------------------------------------
 --#      2025-02-22    Original Creation
---#      2025-04-05    Added DMA write channel for symbols
+--#      2025-04-05    Added DMA write channel for symbols.  DMA packet max size is dependent
+--#                     on FIFO depth.  Currently set to 16K DWORDS
 --#
 --###########################################################################################
 --###########################################################################################
@@ -59,6 +60,10 @@ entity QPSK_Demod_Top is
     clk             : in  std_logic;
     rst             : in  std_logic;
     ce              : in  std_logic := '1';
+    -- ------------------------------------------------------
+    --    Control/Status Signals
+    -- ------------------------------------------------------
+    fifo_rstn       : out std_logic;
     -- ------------------------------------------------------
     --    AXI Stream Input (QPSK Demod Input)
     -- ------------------------------------------------------
@@ -103,8 +108,8 @@ architecture RTL of QPSK_Demod_Top is
   -- ----------------------------------------
   --  Constant and Top level signals
   -- ----------------------------------------
-  constant F_IN             : format := (16,12);
-  constant F_OUT            : format := (16,12);
+  constant F_IN             : format := (16,14);
+  constant F_OUT            : format := (16,14);
 
   -- ----------------------------------------
   --  Signals
@@ -135,7 +140,9 @@ architecture RTL of QPSK_Demod_Top is
   signal dma_length         : std_logic_vector(31 downto 0);
   signal dma_dword_cnt      : std_logic_vector(31 downto 0);
   signal dma_rst            : std_logic;
+
   signal B_TVALID_i         : std_logic;
+  signal B_TDATA_i          : std_logic_vector(31 downto 0);
 
 
   -- ----------------------------------------
@@ -304,8 +311,8 @@ begin
       Q_in              => A_TDATA(15 downto 0),
       Q_in_ap_vld       => A_TVALID,
       -------------------+-----------------------------
-      I_out             => B_TDATA(31 downto 16),
-      Q_out             => B_TDATA(15 downto 0),
+      I_out             => B_TDATA_i(31 downto 16),
+      Q_out             => B_TDATA_i(15 downto 0),
       I_out_ap_vld      => B_TVALID_i,
       Q_out_ap_vld      => open,
       -------------------+-----------------------------
@@ -316,18 +323,33 @@ begin
   -- -------------------------------------------------------------------
   --  DMA Control Logic
   -- -------------------------------------------------------------------
-  process(clk,rst,dma_rst,B_TREADY)
+  process(clk,rst,dma_rst)
   begin
     if((rst = '1') OR (dma_rst='1')) then
-      dma_dword_cnt     <= (others => '0');
-    elsif(rising_edge(clk) AND (B_TREADY='1')) then
-      if(B_TVALID_i = '1') then
-        dma_dword_cnt   <= std_logic_vector(unsigned(dma_dword_cnt) + 1);
+      dma_dword_cnt   <= (others => '0');
+      B_TVALID        <= '0';
+      B_TLAST         <= '0';
+      B_TDATA         <= (others => '0');
+    elsif(rising_edge(clk)) then
+      B_TVALID        <= '0';
+      B_TDATA         <= (others => '0');
+      B_TLAST         <= '0';
+      -- Only stream data to FIFO for size for DMA packet
+      if(unsigned(dma_dword_cnt) < unsigned(dma_length)) then
+        B_TVALID      <= B_TVALID_i;
+        B_TDATA       <= B_TDATA_i;
+        -- TODO: TREADY assumes DMA FIFO is ready
+        if((B_TREADY='1') AND (B_TVALID_i='1')) then 
+          dma_dword_cnt   <= std_logic_vector(unsigned(dma_dword_cnt) + 1);
+          if(unsigned(dma_dword_cnt) = unsigned(dma_length)-1) then
+            B_TLAST   <= '1';
+          end if;
+        end if;
       end if;
     end if;
   end process;
-  B_TLAST   <= '1' when (unsigned(dma_dword_cnt)-1 = unsigned(dma_length)) else '0';
-  B_TVALID  <= B_TVALID_i;
+  -- Clear FIFO to ensure DMA FIFO is ready
+  fifo_rstn <= NOT(dma_rst);
 
 
   -- -------------------------------------------------------------------
