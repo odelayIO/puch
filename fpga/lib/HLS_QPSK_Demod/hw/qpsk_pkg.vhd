@@ -60,6 +60,10 @@ package qpsk_pkg is
   constant CSR_DMA_RST_ADDR : std_logic_vector(8-1 downto 0) := to_unsigned(44, 8);
   constant CSR_DMA_RST_RESET : std_logic_vector(32-1 downto 0) := to_unsigned(0, 32);
 
+  -- DMA_Buf_Cnt - DMA QWORDS written to Buffer
+  constant CSR_DMA_BUF_CNT_ADDR : std_logic_vector(8-1 downto 0) := to_unsigned(48, 8);
+  constant CSR_DMA_BUF_CNT_RESET : std_logic_vector(32-1 downto 0) := to_unsigned(0, 32);
+
 
 
 end package qpsk_pkg;

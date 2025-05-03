@@ -209,6 +209,17 @@ class _RegDma_rst:
         self._rmap._if.write(self._rmap.DMA_RST_ADDR, rdata)
 
 
+class _RegDma_buf_cnt:
+    def __init__(self, rmap):
+        self._rmap = rmap
+
+    @property
+    def dma_buf_cnt(self):
+        """DMA QWORDS written to Buffer"""
+        rdata = self._rmap._if.read(self._rmap.DMA_BUF_CNT_ADDR)
+        return (rdata >> self._rmap.DMA_BUF_CNT_DMA_BUF_CNT_POS) & self._rmap.DMA_BUF_CNT_DMA_BUF_CNT_MSK
+
+
 class RegMap:
     """Control/Status register map"""
 
@@ -279,6 +290,11 @@ class RegMap:
     DMA_RST_ADDR = 0x2c
     DMA_RST_DMA_RST_POS = 0
     DMA_RST_DMA_RST_MSK = 0x1
+
+    # DMA_BUF_CNT - DMA QWORDS written to Buffer
+    DMA_BUF_CNT_ADDR = 0x30
+    DMA_BUF_CNT_DMA_BUF_CNT_POS = 0
+    DMA_BUF_CNT_DMA_BUF_CNT_MSK = 0xffffffff
 
     def __init__(self, interface):
         self._if = interface
@@ -418,3 +434,12 @@ class RegMap:
     @property
     def dma_rst_bf(self):
         return _RegDma_rst(self)
+
+    @property
+    def dma_buf_cnt(self):
+        """DMA QWORDS written to Buffer"""
+        return self._if.read(self.DMA_BUF_CNT_ADDR)
+
+    @property
+    def dma_buf_cnt_bf(self):
+        return _RegDma_buf_cnt(self)

@@ -58,6 +58,9 @@ port(
     -- DMA_RST.dma_rst
     csr_dma_rst_dma_rst_out : out std_logic;
 
+    -- DMA_Buf_Cnt.dma_buf_cnt
+    csr_dma_buf_cnt_dma_buf_cnt_in : in std_logic_vector(31 downto 0);
+
     -- AXI-Lite
     axil_awaddr   : in  std_logic_vector(ADDR_W-1 downto 0);
     axil_awprot   : in  std_logic_vector(2 downto 0);
@@ -172,6 +175,11 @@ signal csr_dma_length_dma_length_ff : std_logic_vector(31 downto 0);
 signal csr_dma_rst_rdata : std_logic_vector(31 downto 0);
 signal csr_dma_rst_wen : std_logic;
 signal csr_dma_rst_dma_rst_ff : std_logic;
+
+signal csr_dma_buf_cnt_rdata : std_logic_vector(31 downto 0);
+signal csr_dma_buf_cnt_ren : std_logic;
+signal csr_dma_buf_cnt_ren_ff : std_logic;
+signal csr_dma_buf_cnt_dma_buf_cnt_ff : std_logic_vector(31 downto 0);
 
 signal rdata_ff : std_logic_vector(31 downto 0);
 signal rvalid_ff : std_logic;
@@ -851,6 +859,44 @@ end process;
 
 
 --------------------------------------------------------------------------------
+-- CSR:
+-- [0x30] - DMA_Buf_Cnt - DMA QWORDS written to Buffer
+--------------------------------------------------------------------------------
+
+
+csr_dma_buf_cnt_ren <= ren when (raddr = "00110000") else '0'; -- 0x30
+process (clk) begin
+if rising_edge(clk) then
+if (rst = '1') then
+    csr_dma_buf_cnt_ren_ff <= '0'; -- 0x0
+else
+        csr_dma_buf_cnt_ren_ff <= csr_dma_buf_cnt_ren;
+end if;
+end if;
+end process;
+
+-----------------------
+-- Bit field:
+-- DMA_Buf_Cnt(31 downto 0) - dma_buf_cnt - DMA QWORDS written to Buffer
+-- access: ro, hardware: i
+-----------------------
+
+csr_dma_buf_cnt_rdata(31 downto 0) <= csr_dma_buf_cnt_dma_buf_cnt_ff;
+
+
+process (clk) begin
+if rising_edge(clk) then
+if (rst = '1') then
+    csr_dma_buf_cnt_dma_buf_cnt_ff <= "00000000000000000000000000000000"; -- 0x0
+else
+            csr_dma_buf_cnt_dma_buf_cnt_ff <= csr_dma_buf_cnt_dma_buf_cnt_in;
+end if;
+end if;
+end process;
+
+
+
+--------------------------------------------------------------------------------
 -- Write ready
 --------------------------------------------------------------------------------
 wready <= '1';
@@ -877,6 +923,7 @@ else
             when "00100100" => rdata_ff <= csr_sync_reset_rdata; -- 0x24
             when "00101000" => rdata_ff <= csr_dma_length_rdata; -- 0x28
             when "00101100" => rdata_ff <= csr_dma_rst_rdata; -- 0x2c
+            when "00110000" => rdata_ff <= csr_dma_buf_cnt_rdata; -- 0x30
             when others => rdata_ff <= "00000000000000000000000000000000"; -- 0x0
         end case;
     else

@@ -166,4 +166,15 @@ regmap:
         access: wosc
         hardware: o
         enums: []
+-   name: DMA_Buf_Cnt
+    description: DMA QWORDS written to Buffer
+    bitfields:
+    -   name: dma_buf_cnt
+        description: DMA QWORDS written to Buffer
+        reset: 0
+        width: 32
+        lsb: 0
+        access: ro
+        hardware: i
+        enums: []
 

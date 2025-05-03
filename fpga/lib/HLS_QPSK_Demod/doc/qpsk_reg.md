@@ -34,6 +34,7 @@ Base address: 0x00000000
 | [Sync_Reset](#sync_reset) | 0x24       | The 32-bit Sync Word Clear/Reset |
 | [DMA_LENGTH](#dma_length) | 0x28       | DMA block size |
 | [DMA_RST](#dma_rst)      | 0x2c       | Reset the DMA logic for capture buffer |
+| [DMA_Buf_Cnt](#dma_buf_cnt) | 0x30       | DMA QWORDS written to Buffer |
 
 ## F_in
 
@@ -235,5 +236,21 @@ Reset value: 0x00000000
 | :---             | :---   | :---            | :---       | :---        |
 | -                | 31:1   | -               | 0x0000000  | Reserved |
 | dma_rst          | 0      | wosc            | 0x0        | Reset the DMA logic for capture buffer |
+
+Back to [Register map](#register-map-summary).
+
+## DMA_Buf_Cnt
+
+DMA QWORDS written to Buffer
+
+Address offset: 0x30
+
+Reset value: 0x00000000
+
+![dma_buf_cnt](md_img/dma_buf_cnt.svg)
+
+| Name             | Bits   | Mode            | Reset      | Description |
+| :---             | :---   | :---            | :---       | :---        |
+| dma_buf_cnt      | 31:0   | ro              | 0x00000000 | DMA QWORDS written to Buffer |
 
 Back to [Register map](#register-map-summary).

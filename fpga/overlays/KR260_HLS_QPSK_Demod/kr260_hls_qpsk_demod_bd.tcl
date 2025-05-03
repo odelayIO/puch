@@ -420,7 +420,7 @@ proc create_hier_cell_Rx_QPSK { parentCell nameHier } {
   set axis_data_fifo_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axis_data_fifo:2.0 axis_data_fifo_0 ]
   set_property -dict [ list \
    CONFIG.FIFO_DEPTH {32768} \
-   CONFIG.FIFO_MEMORY_TYPE {ultra} \
+   CONFIG.FIFO_MEMORY_TYPE {auto} \
    CONFIG.FIFO_MODE {2} \
  ] $axis_data_fifo_0
 
@@ -535,7 +535,7 @@ proc create_root_design { parentCell } {
   # Create instance: axi_interconnect_0, and set properties
   set axi_interconnect_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect:2.1 axi_interconnect_0 ]
   set_property -dict [ list \
-   CONFIG.NUM_MI {5} \
+   CONFIG.NUM_MI {7} \
    CONFIG.NUM_SI {1} \
  ] $axi_interconnect_0
 
@@ -570,35 +570,43 @@ proc create_root_design { parentCell } {
    CONFIG.NUM_SI {2} \
  ] $smartconnect_0
 
-  # Create instance: system_ila_0, and set properties
-  set system_ila_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:system_ila:1.1 system_ila_0 ]
-  set_property -dict [ list \
-   CONFIG.ALL_PROBE_SAME_MU_CNT {2} \
-   CONFIG.C_DATA_DEPTH {16384} \
-   CONFIG.C_EN_STRG_QUAL {1} \
-   CONFIG.C_MON_TYPE {INTERFACE} \
-   CONFIG.C_NUM_MONITOR_SLOTS {2} \
-   CONFIG.C_PROBE0_MU_CNT {2} \
-   CONFIG.C_SLOT_0_APC_EN {1} \
-   CONFIG.C_SLOT_0_AXI_DATA_SEL {1} \
-   CONFIG.C_SLOT_0_AXI_TRIG_SEL {1} \
-   CONFIG.C_SLOT_0_INTF_TYPE {xilinx.com:interface:axis_rtl:1.0} \
-   CONFIG.C_SLOT_1_APC_EN {0} \
-   CONFIG.C_SLOT_1_AXI_DATA_SEL {1} \
-   CONFIG.C_SLOT_1_AXI_TRIG_SEL {1} \
-   CONFIG.C_SLOT_1_INTF_TYPE {xilinx.com:interface:axis_rtl:1.0} \
- ] $system_ila_0
-
   # Create instance: system_ila_1, and set properties
   set system_ila_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:system_ila:1.1 system_ila_1 ]
   set_property -dict [ list \
    CONFIG.ALL_PROBE_SAME_MU_CNT {2} \
-   CONFIG.C_DATA_DEPTH {2048} \
+   CONFIG.C_DATA_DEPTH {8192} \
    CONFIG.C_EN_STRG_QUAL {1} \
-   CONFIG.C_MON_TYPE {NATIVE} \
+   CONFIG.C_MON_TYPE {MIX} \
+   CONFIG.C_NUM_MONITOR_SLOTS {4} \
    CONFIG.C_NUM_OF_PROBES {1} \
    CONFIG.C_PROBE0_MU_CNT {2} \
    CONFIG.C_PROBE0_TYPE {0} \
+   CONFIG.C_SLOT {0} \
+   CONFIG.C_SLOT_0_APC_EN {0} \
+   CONFIG.C_SLOT_0_AXI_AR_SEL_DATA {1} \
+   CONFIG.C_SLOT_0_AXI_AR_SEL_TRIG {1} \
+   CONFIG.C_SLOT_0_AXI_AW_SEL_DATA {1} \
+   CONFIG.C_SLOT_0_AXI_AW_SEL_TRIG {1} \
+   CONFIG.C_SLOT_0_AXI_B_SEL_DATA {1} \
+   CONFIG.C_SLOT_0_AXI_B_SEL_TRIG {1} \
+   CONFIG.C_SLOT_0_AXI_R_SEL_DATA {1} \
+   CONFIG.C_SLOT_0_AXI_R_SEL_TRIG {1} \
+   CONFIG.C_SLOT_0_AXI_W_SEL_DATA {1} \
+   CONFIG.C_SLOT_0_AXI_W_SEL_TRIG {1} \
+   CONFIG.C_SLOT_0_INTF_TYPE {xilinx.com:interface:aximm_rtl:1.0} \
+   CONFIG.C_SLOT_1_APC_EN {0} \
+   CONFIG.C_SLOT_1_AXI_DATA_SEL {1} \
+   CONFIG.C_SLOT_1_AXI_TRIG_SEL {1} \
+   CONFIG.C_SLOT_1_INTF_TYPE {xilinx.com:interface:axis_rtl:1.0} \
+   CONFIG.C_SLOT_2_APC_EN {0} \
+   CONFIG.C_SLOT_2_AXI_DATA_SEL {1} \
+   CONFIG.C_SLOT_2_AXI_TRIG_SEL {1} \
+   CONFIG.C_SLOT_2_INTF_TYPE {xilinx.com:interface:axis_rtl:1.0} \
+   CONFIG.C_SLOT_3_APC_EN {0} \
+   CONFIG.C_SLOT_3_AXI_DATA_SEL {1} \
+   CONFIG.C_SLOT_3_AXI_TRIG_SEL {1} \
+   CONFIG.C_SLOT_3_INTF_TYPE {xilinx.com:interface:axis_rtl:1.0} \
+   CONFIG.C_TRIGOUT_EN {false} \
  ] $system_ila_1
 
   # Create instance: zynq_ultra_ps_e_0, and set properties
@@ -2179,9 +2187,9 @@ Port;FD4A0000;FD4AFFFF;1|FPD;DPDMA;FD4C0000;FD4CFFFF;1|FPD;DDR_XMPU5_CFG;FD05000
  ] $zynq_ultra_ps_e_0
 
   # Create interface connections
-connect_bd_intf_net -intf_net Conn [get_bd_intf_pins Rx_QPSK/B1] [get_bd_intf_pins system_ila_0/SLOT_1_AXIS]
+connect_bd_intf_net -intf_net Conn [get_bd_intf_pins Rx_QPSK/B1] [get_bd_intf_pins system_ila_1/SLOT_3_AXIS]
   connect_bd_intf_net -intf_net QPSK_Demod_Top_0_B [get_bd_intf_pins Rx_QPSK/B] [get_bd_intf_pins axi_dma_0/S_AXIS_S2MM]
-connect_bd_intf_net -intf_net [get_bd_intf_nets QPSK_Demod_Top_0_B] [get_bd_intf_pins Rx_QPSK/B] [get_bd_intf_pins system_ila_0/SLOT_0_AXIS]
+connect_bd_intf_net -intf_net [get_bd_intf_nets QPSK_Demod_Top_0_B] [get_bd_intf_pins Rx_QPSK/B] [get_bd_intf_pins system_ila_1/SLOT_2_AXIS]
   connect_bd_intf_net -intf_net S00_AXI_1 [get_bd_intf_pins axi_interconnect_0/S00_AXI] [get_bd_intf_pins zynq_ultra_ps_e_0/M_AXI_HPM0_FPD]
   connect_bd_intf_net -intf_net axi_dma_0_M_AXIS_MM2S [get_bd_intf_pins axi_dma_0/M_AXIS_MM2S] [get_bd_intf_pins gng_top_0/A]
   connect_bd_intf_net -intf_net axi_dma_0_M_AXI_MM2S [get_bd_intf_pins axi_dma_0/M_AXI_MM2S] [get_bd_intf_pins smartconnect_0/S00_AXI]
@@ -2191,15 +2199,19 @@ connect_bd_intf_net -intf_net [get_bd_intf_nets QPSK_Demod_Top_0_B] [get_bd_intf
   connect_bd_intf_net -intf_net axi_interconnect_0_M02_AXI [get_bd_intf_pins axi_interconnect_0/M02_AXI] [get_bd_intf_pins led_reg_0/axil]
   connect_bd_intf_net -intf_net axi_interconnect_0_M03_AXI [get_bd_intf_pins Timestamp_0/axil] [get_bd_intf_pins axi_interconnect_0/M03_AXI]
   connect_bd_intf_net -intf_net axi_interconnect_0_M04_AXI [get_bd_intf_pins axi_interconnect_0/M04_AXI] [get_bd_intf_pins gng_top_0/axil]
+connect_bd_intf_net -intf_net [get_bd_intf_nets axi_interconnect_0_M04_AXI] [get_bd_intf_pins axi_interconnect_0/M04_AXI] [get_bd_intf_pins system_ila_1/SLOT_0_AXI]
+  set_property HDL_ATTRIBUTE.DEBUG {true} [get_bd_intf_nets axi_interconnect_0_M04_AXI]
   connect_bd_intf_net -intf_net gng_top_0_B [get_bd_intf_pins Rx_QPSK/A] [get_bd_intf_pins gng_top_0/B]
+connect_bd_intf_net -intf_net [get_bd_intf_nets gng_top_0_B] [get_bd_intf_pins Rx_QPSK/A] [get_bd_intf_pins system_ila_1/SLOT_1_AXIS]
+  set_property HDL_ATTRIBUTE.DEBUG {true} [get_bd_intf_nets gng_top_0_B]
   connect_bd_intf_net -intf_net smartconnect_0_M00_AXI [get_bd_intf_pins smartconnect_0/M00_AXI] [get_bd_intf_pins zynq_ultra_ps_e_0/S_AXI_HP0_FPD]
 
   # Create port connections
   connect_bd_net -net Rx_QPSK_Res [get_bd_pins Rx_QPSK/Res] [get_bd_pins system_ila_1/probe0]
   connect_bd_net -net led_reg_0_csr_user_leds_user_leds_out [get_bd_ports user_leds] [get_bd_pins led_reg_0/csr_user_leds_user_leds_out]
-  connect_bd_net -net proc_sys_reset_0_peripheral_aresetn [get_bd_pins Rx_QPSK/rstn] [get_bd_pins axi_dma_0/axi_resetn] [get_bd_pins axi_interconnect_0/ARESETN] [get_bd_pins axi_interconnect_0/M00_ARESETN] [get_bd_pins axi_interconnect_0/M01_ARESETN] [get_bd_pins axi_interconnect_0/M02_ARESETN] [get_bd_pins axi_interconnect_0/M03_ARESETN] [get_bd_pins axi_interconnect_0/M04_ARESETN] [get_bd_pins axi_interconnect_0/S00_ARESETN] [get_bd_pins gng_top_0/rstn] [get_bd_pins proc_sys_reset_0/peripheral_aresetn] [get_bd_pins smartconnect_0/aresetn] [get_bd_pins system_ila_0/resetn]
+  connect_bd_net -net proc_sys_reset_0_peripheral_aresetn [get_bd_pins Rx_QPSK/rstn] [get_bd_pins axi_dma_0/axi_resetn] [get_bd_pins axi_interconnect_0/ARESETN] [get_bd_pins axi_interconnect_0/M00_ARESETN] [get_bd_pins axi_interconnect_0/M01_ARESETN] [get_bd_pins axi_interconnect_0/M02_ARESETN] [get_bd_pins axi_interconnect_0/M03_ARESETN] [get_bd_pins axi_interconnect_0/M04_ARESETN] [get_bd_pins axi_interconnect_0/M05_ARESETN] [get_bd_pins axi_interconnect_0/M06_ARESETN] [get_bd_pins axi_interconnect_0/S00_ARESETN] [get_bd_pins gng_top_0/rstn] [get_bd_pins proc_sys_reset_0/peripheral_aresetn] [get_bd_pins smartconnect_0/aresetn] [get_bd_pins system_ila_1/resetn]
   connect_bd_net -net proc_sys_reset_0_peripheral_reset [get_bd_pins Rx_QPSK/rst] [get_bd_pins Timestamp_0/rst] [get_bd_pins led_reg_0/rst] [get_bd_pins proc_sys_reset_0/peripheral_reset]
-  connect_bd_net -net zynq_ultra_ps_e_0_pl_clk0 [get_bd_pins Rx_QPSK/aclk] [get_bd_pins Timestamp_0/clk] [get_bd_pins axi_dma_0/m_axi_mm2s_aclk] [get_bd_pins axi_dma_0/m_axi_s2mm_aclk] [get_bd_pins axi_dma_0/s_axi_lite_aclk] [get_bd_pins axi_interconnect_0/ACLK] [get_bd_pins axi_interconnect_0/M00_ACLK] [get_bd_pins axi_interconnect_0/M01_ACLK] [get_bd_pins axi_interconnect_0/M02_ACLK] [get_bd_pins axi_interconnect_0/M03_ACLK] [get_bd_pins axi_interconnect_0/M04_ACLK] [get_bd_pins axi_interconnect_0/S00_ACLK] [get_bd_pins gng_top_0/clk] [get_bd_pins led_reg_0/clk] [get_bd_pins proc_sys_reset_0/slowest_sync_clk] [get_bd_pins smartconnect_0/aclk] [get_bd_pins system_ila_0/clk] [get_bd_pins system_ila_1/clk] [get_bd_pins zynq_ultra_ps_e_0/maxihpm0_fpd_aclk] [get_bd_pins zynq_ultra_ps_e_0/pl_clk0] [get_bd_pins zynq_ultra_ps_e_0/saxihp0_fpd_aclk]
+  connect_bd_net -net zynq_ultra_ps_e_0_pl_clk0 [get_bd_pins Rx_QPSK/aclk] [get_bd_pins Timestamp_0/clk] [get_bd_pins axi_dma_0/m_axi_mm2s_aclk] [get_bd_pins axi_dma_0/m_axi_s2mm_aclk] [get_bd_pins axi_dma_0/s_axi_lite_aclk] [get_bd_pins axi_interconnect_0/ACLK] [get_bd_pins axi_interconnect_0/M00_ACLK] [get_bd_pins axi_interconnect_0/M01_ACLK] [get_bd_pins axi_interconnect_0/M02_ACLK] [get_bd_pins axi_interconnect_0/M03_ACLK] [get_bd_pins axi_interconnect_0/M04_ACLK] [get_bd_pins axi_interconnect_0/M05_ACLK] [get_bd_pins axi_interconnect_0/M06_ACLK] [get_bd_pins axi_interconnect_0/S00_ACLK] [get_bd_pins gng_top_0/clk] [get_bd_pins led_reg_0/clk] [get_bd_pins proc_sys_reset_0/slowest_sync_clk] [get_bd_pins smartconnect_0/aclk] [get_bd_pins system_ila_1/clk] [get_bd_pins zynq_ultra_ps_e_0/maxihpm0_fpd_aclk] [get_bd_pins zynq_ultra_ps_e_0/pl_clk0] [get_bd_pins zynq_ultra_ps_e_0/saxihp0_fpd_aclk]
   connect_bd_net -net zynq_ultra_ps_e_0_pl_resetn0 [get_bd_pins proc_sys_reset_0/ext_reset_in] [get_bd_pins zynq_ultra_ps_e_0/pl_resetn0]
 
   # Create address segments
