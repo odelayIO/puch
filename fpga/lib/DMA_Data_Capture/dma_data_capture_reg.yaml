@@ -19,7 +19,7 @@ regmap:
     -   name: len
         description: The start of HLS processor
         reset: 0
-        width: 1
+        width: 16
         lsb: 0
         access: rw
         hardware: o
