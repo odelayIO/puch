@@ -1,0 +1,32 @@
+[globcfg]
+base_address = 0
+data_width = 32
+address_width = 8
+register_reset = sync_pos
+address_increment = data_width
+address_alignment = data_width
+force_name_case = none
+regmap_path = dma_data_capture_reg.yaml
+
+[vhdl_module]
+path = hw/dma_data_capture_reg.vhd
+read_filler = 0
+interface = axil
+generator = Vhdl
+
+[vhdl_header]
+path = hw/dma_data_capture_pkg.vhd
+prefix = CSR
+generator = VhdlHeader
+
+[py]
+path = sw/dma_data_capture_regmap.py
+generator = Python
+
+[md_doc]
+path = doc/dma_data_capture_reg.md
+title = Register map
+print_images = True
+image_dir = md_img
+print_conventions = True
+generator = Markdown
