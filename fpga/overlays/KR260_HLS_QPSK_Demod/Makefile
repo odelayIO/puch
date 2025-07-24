@@ -60,6 +60,7 @@ reg_if:
 	cd ../../lib/timestamp && make && pwd
 	cd ../../lib/AWGN_GNG && make && pwd
 	cd ../../lib/HLS_QPSK_Demod && make reg_if && pwd
+	cd ../../lib/DMA_Data_Capture && make && pwd
 
 build_design: clean 
 ## build_design: Builds the Vivado project without regenerating Lib
@@ -81,6 +82,7 @@ clean_all:
 	rm -fr ../../lib/HLS_fixed_gain/*.jou
 	cd ../../ip/KR260 && make clean && pwd
 	cd ../../lib/HLS_QPSK_Demod && make clean && pwd
+	cd ../../lib/DMA_Data_Capture && make clean && pwd
 	cd ../../lib/timestamp && make clean && pwd
 	cd ../../lib/AWGN_GNG && make clean && pwd
 	cd ../../lib/led_reg && make clean && pwd
