@@ -7,7 +7,7 @@ use ieee.numeric_std.all;
 
 entity timestamp_reg is
 generic(
-    ADDR_W : integer := 16;
+    ADDR_W : integer := 8;
     DATA_W : integer := 32;
     STRB_W : integer := 4
 );
@@ -57,7 +57,7 @@ port(
 end entity;
 
 architecture rtl of timestamp_reg is
-subtype ADDR_T is std_logic_vector(15 downto 0);
+subtype ADDR_T is std_logic_vector(7 downto 0);
 
 signal wready : std_logic;
 signal waddr  : std_logic_vector(ADDR_W-1 downto 0);
@@ -205,7 +205,7 @@ end process;
 csr_time_stamp_year_rdata(31 downto 16) <= (others => '0');
 
 
-csr_time_stamp_year_ren <= ren when (raddr = "0000000000010000") else '0'; -- 0x10
+csr_time_stamp_year_ren <= ren when (raddr = "00010000") else '0'; -- 0x10
 process (clk) begin
 if rising_edge(clk) then
 if (rst = '1') then
@@ -244,7 +244,7 @@ end process;
 csr_time_stamp_month_rdata(31 downto 8) <= (others => '0');
 
 
-csr_time_stamp_month_ren <= ren when (raddr = "0000000000010100") else '0'; -- 0x14
+csr_time_stamp_month_ren <= ren when (raddr = "00010100") else '0'; -- 0x14
 process (clk) begin
 if rising_edge(clk) then
 if (rst = '1') then
@@ -283,7 +283,7 @@ end process;
 csr_time_stamp_day_rdata(31 downto 8) <= (others => '0');
 
 
-csr_time_stamp_day_ren <= ren when (raddr = "0000000000011000") else '0'; -- 0x18
+csr_time_stamp_day_ren <= ren when (raddr = "00011000") else '0'; -- 0x18
 process (clk) begin
 if rising_edge(clk) then
 if (rst = '1') then
@@ -322,7 +322,7 @@ end process;
 csr_time_stamp_hour_rdata(31 downto 8) <= (others => '0');
 
 
-csr_time_stamp_hour_ren <= ren when (raddr = "0000000000011100") else '0'; -- 0x1c
+csr_time_stamp_hour_ren <= ren when (raddr = "00011100") else '0'; -- 0x1c
 process (clk) begin
 if rising_edge(clk) then
 if (rst = '1') then
@@ -361,7 +361,7 @@ end process;
 csr_time_stamp_minute_rdata(31 downto 8) <= (others => '0');
 
 
-csr_time_stamp_minute_ren <= ren when (raddr = "0000000000100000") else '0'; -- 0x20
+csr_time_stamp_minute_ren <= ren when (raddr = "00100000") else '0'; -- 0x20
 process (clk) begin
 if rising_edge(clk) then
 if (rst = '1') then
@@ -400,7 +400,7 @@ end process;
 csr_time_stamp_seconds_rdata(31 downto 8) <= (others => '0');
 
 
-csr_time_stamp_seconds_ren <= ren when (raddr = "0000000000100100") else '0'; -- 0x24
+csr_time_stamp_seconds_ren <= ren when (raddr = "00100100") else '0'; -- 0x24
 process (clk) begin
 if rising_edge(clk) then
 if (rst = '1') then
@@ -447,12 +447,12 @@ if (rst = '1') then
 else
     if (ren = '1') then
         case ADDR_T'(raddr) is
-            when "0000000000010000" => rdata_ff <= csr_time_stamp_year_rdata; -- 0x10
-            when "0000000000010100" => rdata_ff <= csr_time_stamp_month_rdata; -- 0x14
-            when "0000000000011000" => rdata_ff <= csr_time_stamp_day_rdata; -- 0x18
-            when "0000000000011100" => rdata_ff <= csr_time_stamp_hour_rdata; -- 0x1c
-            when "0000000000100000" => rdata_ff <= csr_time_stamp_minute_rdata; -- 0x20
-            when "0000000000100100" => rdata_ff <= csr_time_stamp_seconds_rdata; -- 0x24
+            when "00010000" => rdata_ff <= csr_time_stamp_year_rdata; -- 0x10
+            when "00010100" => rdata_ff <= csr_time_stamp_month_rdata; -- 0x14
+            when "00011000" => rdata_ff <= csr_time_stamp_day_rdata; -- 0x18
+            when "00011100" => rdata_ff <= csr_time_stamp_hour_rdata; -- 0x1c
+            when "00100000" => rdata_ff <= csr_time_stamp_minute_rdata; -- 0x20
+            when "00100100" => rdata_ff <= csr_time_stamp_seconds_rdata; -- 0x24
             when others => rdata_ff <= "00000000000000000000000000000000"; -- 0x0
         end case;
     else

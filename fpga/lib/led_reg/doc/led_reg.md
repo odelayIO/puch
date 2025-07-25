@@ -22,13 +22,13 @@ Base address: 0x00000000
 
 | Name                     | Address    | Description |
 | :---                     | :---       | :---        |
-| [User_LEDs](#user_leds)  | 0x0010     | User Leds on KR260 (user_leds[1:0]) |
+| [User_LEDs](#user_leds)  | 0x10       | User Leds on KR260 (user_leds[1:0]) |
 
 ## User_LEDs
 
 User Leds on KR260 (user_leds[1:0])
 
-Address offset: 0x0010
+Address offset: 0x10
 
 Reset value: 0x00000000
 

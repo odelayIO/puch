@@ -104,10 +104,10 @@ architecture rtl of DMA_Data_Capture_Top is
   signal fifo_tvalid        : std_logic;
   signal fifo_tlast         : std_logic;
   signal fifo_trdy          : std_logic;
-  signal fifo_cnt           : unsigned(31 downto 0);
+  signal fifo_cnt           : unsigned(15 downto 0);
 
   -- Register IF Signals
-  signal cap_depth          : std_logic_vector(31 downto 0);
+  signal cap_depth          : std_logic_vector(15 downto 0);
   signal cap_trig           : std_logic;
   signal fifo_flush         : std_logic;
   signal fifo_flush_n       : std_logic;

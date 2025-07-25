@@ -22,18 +22,18 @@ Base address: 0x00000000
 
 | Name                     | Address    | Description |
 | :---                     | :---       | :---        |
-| [Time_Stamp_Year](#time_stamp_year) | 0x0010     | Time Stamp Year (Hex Value) |
-| [Time_Stamp_Month](#time_stamp_month) | 0x0014     | Time Stamp Month (Hex Value) |
-| [Time_Stamp_Day](#time_stamp_day) | 0x0018     | Time Stamp Day (Hex Value) |
-| [Time_Stamp_Hour](#time_stamp_hour) | 0x001c     | Time Stamp Hour (Hex Value) |
-| [Time_Stamp_Minute](#time_stamp_minute) | 0x0020     | Time Stamp Minute (Hex Value) |
-| [Time_Stamp_Seconds](#time_stamp_seconds) | 0x0024     | Time Stamp Seconds (Hex Value) |
+| [Time_Stamp_Year](#time_stamp_year) | 0x10       | Time Stamp Year (Hex Value) |
+| [Time_Stamp_Month](#time_stamp_month) | 0x14       | Time Stamp Month (Hex Value) |
+| [Time_Stamp_Day](#time_stamp_day) | 0x18       | Time Stamp Day (Hex Value) |
+| [Time_Stamp_Hour](#time_stamp_hour) | 0x1c       | Time Stamp Hour (Hex Value) |
+| [Time_Stamp_Minute](#time_stamp_minute) | 0x20       | Time Stamp Minute (Hex Value) |
+| [Time_Stamp_Seconds](#time_stamp_seconds) | 0x24       | Time Stamp Seconds (Hex Value) |
 
 ## Time_Stamp_Year
 
 Time Stamp Year (Hex Value)
 
-Address offset: 0x0010
+Address offset: 0x10
 
 Reset value: 0x00000000
 
@@ -50,7 +50,7 @@ Back to [Register map](#register-map-summary).
 
 Time Stamp Month (Hex Value)
 
-Address offset: 0x0014
+Address offset: 0x14
 
 Reset value: 0x00000000
 
@@ -67,7 +67,7 @@ Back to [Register map](#register-map-summary).
 
 Time Stamp Day (Hex Value)
 
-Address offset: 0x0018
+Address offset: 0x18
 
 Reset value: 0x00000000
 
@@ -84,7 +84,7 @@ Back to [Register map](#register-map-summary).
 
 Time Stamp Hour (Hex Value)
 
-Address offset: 0x001c
+Address offset: 0x1c
 
 Reset value: 0x00000000
 
@@ -101,7 +101,7 @@ Back to [Register map](#register-map-summary).
 
 Time Stamp Minute (Hex Value)
 
-Address offset: 0x0020
+Address offset: 0x20
 
 Reset value: 0x00000000
 
@@ -118,7 +118,7 @@ Back to [Register map](#register-map-summary).
 
 Time Stamp Seconds (Hex Value)
 
-Address offset: 0x0024
+Address offset: 0x24
 
 Reset value: 0x00000000
 

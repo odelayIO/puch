@@ -61,10 +61,6 @@ entity QPSK_Demod_Top is
     rst             : in  std_logic;
     ce              : in  std_logic := '1';
     -- ------------------------------------------------------
-    --    Control/Status Signals
-    -- ------------------------------------------------------
-    fifo_rstn       : out std_logic;
-    -- ------------------------------------------------------
     --    AXI Stream Input (QPSK Demod Input)
     -- ------------------------------------------------------
     A_TDATA         : in  std_logic_vector(31 downto 0);
@@ -74,10 +70,9 @@ entity QPSK_Demod_Top is
     -- ------------------------------------------------------
     --    AXI Stream Output (QPSK Demod Const)
     -- ------------------------------------------------------
-    B_TDATA         : out std_logic_vector(31 downto 0);
-    B_TVALID        : out std_logic;
-    B_TREADY        : in  std_logic;
-    B_TLAST         : out std_logic;
+    B_SYM_TDATA     : out std_logic_vector(31 downto 0);
+    B_SYM_TVALID    : out std_logic;
+    B_SYM_TREADY    : in  std_logic;
     -- ------------------------------------------------------
     --    AXI-Lite
     -- ------------------------------------------------------
@@ -136,13 +131,6 @@ architecture RTL of QPSK_Demod_Top is
   signal sync_lock          : std_logic := '0';
   signal sync_clr           : std_logic;
 
-  -- DMA Capture Buffer Signals
-  signal dma_length         : std_logic_vector(31 downto 0);
-  signal dma_dword_cnt      : std_logic_vector(31 downto 0);
-  signal dma_rst            : std_logic;
-
-  signal B_TVALID_i         : std_logic;
-  signal B_TDATA_i          : std_logic_vector(31 downto 0);
 
 
   -- ----------------------------------------
@@ -205,15 +193,14 @@ architecture RTL of QPSK_Demod_Top is
   --attribute mark_debug of sync_lock         : signal is "true"; 
   --attribute mark_debug of sync_clr          : signal is "true";  
 
-  attribute mark_debug of dma_length        : signal is "true";  
-  attribute mark_debug of dma_dword_cnt     : signal is "true";  
-  attribute mark_debug of dma_rst           : signal is "true";  
-  attribute mark_debug of A_TVALID          : signal is "true";  
-  attribute mark_debug of A_TREADY          : signal is "true";  
-  attribute mark_debug of A_TLAST           : signal is "true";  
-  attribute mark_debug of B_TVALID          : signal is "true";  
-  attribute mark_debug of B_TREADY          : signal is "true";  
-  attribute mark_debug of B_TLAST           : signal is "true";  
+  --attribute mark_debug of dma_length        : signal is "true";  
+  --attribute mark_debug of dma_dword_cnt     : signal is "true";  
+  --attribute mark_debug of dma_rst           : signal is "true";  
+  --attribute mark_debug of A_TVALID          : signal is "true";  
+  --attribute mark_debug of A_TREADY          : signal is "true";  
+  --attribute mark_debug of A_TLAST           : signal is "true";  
+  --attribute mark_debug of B_TVALID          : signal is "true";  
+  --attribute mark_debug of B_TREADY          : signal is "true";  
 
 begin
 
@@ -255,11 +242,6 @@ begin
       csr_sync_word_sync_word_out     => sync_word, 
       csr_sync_lock_sync_lock_in      => sync_lock,
       csr_sync_reset_sync_clr_out     => sync_clr,
-      ---------------------------------+-----------------------------------------------
-      csr_dma_length_dma_length_out   => dma_length,
-      csr_dma_rst_dma_rst_out         => dma_rst,
-      ---------------------------------+-----------------------------------------------
-      csr_dma_buf_cnt_dma_buf_cnt_in  => dma_dword_cnt,
       -- ---------------------------------------------------
       --    AXI-Lite Bus
       -- ---------------------------------------------------
@@ -313,45 +295,14 @@ begin
       Q_in              => A_TDATA(15 downto 0),
       Q_in_ap_vld       => A_TVALID,
       -------------------+-----------------------------
-      I_out             => B_TDATA_i(31 downto 16),
-      Q_out             => B_TDATA_i(15 downto 0),
-      I_out_ap_vld      => B_TVALID_i,
+      I_out             => B_SYM_TDATA(31 downto 16),
+      Q_out             => B_SYM_TDATA(15 downto 0),
+      I_out_ap_vld      => B_SYM_TVALID,
       Q_out_ap_vld      => open,
       -------------------+-----------------------------
       demod_bits        => demod_bits,
       demod_bits_ap_vld => demod_bits_stb
     );
-
-  -- -------------------------------------------------------------------
-  --  DMA Control Logic
-  -- -------------------------------------------------------------------
-  process(clk,rst,dma_rst)
-  begin
-    if((rst = '1') OR (dma_rst='1')) then
-      dma_dword_cnt   <= (others => '0');
-      B_TVALID        <= '0';
-      B_TLAST         <= '0';
-      B_TDATA         <= (others => '0');
-    elsif(rising_edge(clk)) then
-      B_TVALID        <= '0';
-      B_TDATA         <= (others => '0');
-      B_TLAST         <= '0';
-      -- Only stream data to FIFO for size for DMA packet
-      if(unsigned(dma_dword_cnt) < unsigned(dma_length)) then
-        B_TVALID      <= B_TVALID_i;
-        B_TDATA       <= B_TDATA_i;
-        -- TODO: TREADY assumes DMA FIFO is ready
-        if((B_TREADY='1') AND (B_TVALID_i='1')) then 
-          dma_dword_cnt   <= std_logic_vector(unsigned(dma_dword_cnt) + 1);
-          if(unsigned(dma_dword_cnt) = unsigned(dma_length)-1) then
-            B_TLAST   <= '1';
-          end if;
-        end if;
-      end if;
-    end if;
-  end process;
-  -- Clear FIFO to ensure DMA FIFO is ready
-  fifo_rstn <= NOT(dma_rst);
 
 
   -- -------------------------------------------------------------------

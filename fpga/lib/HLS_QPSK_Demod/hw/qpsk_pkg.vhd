@@ -52,18 +52,6 @@ package qpsk_pkg is
   constant CSR_SYNC_RESET_ADDR : std_logic_vector(8-1 downto 0) := to_unsigned(36, 8);
   constant CSR_SYNC_RESET_RESET : std_logic_vector(32-1 downto 0) := to_unsigned(0, 32);
 
-  -- DMA_LENGTH - DMA block size
-  constant CSR_DMA_LENGTH_ADDR : std_logic_vector(8-1 downto 0) := to_unsigned(40, 8);
-  constant CSR_DMA_LENGTH_RESET : std_logic_vector(32-1 downto 0) := to_unsigned(0, 32);
-
-  -- DMA_RST - Reset the DMA logic for capture buffer
-  constant CSR_DMA_RST_ADDR : std_logic_vector(8-1 downto 0) := to_unsigned(44, 8);
-  constant CSR_DMA_RST_RESET : std_logic_vector(32-1 downto 0) := to_unsigned(0, 32);
-
-  -- DMA_Buf_Cnt - DMA QWORDS written to Buffer
-  constant CSR_DMA_BUF_CNT_ADDR : std_logic_vector(8-1 downto 0) := to_unsigned(48, 8);
-  constant CSR_DMA_BUF_CNT_RESET : std_logic_vector(32-1 downto 0) := to_unsigned(0, 32);
-
 
 
 end package qpsk_pkg;

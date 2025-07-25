@@ -46,7 +46,7 @@ use work.Timestamp_Pkg.all;
 
 entity Timestamp is
   generic(
-    ADDR_W : integer := 16;
+    ADDR_W : integer := 8;
     DATA_W : integer := 32;
     STRB_W : integer := 4
   );

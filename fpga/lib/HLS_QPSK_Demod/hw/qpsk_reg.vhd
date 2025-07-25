@@ -52,15 +52,6 @@ port(
     -- Sync_Reset.sync_clr
     csr_sync_reset_sync_clr_out : out std_logic;
 
-    -- DMA_LENGTH.dma_length
-    csr_dma_length_dma_length_out : out std_logic_vector(31 downto 0);
-
-    -- DMA_RST.dma_rst
-    csr_dma_rst_dma_rst_out : out std_logic;
-
-    -- DMA_Buf_Cnt.dma_buf_cnt
-    csr_dma_buf_cnt_dma_buf_cnt_in : in std_logic_vector(31 downto 0);
-
     -- AXI-Lite
     axil_awaddr   : in  std_logic_vector(ADDR_W-1 downto 0);
     axil_awprot   : in  std_logic_vector(2 downto 0);
@@ -165,21 +156,6 @@ signal csr_sync_lock_sync_lock_ff : std_logic;
 signal csr_sync_reset_rdata : std_logic_vector(31 downto 0);
 signal csr_sync_reset_wen : std_logic;
 signal csr_sync_reset_sync_clr_ff : std_logic;
-
-signal csr_dma_length_rdata : std_logic_vector(31 downto 0);
-signal csr_dma_length_wen : std_logic;
-signal csr_dma_length_ren : std_logic;
-signal csr_dma_length_ren_ff : std_logic;
-signal csr_dma_length_dma_length_ff : std_logic_vector(31 downto 0);
-
-signal csr_dma_rst_rdata : std_logic_vector(31 downto 0);
-signal csr_dma_rst_wen : std_logic;
-signal csr_dma_rst_dma_rst_ff : std_logic;
-
-signal csr_dma_buf_cnt_rdata : std_logic_vector(31 downto 0);
-signal csr_dma_buf_cnt_ren : std_logic;
-signal csr_dma_buf_cnt_ren_ff : std_logic;
-signal csr_dma_buf_cnt_dma_buf_cnt_ff : std_logic_vector(31 downto 0);
 
 signal rdata_ff : std_logic_vector(31 downto 0);
 signal rvalid_ff : std_logic;
@@ -768,135 +744,6 @@ end process;
 
 
 --------------------------------------------------------------------------------
--- CSR:
--- [0x28] - DMA_LENGTH - DMA block size
---------------------------------------------------------------------------------
-
-csr_dma_length_wen <= wen when (waddr = "00101000") else '0'; -- 0x28
-
-csr_dma_length_ren <= ren when (raddr = "00101000") else '0'; -- 0x28
-process (clk) begin
-if rising_edge(clk) then
-if (rst = '1') then
-    csr_dma_length_ren_ff <= '0'; -- 0x0
-else
-        csr_dma_length_ren_ff <= csr_dma_length_ren;
-end if;
-end if;
-end process;
-
------------------------
--- Bit field:
--- DMA_LENGTH(31 downto 0) - dma_length - Contrains the length of the DMA transfer block size
--- access: rw, hardware: o
------------------------
-
-csr_dma_length_rdata(31 downto 0) <= csr_dma_length_dma_length_ff;
-
-csr_dma_length_dma_length_out <= csr_dma_length_dma_length_ff;
-
-process (clk) begin
-if rising_edge(clk) then
-if (rst = '1') then
-    csr_dma_length_dma_length_ff <= "00000000000000000000000000000000"; -- 0x0
-else
-        if (csr_dma_length_wen = '1') then
-            if (wstrb(0) = '1') then
-                csr_dma_length_dma_length_ff(7 downto 0) <= wdata(7 downto 0);
-            end if;
-            if (wstrb(1) = '1') then
-                csr_dma_length_dma_length_ff(15 downto 8) <= wdata(15 downto 8);
-            end if;
-            if (wstrb(2) = '1') then
-                csr_dma_length_dma_length_ff(23 downto 16) <= wdata(23 downto 16);
-            end if;
-            if (wstrb(3) = '1') then
-                csr_dma_length_dma_length_ff(31 downto 24) <= wdata(31 downto 24);
-            end if;
-        else
-            csr_dma_length_dma_length_ff <= csr_dma_length_dma_length_ff;
-        end if;
-end if;
-end if;
-end process;
-
-
-
---------------------------------------------------------------------------------
--- CSR:
--- [0x2c] - DMA_RST - Reset the DMA logic for capture buffer
---------------------------------------------------------------------------------
-csr_dma_rst_rdata(31 downto 1) <= (others => '0');
-
-csr_dma_rst_wen <= wen when (waddr = "00101100") else '0'; -- 0x2c
-
------------------------
--- Bit field:
--- DMA_RST(0) - dma_rst - Reset the DMA logic for capture buffer
--- access: wosc, hardware: o
------------------------
-
-csr_dma_rst_rdata(0) <= '0';
-
-csr_dma_rst_dma_rst_out <= csr_dma_rst_dma_rst_ff;
-
-process (clk) begin
-if rising_edge(clk) then
-if (rst = '1') then
-    csr_dma_rst_dma_rst_ff <= '0'; -- 0x0
-else
-        if (csr_dma_rst_wen = '1') then
-            if (wstrb(0) = '1') then
-                csr_dma_rst_dma_rst_ff <= wdata(0);
-            end if;
-        else
-            csr_dma_rst_dma_rst_ff <= '0';
-        end if;
-end if;
-end if;
-end process;
-
-
-
---------------------------------------------------------------------------------
--- CSR:
--- [0x30] - DMA_Buf_Cnt - DMA QWORDS written to Buffer
---------------------------------------------------------------------------------
-
-
-csr_dma_buf_cnt_ren <= ren when (raddr = "00110000") else '0'; -- 0x30
-process (clk) begin
-if rising_edge(clk) then
-if (rst = '1') then
-    csr_dma_buf_cnt_ren_ff <= '0'; -- 0x0
-else
-        csr_dma_buf_cnt_ren_ff <= csr_dma_buf_cnt_ren;
-end if;
-end if;
-end process;
-
------------------------
--- Bit field:
--- DMA_Buf_Cnt(31 downto 0) - dma_buf_cnt - DMA QWORDS written to Buffer
--- access: ro, hardware: i
------------------------
-
-csr_dma_buf_cnt_rdata(31 downto 0) <= csr_dma_buf_cnt_dma_buf_cnt_ff;
-
-
-process (clk) begin
-if rising_edge(clk) then
-if (rst = '1') then
-    csr_dma_buf_cnt_dma_buf_cnt_ff <= "00000000000000000000000000000000"; -- 0x0
-else
-            csr_dma_buf_cnt_dma_buf_cnt_ff <= csr_dma_buf_cnt_dma_buf_cnt_in;
-end if;
-end if;
-end process;
-
-
-
---------------------------------------------------------------------------------
 -- Write ready
 --------------------------------------------------------------------------------
 wready <= '1';
@@ -921,9 +768,6 @@ else
             when "00011100" => rdata_ff <= csr_sync_word_rdata; -- 0x1c
             when "00100000" => rdata_ff <= csr_sync_lock_rdata; -- 0x20
             when "00100100" => rdata_ff <= csr_sync_reset_rdata; -- 0x24
-            when "00101000" => rdata_ff <= csr_dma_length_rdata; -- 0x28
-            when "00101100" => rdata_ff <= csr_dma_rst_rdata; -- 0x2c
-            when "00110000" => rdata_ff <= csr_dma_buf_cnt_rdata; -- 0x30
             when others => rdata_ff <= "00000000000000000000000000000000"; -- 0x0
         end case;
     else
