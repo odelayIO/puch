@@ -7,7 +7,7 @@ regmap:
     bitfields:
     -   name: len
         description: The depth of the capture FIFO
-        reset: 32768
+        reset: 0
         width: 32
         lsb: 0
         access: ro
@@ -45,4 +45,26 @@ regmap:
         lsb: 0
         access: rw
         hardware: o
+        enums: []
+-   name: FIFO_WR_Ptr
+    description: FIFO Write Pointer
+    bitfields:
+    -   name: wr_ptr
+        description: FIFO Write Pointer
+        reset: 0
+        width: 32
+        lsb: 0
+        access: ro
+        hardware: i
+        enums: []
+-   name: FIFO_RD_Ptr
+    description: FIFO Read Pointer
+    bitfields:
+    -   name: rd_ptr
+        description: FIFO Read Pointer
+        reset: 0
+        width: 32 
+        lsb: 0
+        access: ro
+        hardware: i
         enums: []

@@ -71,6 +71,28 @@ class _RegFifo_flush:
         self._rmap._if.write(self._rmap.FIFO_FLUSH_ADDR, rdata)
 
 
+class _RegFifo_wr_ptr:
+    def __init__(self, rmap):
+        self._rmap = rmap
+
+    @property
+    def wr_ptr(self):
+        """FIFO Write Pointer"""
+        rdata = self._rmap._if.read(self._rmap.FIFO_WR_PTR_ADDR)
+        return (rdata >> self._rmap.FIFO_WR_PTR_WR_PTR_POS) & self._rmap.FIFO_WR_PTR_WR_PTR_MSK
+
+
+class _RegFifo_rd_ptr:
+    def __init__(self, rmap):
+        self._rmap = rmap
+
+    @property
+    def rd_ptr(self):
+        """FIFO Read Pointer"""
+        rdata = self._rmap._if.read(self._rmap.FIFO_RD_PTR_ADDR)
+        return (rdata >> self._rmap.FIFO_RD_PTR_RD_PTR_POS) & self._rmap.FIFO_RD_PTR_RD_PTR_MSK
+
+
 class RegMap:
     """Control/Status register map"""
 
@@ -82,7 +104,7 @@ class RegMap:
     # CAPTURE_LENGTH - The number of samples to capture in buffer
     CAPTURE_LENGTH_ADDR = 0x04
     CAPTURE_LENGTH_LEN_POS = 0
-    CAPTURE_LENGTH_LEN_MSK = 0x1
+    CAPTURE_LENGTH_LEN_MSK = 0xffff
 
     # CAPTURE_STB - Capture Strobe, self clearing 1cc strobe
     CAPTURE_STB_ADDR = 0x08
@@ -93,6 +115,16 @@ class RegMap:
     FIFO_FLUSH_ADDR = 0x0c
     FIFO_FLUSH_FLUSH_POS = 0
     FIFO_FLUSH_FLUSH_MSK = 0x1
+
+    # FIFO_WR_PTR - FIFO Write Pointer
+    FIFO_WR_PTR_ADDR = 0x10
+    FIFO_WR_PTR_WR_PTR_POS = 0
+    FIFO_WR_PTR_WR_PTR_MSK = 0xffffffff
+
+    # FIFO_RD_PTR - FIFO Read Pointer
+    FIFO_RD_PTR_ADDR = 0x14
+    FIFO_RD_PTR_RD_PTR_POS = 0
+    FIFO_RD_PTR_RD_PTR_MSK = 0xffffffff
 
     def __init__(self, interface):
         self._if = interface
@@ -144,3 +176,21 @@ class RegMap:
     @property
     def fifo_flush_bf(self):
         return _RegFifo_flush(self)
+
+    @property
+    def fifo_wr_ptr(self):
+        """FIFO Write Pointer"""
+        return self._if.read(self.FIFO_WR_PTR_ADDR)
+
+    @property
+    def fifo_wr_ptr_bf(self):
+        return _RegFifo_wr_ptr(self)
+
+    @property
+    def fifo_rd_ptr(self):
+        """FIFO Read Pointer"""
+        return self._if.read(self.FIFO_RD_PTR_ADDR)
+
+    @property
+    def fifo_rd_ptr_bf(self):
+        return _RegFifo_rd_ptr(self)

@@ -26,6 +26,8 @@ Base address: 0x00000000
 | [Capture_Length](#capture_length) | 0x04       | The number of samples to capture in buffer |
 | [Capture_Stb](#capture_stb) | 0x08       | Capture Strobe, self clearing 1cc strobe |
 | [FIFO_Flush](#fifo_flush) | 0x0c       | Flush the FIFO for a new capture trigger |
+| [FIFO_WR_Ptr](#fifo_wr_ptr) | 0x10       | FIFO Write Pointer |
+| [FIFO_RD_Ptr](#fifo_rd_ptr) | 0x14       | FIFO Read Pointer |
 
 ## Max_Depth
 
@@ -33,13 +35,13 @@ The depth of the capture FIFO
 
 Address offset: 0x00
 
-Reset value: 0x00008000
+Reset value: 0x00000000
 
 ![max_depth](md_img/max_depth.svg)
 
 | Name             | Bits   | Mode            | Reset      | Description |
 | :---             | :---   | :---            | :---       | :---        |
-| len              | 31:0   | ro              | 0x00008000 | The depth of the capture FIFO |
+| len              | 31:0   | ro              | 0x00000000 | The depth of the capture FIFO |
 
 Back to [Register map](#register-map-summary).
 
@@ -55,8 +57,8 @@ Reset value: 0x00000000
 
 | Name             | Bits   | Mode            | Reset      | Description |
 | :---             | :---   | :---            | :---       | :---        |
-| -                | 31:1   | -               | 0x0000000  | Reserved |
-| len              | 0      | rw              | 0x0        | The start of HLS processor |
+| -                | 31:16  | -               | 0x0000     | Reserved |
+| len              | 15:0   | rw              | 0x0000     | The start of HLS processor |
 
 Back to [Register map](#register-map-summary).
 
@@ -91,5 +93,37 @@ Reset value: 0x00000000
 | :---             | :---   | :---            | :---       | :---        |
 | -                | 31:1   | -               | 0x0000000  | Reserved |
 | flush            | 0      | rw              | 0x0        | Flush the FIFO for a new capture trigger |
+
+Back to [Register map](#register-map-summary).
+
+## FIFO_WR_Ptr
+
+FIFO Write Pointer
+
+Address offset: 0x10
+
+Reset value: 0x00000000
+
+![fifo_wr_ptr](md_img/fifo_wr_ptr.svg)
+
+| Name             | Bits   | Mode            | Reset      | Description |
+| :---             | :---   | :---            | :---       | :---        |
+| wr_ptr           | 31:0   | ro              | 0x00000000 | FIFO Write Pointer |
+
+Back to [Register map](#register-map-summary).
+
+## FIFO_RD_Ptr
+
+FIFO Read Pointer
+
+Address offset: 0x14
+
+Reset value: 0x00000000
+
+![fifo_rd_ptr](md_img/fifo_rd_ptr.svg)
+
+| Name             | Bits   | Mode            | Reset      | Description |
+| :---             | :---   | :---            | :---       | :---        |
+| rd_ptr           | 31:0   | ro              | 0x00000000 | FIFO Read Pointer |
 
 Back to [Register map](#register-map-summary).

@@ -18,13 +18,19 @@ port(
     csr_max_depth_len_in : in std_logic_vector(31 downto 0);
 
     -- Capture_Length.len
-    csr_capture_length_len_out : out std_logic;
+    csr_capture_length_len_out : out std_logic_vector(15 downto 0);
 
     -- Capture_Stb.cap_stb
     csr_capture_stb_cap_stb_out : out std_logic;
 
     -- FIFO_Flush.flush
     csr_fifo_flush_flush_out : out std_logic;
+
+    -- FIFO_WR_Ptr.wr_ptr
+    csr_fifo_wr_ptr_wr_ptr_in : in std_logic_vector(31 downto 0);
+
+    -- FIFO_RD_Ptr.rd_ptr
+    csr_fifo_rd_ptr_rd_ptr_in : in std_logic_vector(31 downto 0);
 
     -- AXI-Lite
     axil_awaddr   : in  std_logic_vector(ADDR_W-1 downto 0);
@@ -85,7 +91,7 @@ signal csr_capture_length_rdata : std_logic_vector(31 downto 0);
 signal csr_capture_length_wen : std_logic;
 signal csr_capture_length_ren : std_logic;
 signal csr_capture_length_ren_ff : std_logic;
-signal csr_capture_length_len_ff : std_logic;
+signal csr_capture_length_len_ff : std_logic_vector(15 downto 0);
 
 signal csr_capture_stb_rdata : std_logic_vector(31 downto 0);
 signal csr_capture_stb_wen : std_logic;
@@ -96,6 +102,16 @@ signal csr_fifo_flush_wen : std_logic;
 signal csr_fifo_flush_ren : std_logic;
 signal csr_fifo_flush_ren_ff : std_logic;
 signal csr_fifo_flush_flush_ff : std_logic;
+
+signal csr_fifo_wr_ptr_rdata : std_logic_vector(31 downto 0);
+signal csr_fifo_wr_ptr_ren : std_logic;
+signal csr_fifo_wr_ptr_ren_ff : std_logic;
+signal csr_fifo_wr_ptr_wr_ptr_ff : std_logic_vector(31 downto 0);
+
+signal csr_fifo_rd_ptr_rdata : std_logic_vector(31 downto 0);
+signal csr_fifo_rd_ptr_ren : std_logic;
+signal csr_fifo_rd_ptr_ren_ff : std_logic;
+signal csr_fifo_rd_ptr_rd_ptr_ff : std_logic_vector(31 downto 0);
 
 signal rdata_ff : std_logic_vector(31 downto 0);
 signal rvalid_ff : std_logic;
@@ -212,7 +228,7 @@ csr_max_depth_rdata(31 downto 0) <= csr_max_depth_len_ff;
 process (clk) begin
 if rising_edge(clk) then
 if (rst = '1') then
-    csr_max_depth_len_ff <= "00000000000000001000000000000000"; -- 0x8000
+    csr_max_depth_len_ff <= "00000000000000000000000000000000"; -- 0x0
 else
             csr_max_depth_len_ff <= csr_max_depth_len_in;
 end if;
@@ -225,7 +241,7 @@ end process;
 -- CSR:
 -- [0x4] - Capture_Length - The number of samples to capture in buffer
 --------------------------------------------------------------------------------
-csr_capture_length_rdata(31 downto 1) <= (others => '0');
+csr_capture_length_rdata(31 downto 16) <= (others => '0');
 
 csr_capture_length_wen <= wen when (waddr = "00000100") else '0'; -- 0x4
 
@@ -242,22 +258,25 @@ end process;
 
 -----------------------
 -- Bit field:
--- Capture_Length(0) - len - The start of HLS processor
+-- Capture_Length(15 downto 0) - len - The start of HLS processor
 -- access: rw, hardware: o
 -----------------------
 
-csr_capture_length_rdata(0) <= csr_capture_length_len_ff;
+csr_capture_length_rdata(15 downto 0) <= csr_capture_length_len_ff;
 
 csr_capture_length_len_out <= csr_capture_length_len_ff;
 
 process (clk) begin
 if rising_edge(clk) then
 if (rst = '1') then
-    csr_capture_length_len_ff <= '0'; -- 0x0
+    csr_capture_length_len_ff <= "0000000000000000"; -- 0x0
 else
         if (csr_capture_length_wen = '1') then
             if (wstrb(0) = '1') then
-                csr_capture_length_len_ff <= wdata(0);
+                csr_capture_length_len_ff(7 downto 0) <= wdata(7 downto 0);
+            end if;
+            if (wstrb(1) = '1') then
+                csr_capture_length_len_ff(15 downto 8) <= wdata(15 downto 8);
             end if;
         else
             csr_capture_length_len_ff <= csr_capture_length_len_ff;
@@ -352,6 +371,82 @@ end process;
 
 
 --------------------------------------------------------------------------------
+-- CSR:
+-- [0x10] - FIFO_WR_Ptr - FIFO Write Pointer
+--------------------------------------------------------------------------------
+
+
+csr_fifo_wr_ptr_ren <= ren when (raddr = "00010000") else '0'; -- 0x10
+process (clk) begin
+if rising_edge(clk) then
+if (rst = '1') then
+    csr_fifo_wr_ptr_ren_ff <= '0'; -- 0x0
+else
+        csr_fifo_wr_ptr_ren_ff <= csr_fifo_wr_ptr_ren;
+end if;
+end if;
+end process;
+
+-----------------------
+-- Bit field:
+-- FIFO_WR_Ptr(31 downto 0) - wr_ptr - FIFO Write Pointer
+-- access: ro, hardware: i
+-----------------------
+
+csr_fifo_wr_ptr_rdata(31 downto 0) <= csr_fifo_wr_ptr_wr_ptr_ff;
+
+
+process (clk) begin
+if rising_edge(clk) then
+if (rst = '1') then
+    csr_fifo_wr_ptr_wr_ptr_ff <= "00000000000000000000000000000000"; -- 0x0
+else
+            csr_fifo_wr_ptr_wr_ptr_ff <= csr_fifo_wr_ptr_wr_ptr_in;
+end if;
+end if;
+end process;
+
+
+
+--------------------------------------------------------------------------------
+-- CSR:
+-- [0x14] - FIFO_RD_Ptr - FIFO Read Pointer
+--------------------------------------------------------------------------------
+
+
+csr_fifo_rd_ptr_ren <= ren when (raddr = "00010100") else '0'; -- 0x14
+process (clk) begin
+if rising_edge(clk) then
+if (rst = '1') then
+    csr_fifo_rd_ptr_ren_ff <= '0'; -- 0x0
+else
+        csr_fifo_rd_ptr_ren_ff <= csr_fifo_rd_ptr_ren;
+end if;
+end if;
+end process;
+
+-----------------------
+-- Bit field:
+-- FIFO_RD_Ptr(31 downto 0) - rd_ptr - FIFO Read Pointer
+-- access: ro, hardware: i
+-----------------------
+
+csr_fifo_rd_ptr_rdata(31 downto 0) <= csr_fifo_rd_ptr_rd_ptr_ff;
+
+
+process (clk) begin
+if rising_edge(clk) then
+if (rst = '1') then
+    csr_fifo_rd_ptr_rd_ptr_ff <= "00000000000000000000000000000000"; -- 0x0
+else
+            csr_fifo_rd_ptr_rd_ptr_ff <= csr_fifo_rd_ptr_rd_ptr_in;
+end if;
+end if;
+end process;
+
+
+
+--------------------------------------------------------------------------------
 -- Write ready
 --------------------------------------------------------------------------------
 wready <= '1';
@@ -370,6 +465,8 @@ else
             when "00000100" => rdata_ff <= csr_capture_length_rdata; -- 0x4
             when "00001000" => rdata_ff <= csr_capture_stb_rdata; -- 0x8
             when "00001100" => rdata_ff <= csr_fifo_flush_rdata; -- 0xc
+            when "00010000" => rdata_ff <= csr_fifo_wr_ptr_rdata; -- 0x10
+            when "00010100" => rdata_ff <= csr_fifo_rd_ptr_rdata; -- 0x14
             when others => rdata_ff <= "00000000000000000000000000000000"; -- 0x0
         end case;
     else
