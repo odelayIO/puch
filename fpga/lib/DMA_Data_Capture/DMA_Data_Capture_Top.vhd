@@ -115,6 +115,7 @@ architecture rtl of DMA_Data_Capture_Top is
   -- Internal Signals
   signal fifo_wr_ptr        : std_logic_vector(31 downto 0);
   signal fifo_rd_ptr        : std_logic_vector(31 downto 0);
+  signal rst                : std_logic;
 
 
   
@@ -142,6 +143,7 @@ begin
 
   A_TREADY      <= fifo_trdy;
   fifo_flush_n  <= NOT(fifo_flush);
+  rst           <= NOT(rstn);
 
   -- ------------------------------------------------------------------------------------------
   --    Host Interface
@@ -157,7 +159,7 @@ begin
       --    Clock / Reset
       -- -------------------------------------+-------------------------------------------------
       clk                                     => clk,
-      rst                                     => rstn, 
+      rst                                     => rst, 
       -- -------------------------------------+-------------------------------------------------
       --    Status Registers
       -- -------------------------------------+-------------------------------------------------

@@ -72,7 +72,7 @@ entity QPSK_Demod_Top is
     -- ------------------------------------------------------
     B_SYM_TDATA     : out std_logic_vector(31 downto 0);
     B_SYM_TVALID    : out std_logic;
-    B_SYM_TREADY    : in  std_logic;
+    B_SYM_TREADY    : in  std_logic := '1';
     -- ------------------------------------------------------
     --    AXI-Lite
     -- ------------------------------------------------------
@@ -131,6 +131,8 @@ architecture RTL of QPSK_Demod_Top is
   signal sync_lock          : std_logic := '0';
   signal sync_clr           : std_logic;
 
+  signal B_SYM_TDATA_i      : std_logic_vector(31 downto 0);
+  signal B_SYM_TVALID_i     : std_logic;
 
 
   -- ----------------------------------------
@@ -295,9 +297,9 @@ begin
       Q_in              => A_TDATA(15 downto 0),
       Q_in_ap_vld       => A_TVALID,
       -------------------+-----------------------------
-      I_out             => B_SYM_TDATA(31 downto 16),
-      Q_out             => B_SYM_TDATA(15 downto 0),
-      I_out_ap_vld      => B_SYM_TVALID,
+      I_out             => B_SYM_TDATA_i(31 downto 16),
+      Q_out             => B_SYM_TDATA_i(15 downto 0),
+      I_out_ap_vld      => B_SYM_TVALID_i,
       Q_out_ap_vld      => open,
       -------------------+-----------------------------
       demod_bits        => demod_bits,
@@ -312,6 +314,8 @@ begin
   begin
     if(rising_edge(clk)) then
       demod_bits_stb_q    <= demod_bits_stb;
+      B_SYM_TDATA         <= B_SYM_TDATA_i;
+      B_SYM_TVALID        <= B_SYM_TVALID_i;
       if(demod_bits_stb = '1') then
         demod_bits_q      <= demod_bits;
       end if;
