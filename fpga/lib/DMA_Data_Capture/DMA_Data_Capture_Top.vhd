@@ -97,7 +97,7 @@ architecture rtl of DMA_Data_Capture_Top is
 
 
   -- State Machine Signals
-  type state_type is (IDLE, CAPTURE);
+  type state_type is (IDLE, CAPTURE, TLAST);
   signal state : state_type;
 
   signal fifo_tdata         : std_logic_vector(31 downto 0);
@@ -117,8 +117,13 @@ architecture rtl of DMA_Data_Capture_Top is
   signal fifo_rd_ptr        : std_logic_vector(31 downto 0);
   signal rst                : std_logic;
 
-
-  
+  attribute mark_debug : string;
+  attribute mark_debug of fifo_tdata    : signal is "true";
+  attribute mark_debug of fifo_tvalid   : signal is "true";
+  attribute mark_debug of fifo_tlast    : signal is "true";
+  attribute mark_debug of fifo_trdy     : signal is "true";
+  attribute mark_debug of fifo_cnt      : signal is "true";
+ 
   -- ----------------------------------------
   --  Components
   -- ----------------------------------------
@@ -231,7 +236,7 @@ begin
               fifo_tvalid     <= '1';
               fifo_tdata      <= A_TDATA;
               if(fifo_cnt-1 = 0) then
-                state         <= IDLE;
+                state         <= TLAST;
                 fifo_tlast    <= '1';
               else
                 state         <= CAPTURE;
@@ -239,6 +244,13 @@ begin
               end if;
             end if;
 
+          -- Clear TLAST signal in the FIFO
+          -- Writing additional word to clear tlast
+          when TLAST =>
+              fifo_tvalid     <= '1';
+              fifo_tdata      <= x"DEADBEEF";
+              fifo_tlast      <= '0';
+              state           <= IDLE;
 
           -- Others
           when others =>
