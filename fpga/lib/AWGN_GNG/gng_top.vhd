@@ -104,8 +104,8 @@ architecture rtl of gng_top is
 
   -- Constant and Top level signals
   constant F_AWGN         : format := (16,11);  -- AWGN is fixed format
-  constant F_IN           : format := (16,14);
-  constant F_OUT          : format := (16,14);
+  constant F_IN           : format := (16,12);
+  constant F_OUT          : format := (16,12);
   constant DLY            : natural := 1; -- Pipeline delay
   signal rst              : std_logic := '1';
 
@@ -167,6 +167,8 @@ begin
   ch_Q      <= im(B_TDATA_int);
   ch_I_sat  <= is_sat(ch_I);
   ch_Q_sat  <= is_sat(ch_Q);
+
+
 
 
   -- --------------------------------------------------------
@@ -264,7 +266,7 @@ begin
     port map (
       clk         => clk,
       rstn        => rstn,
-      ce          => B_TREADY,
+      ce          => B_TREADY AND A_TVALID,
       valid_out   => open,
       data_out    => I_gng
     );
@@ -278,7 +280,7 @@ begin
     port map (
       clk         => clk,
       rstn        => rstn,
-      ce          => B_TREADY,
+      ce          => B_TREADY AND A_TVALID,
       valid_out   => open,
       data_out    => Q_gng
     );
@@ -300,7 +302,7 @@ begin
       -- Clock and Reset
       ------------+-------------------------
       clk         => clk,
-      ce          => B_TREADY,
+      ce          => '1',
       rst         => rst,
       ------------+-------------------------
       -- Input Signals
@@ -331,7 +333,7 @@ begin
       -- Clock and Reset
       ------------+-------------------------
       clk         => clk,
-      ce          => B_TREADY,
+      ce          => '1',
       rst         => rst,
       ------------+-------------------------
       -- Input Signals
@@ -366,7 +368,7 @@ begin
       -- Clock and Reset
       ------------+-------------------------
       clk         => clk,
-      ce          => B_TREADY,
+      ce          => '1',
       rst         => rst,
       ------------+-------------------------
       -- Input Signals
@@ -397,7 +399,7 @@ begin
       -- Clock and Reset
       ------------+-------------------------
       clk         => clk,
-      ce          => B_TREADY,
+      ce          => '1',
       rst         => rst,
       ------------+-------------------------
       -- Input Signals

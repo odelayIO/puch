@@ -67,6 +67,7 @@ entity DMA_Data_Capture_Top is
     B_TVALID      : out std_logic;
     B_TLAST       : out std_logic;
     B_TREADY      : in  std_logic;
+    B_TKEEP       : out std_logic_vector(3 downto 0); -- Needed for PYNQ DMA
     -- -----------------------------------------------------------------
     --    AXI-Lite
     -- -----------------------------------------------------------------
@@ -146,9 +147,11 @@ architecture rtl of DMA_Data_Capture_Top is
 
 begin
 
+  B_TKEEP       <= (others => '1'); -- Needed for PYNQ DMA
   A_TREADY      <= fifo_trdy;
   fifo_flush_n  <= NOT(fifo_flush);
   rst           <= NOT(rstn);
+
 
   -- ------------------------------------------------------------------------------------------
   --    Host Interface

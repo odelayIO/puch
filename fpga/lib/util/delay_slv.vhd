@@ -33,9 +33,9 @@ use ieee.numeric_std.all;
 
 entity delay_slv is
   generic (
-    DLY       : integer; -- 0: no delay, >=1: delayed
-    BITS_LEN  : natural;
-    ARST      : boolean -- Async Reset True: async rst, False: sync rst
+    DLY       : integer := 0; -- 0: no delay, >=1: delayed
+    BITS_LEN  : natural := 8;
+    ARST      : boolean := TRUE -- Async Reset True: async rst, False: sync rst
   );
   port (
     rst       : in  std_logic;
@@ -65,7 +65,7 @@ begin
     begin
       process(clk,ce)
       begin
-        if(rising_edge(clk)) then
+        if(rising_edge(clk) AND ce='1') then
           if(rst = '1') then
             pipe    <= (others => (others => '0'));
           else
