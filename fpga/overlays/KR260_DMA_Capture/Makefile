@@ -79,10 +79,8 @@ clean_all:
 	rm -fr ../../lib/HLS_fixed_gain/*.log
 	rm -fr ../../lib/HLS_fixed_gain/*.jou
 	cd ../../ip/KR260 && make clean && pwd
-	cd ../../lib/HLS_QPSK_Demod && make clean && pwd
 	cd ../../lib/DMA_Data_Capture && make clean && pwd
 	cd ../../lib/timestamp && make clean && pwd
-	cd ../../lib/AWGN_GNG && make clean && pwd
 	cd ../../lib/led_reg && make clean && pwd
 	rm -fr ../../py/KR260_HLS_QPSK_Demod/.ipynb_checkpoints
 	rm -fr ../../py/__pycache__
