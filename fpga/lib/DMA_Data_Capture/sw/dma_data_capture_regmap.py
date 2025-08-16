@@ -104,7 +104,7 @@ class RegMap:
     # CAPTURE_LENGTH - The number of samples to capture in buffer
     CAPTURE_LENGTH_ADDR = 0x04
     CAPTURE_LENGTH_LEN_POS = 0
-    CAPTURE_LENGTH_LEN_MSK = 0xffff
+    CAPTURE_LENGTH_LEN_MSK = 0xffffffff
 
     # CAPTURE_STB - Capture Strobe, self clearing 1cc strobe
     CAPTURE_STB_ADDR = 0x08

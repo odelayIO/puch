@@ -59,8 +59,8 @@ entity DMA_Data_Capture_Top is
     -- -----------------------------------------------------------------
     --    Data Path
     -- -----------------------------------------------------------------
-    A_TDATA       : in  std_logic_vector(31 downto 0);
-    A_TVALID      : in  std_logic;
+    A_TDATA       : in  std_logic_vector(31 downto 0) := (others => '0');
+    A_TVALID      : in  std_logic := '1';
     A_TREADY      : out std_logic;
     --------------+-----------------------------------
     B_TDATA       : out std_logic_vector(31 downto 0);
@@ -105,10 +105,10 @@ architecture rtl of DMA_Data_Capture_Top is
   signal fifo_tvalid        : std_logic;
   signal fifo_tlast         : std_logic;
   signal fifo_trdy          : std_logic;
-  signal fifo_cnt           : unsigned(15 downto 0);
+  signal fifo_cnt           : unsigned(31 downto 0);
 
   -- Register IF Signals
-  signal cap_depth          : std_logic_vector(15 downto 0);
+  signal cap_depth          : std_logic_vector(31 downto 0);
   signal cap_trig           : std_logic;
   signal fifo_flush         : std_logic;
   signal fifo_flush_n       : std_logic;
@@ -237,7 +237,8 @@ begin
             fifo_tlast        <= '0';
             if(A_TVALID='1' AND (fifo_trdy='1')) then
               fifo_tvalid     <= '1';
-              fifo_tdata      <= A_TDATA;
+              --fifo_tdata      <= A_TDATA;
+              fifo_tdata      <= std_logic_vector(fifo_cnt);
               if(fifo_cnt-1 = 0) then
                 state         <= TLAST;
                 fifo_tlast    <= '1';

@@ -268,7 +268,7 @@ proc create_root_design { parentCell } {
   # Create instance: axi_dma_0, and set properties
   set axi_dma_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_dma:7.1 axi_dma_0 ]
   set_property -dict [ list \
-   CONFIG.c_addr_width {32} \
+   CONFIG.c_addr_width {49} \
    CONFIG.c_include_mm2s {1} \
    CONFIG.c_include_s2mm {1} \
    CONFIG.c_include_sg {0} \
@@ -288,7 +288,6 @@ proc create_root_design { parentCell } {
   # Create instance: axi_smc, and set properties
   set axi_smc [ create_bd_cell -type ip -vlnv xilinx.com:ip:smartconnect:1.0 axi_smc ]
   set_property -dict [ list \
-   CONFIG.NUM_MI {1} \
    CONFIG.NUM_SI {2} \
  ] $axi_smc
 
@@ -1964,6 +1963,7 @@ connect_bd_intf_net -intf_net [get_bd_intf_nets QPSK_Demod_Top_0_B_SYM] [get_bd_
   # Restore current instance
   current_bd_instance $oldCurInst
 
+  validate_bd_design
   save_bd_design
 }
 # End of create_root_design()
@@ -1975,6 +1975,4 @@ connect_bd_intf_net -intf_net [get_bd_intf_nets QPSK_Demod_Top_0_B_SYM] [get_bd_
 
 create_root_design ""
 
-
-common::send_gid_msg -ssname BD::TCL -id 2053 -severity "WARNING" "This Tcl script was generated from a block design that has not been validated. It is possible that design <$design_name> may result in errors during validation."
 

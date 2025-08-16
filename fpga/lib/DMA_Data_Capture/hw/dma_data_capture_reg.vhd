@@ -18,7 +18,7 @@ port(
     csr_max_depth_len_in : in std_logic_vector(31 downto 0);
 
     -- Capture_Length.len
-    csr_capture_length_len_out : out std_logic_vector(15 downto 0);
+    csr_capture_length_len_out : out std_logic_vector(31 downto 0);
 
     -- Capture_Stb.cap_stb
     csr_capture_stb_cap_stb_out : out std_logic;
@@ -91,7 +91,7 @@ signal csr_capture_length_rdata : std_logic_vector(31 downto 0);
 signal csr_capture_length_wen : std_logic;
 signal csr_capture_length_ren : std_logic;
 signal csr_capture_length_ren_ff : std_logic;
-signal csr_capture_length_len_ff : std_logic_vector(15 downto 0);
+signal csr_capture_length_len_ff : std_logic_vector(31 downto 0);
 
 signal csr_capture_stb_rdata : std_logic_vector(31 downto 0);
 signal csr_capture_stb_wen : std_logic;
@@ -241,7 +241,6 @@ end process;
 -- CSR:
 -- [0x4] - Capture_Length - The number of samples to capture in buffer
 --------------------------------------------------------------------------------
-csr_capture_length_rdata(31 downto 16) <= (others => '0');
 
 csr_capture_length_wen <= wen when (waddr = "00000100") else '0'; -- 0x4
 
@@ -258,18 +257,18 @@ end process;
 
 -----------------------
 -- Bit field:
--- Capture_Length(15 downto 0) - len - The start of HLS processor
+-- Capture_Length(31 downto 0) - len - The start of HLS processor
 -- access: rw, hardware: o
 -----------------------
 
-csr_capture_length_rdata(15 downto 0) <= csr_capture_length_len_ff;
+csr_capture_length_rdata(31 downto 0) <= csr_capture_length_len_ff;
 
 csr_capture_length_len_out <= csr_capture_length_len_ff;
 
 process (clk) begin
 if rising_edge(clk) then
 if (rst = '1') then
-    csr_capture_length_len_ff <= "0000000000000000"; -- 0x0
+    csr_capture_length_len_ff <= "00000000000000000000000000000000"; -- 0x0
 else
         if (csr_capture_length_wen = '1') then
             if (wstrb(0) = '1') then
@@ -277,6 +276,12 @@ else
             end if;
             if (wstrb(1) = '1') then
                 csr_capture_length_len_ff(15 downto 8) <= wdata(15 downto 8);
+            end if;
+            if (wstrb(2) = '1') then
+                csr_capture_length_len_ff(23 downto 16) <= wdata(23 downto 16);
+            end if;
+            if (wstrb(3) = '1') then
+                csr_capture_length_len_ff(31 downto 24) <= wdata(31 downto 24);
             end if;
         else
             csr_capture_length_len_ff <= csr_capture_length_len_ff;

@@ -1,6 +1,6 @@
 
 ################################################################
-# This is a generated script based on design: kr260_fir_accel
+# This is a generated script based on design: kr260_fir_acceleration
 #
 # Though there are limitations about the generated script,
 # the main purpose of this utility is to make learning
@@ -35,7 +35,7 @@ if { [string first $scripts_vivado_version $current_vivado_version] == -1 } {
 ################################################################
 
 # To test this script, run the following commands from Vivado Tcl console:
-# source kr260_fir_accel_script.tcl
+# source kr260_fir_acceleration_script.tcl
 
 # If there is no project opened, this script will create a
 # project, but make sure you do not have an existing project
@@ -43,21 +43,14 @@ if { [string first $scripts_vivado_version $current_vivado_version] == -1 } {
 
 set list_projs [get_projects -quiet]
 if { $list_projs eq "" } {
-   #create_project project_1 myproj -part xck26-sfvc784-2LV-c
-   #set_property BOARD_PART xilinx.com:kr260_som:part0:1.0 [current_project]
-   set_param board.repoPaths ../../../XilinxBoardStore
-   create_project kr260_fir_accel kr260_fir_accel -part xck26-sfvc784-2LV-c
+   create_project project_1 myproj -part xck26-sfvc784-2LV-c
    set_property BOARD_PART xilinx.com:kr260_som:part0:1.0 [current_project]
-   set_property target_language VHDL [current_project]
-   set_property default_lib work [current_project]
- 
-
 }
 
 
 # CHANGE DESIGN NAME HERE
 variable design_name
-set design_name kr260_fir_accel
+set design_name kr260_fir_acceleration
 
 # If you do not already have an existing IP Integrator design open,
 # you can create a design using the following command:

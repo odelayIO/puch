@@ -57,8 +57,7 @@ Reset value: 0x00000000
 
 | Name             | Bits   | Mode            | Reset      | Description |
 | :---             | :---   | :---            | :---       | :---        |
-| -                | 31:16  | -               | 0x0000     | Reserved |
-| len              | 15:0   | rw              | 0x0000     | The start of HLS processor |
+| len              | 31:0   | rw              | 0x00000000 | The start of HLS processor |
 
 Back to [Register map](#register-map-summary).
 
