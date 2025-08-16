@@ -28,6 +28,7 @@ Base address: 0x00000000
 | [FIFO_Flush](#fifo_flush) | 0x0c       | Flush the FIFO for a new capture trigger |
 | [FIFO_WR_Ptr](#fifo_wr_ptr) | 0x10       | FIFO Write Pointer |
 | [FIFO_RD_Ptr](#fifo_rd_ptr) | 0x14       | FIFO Read Pointer |
+| [Enable_Debug_Cnt](#enable_debug_cnt) | 0x18       | Enable the debug counter on DMA data output port |
 
 ## Max_Depth
 
@@ -124,5 +125,22 @@ Reset value: 0x00000000
 | Name             | Bits   | Mode            | Reset      | Description |
 | :---             | :---   | :---            | :---       | :---        |
 | rd_ptr           | 31:0   | ro              | 0x00000000 | FIFO Read Pointer |
+
+Back to [Register map](#register-map-summary).
+
+## Enable_Debug_Cnt
+
+Enable the debug counter on DMA data output port
+
+Address offset: 0x18
+
+Reset value: 0x00000000
+
+![enable_debug_cnt](md_img/enable_debug_cnt.svg)
+
+| Name             | Bits   | Mode            | Reset      | Description |
+| :---             | :---   | :---            | :---       | :---        |
+| -                | 31:1   | -               | 0x0000000  | Reserved |
+| en_debug_cnt     | 0      | rw              | 0x0        | Enable the debug counter on DMA data output port |
 
 Back to [Register map](#register-map-summary).

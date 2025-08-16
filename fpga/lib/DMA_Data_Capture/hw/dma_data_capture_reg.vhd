@@ -32,6 +32,9 @@ port(
     -- FIFO_RD_Ptr.rd_ptr
     csr_fifo_rd_ptr_rd_ptr_in : in std_logic_vector(31 downto 0);
 
+    -- Enable_Debug_Cnt.en_debug_cnt
+    csr_enable_debug_cnt_en_debug_cnt_out : out std_logic;
+
     -- AXI-Lite
     axil_awaddr   : in  std_logic_vector(ADDR_W-1 downto 0);
     axil_awprot   : in  std_logic_vector(2 downto 0);
@@ -112,6 +115,12 @@ signal csr_fifo_rd_ptr_rdata : std_logic_vector(31 downto 0);
 signal csr_fifo_rd_ptr_ren : std_logic;
 signal csr_fifo_rd_ptr_ren_ff : std_logic;
 signal csr_fifo_rd_ptr_rd_ptr_ff : std_logic_vector(31 downto 0);
+
+signal csr_enable_debug_cnt_rdata : std_logic_vector(31 downto 0);
+signal csr_enable_debug_cnt_wen : std_logic;
+signal csr_enable_debug_cnt_ren : std_logic;
+signal csr_enable_debug_cnt_ren_ff : std_logic;
+signal csr_enable_debug_cnt_en_debug_cnt_ff : std_logic;
 
 signal rdata_ff : std_logic_vector(31 downto 0);
 signal rvalid_ff : std_logic;
@@ -452,6 +461,53 @@ end process;
 
 
 --------------------------------------------------------------------------------
+-- CSR:
+-- [0x18] - Enable_Debug_Cnt - Enable the debug counter on DMA data output port
+--------------------------------------------------------------------------------
+csr_enable_debug_cnt_rdata(31 downto 1) <= (others => '0');
+
+csr_enable_debug_cnt_wen <= wen when (waddr = "00011000") else '0'; -- 0x18
+
+csr_enable_debug_cnt_ren <= ren when (raddr = "00011000") else '0'; -- 0x18
+process (clk) begin
+if rising_edge(clk) then
+if (rst = '1') then
+    csr_enable_debug_cnt_ren_ff <= '0'; -- 0x0
+else
+        csr_enable_debug_cnt_ren_ff <= csr_enable_debug_cnt_ren;
+end if;
+end if;
+end process;
+
+-----------------------
+-- Bit field:
+-- Enable_Debug_Cnt(0) - en_debug_cnt - Enable the debug counter on DMA data output port
+-- access: rw, hardware: o
+-----------------------
+
+csr_enable_debug_cnt_rdata(0) <= csr_enable_debug_cnt_en_debug_cnt_ff;
+
+csr_enable_debug_cnt_en_debug_cnt_out <= csr_enable_debug_cnt_en_debug_cnt_ff;
+
+process (clk) begin
+if rising_edge(clk) then
+if (rst = '1') then
+    csr_enable_debug_cnt_en_debug_cnt_ff <= '0'; -- 0x0
+else
+        if (csr_enable_debug_cnt_wen = '1') then
+            if (wstrb(0) = '1') then
+                csr_enable_debug_cnt_en_debug_cnt_ff <= wdata(0);
+            end if;
+        else
+            csr_enable_debug_cnt_en_debug_cnt_ff <= csr_enable_debug_cnt_en_debug_cnt_ff;
+        end if;
+end if;
+end if;
+end process;
+
+
+
+--------------------------------------------------------------------------------
 -- Write ready
 --------------------------------------------------------------------------------
 wready <= '1';
@@ -472,6 +528,7 @@ else
             when "00001100" => rdata_ff <= csr_fifo_flush_rdata; -- 0xc
             when "00010000" => rdata_ff <= csr_fifo_wr_ptr_rdata; -- 0x10
             when "00010100" => rdata_ff <= csr_fifo_rd_ptr_rdata; -- 0x14
+            when "00011000" => rdata_ff <= csr_enable_debug_cnt_rdata; -- 0x18
             when others => rdata_ff <= "00000000000000000000000000000000"; -- 0x0
         end case;
     else

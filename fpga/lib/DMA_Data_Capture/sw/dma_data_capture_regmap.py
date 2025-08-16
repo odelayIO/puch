@@ -93,6 +93,24 @@ class _RegFifo_rd_ptr:
         return (rdata >> self._rmap.FIFO_RD_PTR_RD_PTR_POS) & self._rmap.FIFO_RD_PTR_RD_PTR_MSK
 
 
+class _RegEnable_debug_cnt:
+    def __init__(self, rmap):
+        self._rmap = rmap
+
+    @property
+    def en_debug_cnt(self):
+        """Enable the debug counter on DMA data output port"""
+        rdata = self._rmap._if.read(self._rmap.ENABLE_DEBUG_CNT_ADDR)
+        return (rdata >> self._rmap.ENABLE_DEBUG_CNT_EN_DEBUG_CNT_POS) & self._rmap.ENABLE_DEBUG_CNT_EN_DEBUG_CNT_MSK
+
+    @en_debug_cnt.setter
+    def en_debug_cnt(self, val):
+        rdata = self._rmap._if.read(self._rmap.ENABLE_DEBUG_CNT_ADDR)
+        rdata = rdata & (~(self._rmap.ENABLE_DEBUG_CNT_EN_DEBUG_CNT_MSK << self._rmap.ENABLE_DEBUG_CNT_EN_DEBUG_CNT_POS))
+        rdata = rdata | (val << self._rmap.ENABLE_DEBUG_CNT_EN_DEBUG_CNT_POS)
+        self._rmap._if.write(self._rmap.ENABLE_DEBUG_CNT_ADDR, rdata)
+
+
 class RegMap:
     """Control/Status register map"""
 
@@ -125,6 +143,11 @@ class RegMap:
     FIFO_RD_PTR_ADDR = 0x14
     FIFO_RD_PTR_RD_PTR_POS = 0
     FIFO_RD_PTR_RD_PTR_MSK = 0xffffffff
+
+    # ENABLE_DEBUG_CNT - Enable the debug counter on DMA data output port
+    ENABLE_DEBUG_CNT_ADDR = 0x18
+    ENABLE_DEBUG_CNT_EN_DEBUG_CNT_POS = 0
+    ENABLE_DEBUG_CNT_EN_DEBUG_CNT_MSK = 0x1
 
     def __init__(self, interface):
         self._if = interface
@@ -194,3 +217,16 @@ class RegMap:
     @property
     def fifo_rd_ptr_bf(self):
         return _RegFifo_rd_ptr(self)
+
+    @property
+    def enable_debug_cnt(self):
+        """Enable the debug counter on DMA data output port"""
+        return self._if.read(self.ENABLE_DEBUG_CNT_ADDR)
+
+    @enable_debug_cnt.setter
+    def enable_debug_cnt(self, val):
+        self._if.write(self.ENABLE_DEBUG_CNT_ADDR, val)
+
+    @property
+    def enable_debug_cnt_bf(self):
+        return _RegEnable_debug_cnt(self)

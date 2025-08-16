@@ -298,6 +298,7 @@ proc create_root_design { parentCell } {
    CONFIG.C_MON_TYPE {INTERFACE} \
    CONFIG.C_NUM_MONITOR_SLOTS {3} \
    CONFIG.C_PROBE0_MU_CNT {2} \
+   CONFIG.C_SLOT {2} \
    CONFIG.C_SLOT_0_APC_EN {0} \
    CONFIG.C_SLOT_0_AXI_AR_SEL_DATA {0} \
    CONFIG.C_SLOT_0_AXI_AR_SEL_TRIG {0} \
@@ -310,6 +311,8 @@ proc create_root_design { parentCell } {
    CONFIG.C_SLOT_0_AXI_W_SEL_DATA {1} \
    CONFIG.C_SLOT_0_AXI_W_SEL_TRIG {1} \
    CONFIG.C_SLOT_0_INTF_TYPE {xilinx.com:interface:aximm_rtl:1.0} \
+   CONFIG.C_SLOT_0_MAX_RD_BURSTS {8} \
+   CONFIG.C_SLOT_0_MAX_WR_BURSTS {8} \
    CONFIG.C_SLOT_1_APC_EN {0} \
    CONFIG.C_SLOT_1_AXI_AR_SEL_DATA {0} \
    CONFIG.C_SLOT_1_AXI_AR_SEL_TRIG {0} \
@@ -322,6 +325,8 @@ proc create_root_design { parentCell } {
    CONFIG.C_SLOT_1_AXI_W_SEL_DATA {1} \
    CONFIG.C_SLOT_1_AXI_W_SEL_TRIG {1} \
    CONFIG.C_SLOT_1_INTF_TYPE {xilinx.com:interface:aximm_rtl:1.0} \
+   CONFIG.C_SLOT_1_MAX_RD_BURSTS {8} \
+   CONFIG.C_SLOT_1_MAX_WR_BURSTS {8} \
    CONFIG.C_SLOT_2_APC_EN {0} \
    CONFIG.C_SLOT_2_AXI_DATA_SEL {1} \
    CONFIG.C_SLOT_2_AXI_TRIG_SEL {1} \

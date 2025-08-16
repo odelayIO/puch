@@ -36,6 +36,10 @@ package dma_data_capture_pkg is
   constant CSR_FIFO_RD_PTR_ADDR : std_logic_vector(8-1 downto 0) := to_unsigned(20, 8);
   constant CSR_FIFO_RD_PTR_RESET : std_logic_vector(32-1 downto 0) := to_unsigned(0, 32);
 
+  -- Enable_Debug_Cnt - Enable the debug counter on DMA data output port
+  constant CSR_ENABLE_DEBUG_CNT_ADDR : std_logic_vector(8-1 downto 0) := to_unsigned(24, 8);
+  constant CSR_ENABLE_DEBUG_CNT_RESET : std_logic_vector(32-1 downto 0) := to_unsigned(0, 32);
+
 
 
 end package dma_data_capture_pkg;

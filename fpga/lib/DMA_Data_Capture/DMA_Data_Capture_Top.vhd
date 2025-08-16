@@ -112,6 +112,7 @@ architecture rtl of DMA_Data_Capture_Top is
   signal cap_trig           : std_logic;
   signal fifo_flush         : std_logic;
   signal fifo_flush_n       : std_logic;
+  signal debug_cnt_en       : std_logic;
 
   -- Internal Signals
   signal fifo_wr_ptr        : std_logic_vector(31 downto 0);
@@ -180,6 +181,7 @@ begin
       csr_capture_length_len_out              => cap_depth,
       csr_capture_stb_cap_stb_out             => cap_trig,
       csr_fifo_flush_flush_out                => fifo_flush,
+      csr_enable_debug_cnt_en_debug_cnt_out   => debug_cnt_en,
       -- -------------------------------------+-------------------------------------------------
       --    AXI-Lite
       -- -------------------------------------+-------------------------------------------------
@@ -237,8 +239,12 @@ begin
             fifo_tlast        <= '0';
             if(A_TVALID='1' AND (fifo_trdy='1')) then
               fifo_tvalid     <= '1';
-              --fifo_tdata      <= A_TDATA;
-              fifo_tdata      <= std_logic_vector(fifo_cnt);
+              -- Debug Counter
+              if(debug_cnt_en = '1') then
+                fifo_tdata    <= std_logic_vector(fifo_cnt);
+              else
+                fifo_tdata    <= A_TDATA;
+              end if;
               if(fifo_cnt-1 = 0) then
                 state         <= TLAST;
                 fifo_tlast    <= '1';
