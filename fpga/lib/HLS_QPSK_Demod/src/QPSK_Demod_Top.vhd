@@ -103,8 +103,8 @@ architecture RTL of QPSK_Demod_Top is
   -- ----------------------------------------
   --  Constant and Top level signals
   -- ----------------------------------------
-  constant F_IN             : format := (16,14);
-  constant F_OUT            : format := (16,14);
+  constant F_IN             : format := (16,12);
+  constant F_OUT            : format := (16,12);
 
   -- ----------------------------------------
   --  Signals

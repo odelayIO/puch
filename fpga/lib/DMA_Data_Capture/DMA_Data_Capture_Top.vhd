@@ -115,8 +115,10 @@ architecture rtl of DMA_Data_Capture_Top is
   signal debug_cnt_en       : std_logic;
 
   -- Internal Signals
-  signal fifo_wr_ptr        : std_logic_vector(31 downto 0);
-  signal fifo_rd_ptr        : std_logic_vector(31 downto 0);
+  signal fifo_wr_ptr        : std_logic_vector(15 downto 0);
+  signal fifo_rd_ptr        : std_logic_vector(15 downto 0);
+  signal fifo_wr_ptr32      : std_logic_vector(31 downto 0);
+  signal fifo_rd_ptr32      : std_logic_vector(31 downto 0);
   signal rst                : std_logic;
 
   attribute mark_debug : string;
@@ -125,7 +127,22 @@ architecture rtl of DMA_Data_Capture_Top is
   attribute mark_debug of fifo_tlast    : signal is "true";
   attribute mark_debug of fifo_trdy     : signal is "true";
   attribute mark_debug of fifo_cnt      : signal is "true";
- 
+
+  attribute mark_debug of cap_trig      : signal is "true";
+  attribute mark_debug of fifo_flush    : signal is "true";
+  attribute mark_debug of debug_cnt_en  : signal is "true";
+
+  attribute mark_debug of state         : signal is "true";
+  attribute mark_debug of fifo_wr_ptr   : signal is "true";
+  attribute mark_debug of fifo_rd_ptr   : signal is "true";
+
+  attribute mark_debug of B_TDATA       : signal is "true";
+  attribute mark_debug of B_TVALID      : signal is "true";
+  attribute mark_debug of B_TLAST       : signal is "true";
+  attribute mark_debug of B_TREADY      : signal is "true";
+  attribute mark_debug of B_TKEEP       : signal is "true";
+
+
   -- ----------------------------------------
   --  Components
   -- ----------------------------------------
@@ -173,8 +190,8 @@ begin
       --    Status Registers
       -- -------------------------------------+-------------------------------------------------
       csr_max_depth_len_in                    => std_logic_vector(to_unsigned(32768,32)),
-      csr_fifo_wr_ptr_wr_ptr_in               => fifo_wr_ptr,
-      csr_fifo_rd_ptr_rd_ptr_in               => fifo_rd_ptr, 
+      csr_fifo_wr_ptr_wr_ptr_in               => x"0000" & fifo_wr_ptr,
+      csr_fifo_rd_ptr_rd_ptr_in               => x"0000" & fifo_rd_ptr, 
       -- -------------------------------------+-------------------------------------------------
       --    Control Registers
       -- -------------------------------------+-------------------------------------------------
@@ -267,7 +284,7 @@ begin
             fifo_tdata        <= (others => '0');
             fifo_tvalid       <= '0';
             fifo_tlast        <= '0';
-            fifo_cnt          <= (others => '0');
+            fifo_cnt          <= unsigned(cap_depth);
             state             <= IDLE;
         end case;
       end if;
@@ -293,9 +310,12 @@ begin
       m_axis_tready       => B_TREADY, 
       m_axis_tlast        => B_TLAST,
       --------------------+-------------------------------
-      axis_wr_data_count  => fifo_wr_ptr, 
-      axis_rd_data_count  => fifo_rd_ptr 
+      axis_wr_data_count  => fifo_wr_ptr32, 
+      axis_rd_data_count  => fifo_rd_ptr32 
     );
+
+  fifo_wr_ptr <= fifo_wr_ptr32(15 downto 0);
+  fifo_rd_ptr <= fifo_rd_ptr32(15 downto 0);
 
 end RTL;
 
