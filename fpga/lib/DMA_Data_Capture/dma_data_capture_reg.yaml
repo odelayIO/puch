@@ -1,0 +1,82 @@
+# See consair ReadTheDocs for RegMap parameters https://corsair.readthedocs.io/en/latest/regmap.html
+
+regmap:
+-   name: Max_Depth
+    description: The depth of the capture FIFO
+    address: 0
+    bitfields:
+    -   name: len
+        description: The depth of the capture FIFO
+        reset: 0
+        width: 32
+        lsb: 0
+        access: ro
+        hardware: i
+        enums: []
+-   name: Capture_Length
+    description: The number of samples to capture in buffer
+    bitfields:
+    -   name: len
+        description: The start of HLS processor
+        reset: 0
+        width: 32
+        lsb: 0
+        access: rw
+        hardware: o
+        enums: []
+-   name: Capture_Stb
+    description: Capture Strobe, self clearing 1cc strobe
+    bitfields:
+    -   name: cap_stb
+        description: Capture Strobe, self clearing 1cc strobe
+        reset: 0
+        width: 1
+        lsb: 0
+        access: wosc
+        hardware: o
+        enums: []
+-   name: FIFO_Flush
+    description: Flush the FIFO for a new capture trigger
+    bitfields:
+    -   name: flush
+        description: Flush the FIFO for a new capture trigger
+        reset: 0
+        width: 1
+        lsb: 0
+        access: rw
+        hardware: o
+        enums: []
+-   name: FIFO_WR_Ptr
+    description: FIFO Write Pointer
+    bitfields:
+    -   name: wr_ptr
+        description: FIFO Write Pointer
+        reset: 0
+        width: 32
+        lsb: 0
+        access: ro
+        hardware: i
+        enums: []
+-   name: FIFO_RD_Ptr
+    description: FIFO Read Pointer
+    bitfields:
+    -   name: rd_ptr
+        description: FIFO Read Pointer
+        reset: 0
+        width: 32 
+        lsb: 0
+        access: ro
+        hardware: i
+        enums: []
+-   name: Enable_Debug_Cnt
+    description: Enable the debug counter on DMA data output port
+    bitfields:
+    -   name: en_debug_cnt
+        description: Enable the debug counter on DMA data output port
+        reset: 0
+        width: 1
+        lsb: 0
+        access: rw
+        hardware: o
+        enums: []
+

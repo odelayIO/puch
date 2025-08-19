@@ -29,7 +29,7 @@ class RegMap:
     """Control/Status register map"""
 
     # USER_LEDS - User Leds on KR260 (user_leds[1:0])
-    USER_LEDS_ADDR = 0x0010
+    USER_LEDS_ADDR = 0x10
     USER_LEDS_USER_LEDS_POS = 0
     USER_LEDS_USER_LEDS_MSK = 0x3
 

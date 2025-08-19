@@ -7,7 +7,7 @@ use ieee.numeric_std.all;
 
 entity led_reg is
 generic(
-    ADDR_W : integer := 16;
+    ADDR_W : integer := 8;
     DATA_W : integer := 32;
     STRB_W : integer := 4
 );
@@ -42,7 +42,7 @@ port(
 end entity;
 
 architecture rtl of led_reg is
-subtype ADDR_T is std_logic_vector(15 downto 0);
+subtype ADDR_T is std_logic_vector(7 downto 0);
 
 signal wready : std_logic;
 signal waddr  : std_logic_vector(ADDR_W-1 downto 0);
@@ -165,9 +165,9 @@ end process;
 --------------------------------------------------------------------------------
 csr_user_leds_rdata(31 downto 2) <= (others => '0');
 
-csr_user_leds_wen <= wen when (waddr = "0000000000010000") else '0'; -- 0x10
+csr_user_leds_wen <= wen when (waddr = "00010000") else '0'; -- 0x10
 
-csr_user_leds_ren <= ren when (raddr = "0000000000010000") else '0'; -- 0x10
+csr_user_leds_ren <= ren when (raddr = "00010000") else '0'; -- 0x10
 process (clk) begin
 if rising_edge(clk) then
 if (rst = '1') then
@@ -221,7 +221,7 @@ if (rst = '1') then
 else
     if (ren = '1') then
         case ADDR_T'(raddr) is
-            when "0000000000010000" => rdata_ff <= csr_user_leds_rdata; -- 0x10
+            when "00010000" => rdata_ff <= csr_user_leds_rdata; -- 0x10
             when others => rdata_ff <= "00000000000000000000000000000000"; -- 0x0
         end case;
     else

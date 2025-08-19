@@ -57,20 +57,26 @@ entity gng_top is
     Q_INIT_Z3     : std_logic_vector(63 downto 0) :=  x"32b439953f41c5e7"
   );
   port (
-    -- Clock and Reset
+    -- -----------------------------------------------------------------
+    --    Clock and Reset
+    -- -----------------------------------------------------------------
     clk           : in  std_logic;
     rstn          : in  std_logic;
-    -- Data Path
+    -- -----------------------------------------------------------------
+    --    Data Path
+    -- -----------------------------------------------------------------
     A_TDATA       : in  std_logic_vector(31 downto 0);
     A_TVALID      : in  std_logic;
     A_TLAST       : in  std_logic;
     A_TREADY      : out std_logic;
+    --------------+-----------------------------------
     B_TDATA       : out std_logic_vector(31 downto 0);
     B_TVALID      : out std_logic;
     B_TLAST       : out std_logic;
     B_TREADY      : in  std_logic;
-
-    -- AXI-Lite
+    -- -----------------------------------------------------------------
+    --    AXI-Lite
+    -- -----------------------------------------------------------------
     axil_awaddr   : in  std_logic_vector(AXIL_ADDR_W-1 downto 0);
     axil_awprot   : in  std_logic_vector(2 downto 0);
     axil_awvalid  : in  std_logic;
@@ -98,8 +104,8 @@ architecture rtl of gng_top is
 
   -- Constant and Top level signals
   constant F_AWGN         : format := (16,11);  -- AWGN is fixed format
-  constant F_IN           : format := (16,14);
-  constant F_OUT          : format := (16,14);
+  constant F_IN           : format := (16,12);
+  constant F_OUT          : format := (16,12);
   constant DLY            : natural := 1; -- Pipeline delay
   signal rst              : std_logic := '1';
 
@@ -163,7 +169,11 @@ begin
   ch_Q_sat  <= is_sat(ch_Q);
 
 
-  -- TLAST delay by DLY cc
+
+
+  -- --------------------------------------------------------
+  --    TLAST delay by DLY cc
+  -- --------------------------------------------------------
   process(clk,B_TREADY,rst)
   begin
     if(rst = '1') then
@@ -181,7 +191,7 @@ begin
 
 
   -- --------------------------------------------------------
-  --  Host Interface
+  --    Host Interface
   -- --------------------------------------------------------
   U_AWGN_REG : entity work.awgn_reg 
     generic map (
@@ -190,29 +200,39 @@ begin
       STRB_W        => AXIL_STRB_W 
     )
     port map (
+      -- -------------------------------------+-------------------------------------------------
+      --    Clock / Reset
+      -- -------------------------------------+-------------------------------------------------
       clk           => clk,
       rst           => rst, 
-
+      -- -------------------------------------+-------------------------------------------------
+      --    Status Registers
+      -- -------------------------------------+-------------------------------------------------
       csr_f_in_f_in_total_in                  => std_logic_vector(to_unsigned(F_IN.tBits,16)),
       csr_f_in_f_in_fractional_in             => std_logic_vector(to_unsigned(F_IN.fBits,16)),
       csr_f_out_f_out_total_in                => std_logic_vector(to_unsigned(F_OUT.tBits,16)),
       csr_f_out_f_out_fractional_in           => std_logic_vector(to_unsigned(F_OUT.fBits,16)),
       csr_f_awgn_f_awgn_total_in              => std_logic_vector(to_unsigned(F_AWGN.tBits,16)),
       csr_f_awgn_f_awgn_fractional_in         => std_logic_vector(to_unsigned(F_AWGN.fBits,16)),
+      -- -------------------------------------+-------------------------------------------------
+      --    Control Registers
+      -- -------------------------------------+-------------------------------------------------
       csr_awgn_noise_gain_awgn_noise_gain_out => awgn_gain,
       csr_awgn_enable_awgn_enable_out         => awgn_enable,
       csr_awgn_enable_sat_i_ch_in             => '1', 
       csr_awgn_enable_sat_i_ch_en             => ch_I_sat,
       csr_awgn_enable_sat_q_ch_in             => '1', 
       csr_awgn_enable_sat_q_ch_en             => ch_Q_sat,
-      -- Debug Counters
+      -- -------------------------------------+-------------------------------------------------
+      --    Debug Counters
+      -- -------------------------------------+-------------------------------------------------
       csr_tvalid_cnt_tvalid_cnt_in            => cnt_tvalid_cap, 
       csr_tlast_cnt_tlast_cnt_in              => cnt_tlast_cap,
       csr_cnt_ctrl_clear_cnt_out              => clr_cnt, 
       csr_cnt_ctrl_capture_cnt_out            => cap_cnt, 
-
-
-      -- AXI-Lite
+      -- -------------------------------------+-------------------------------------------------
+      --    AXI-Lite
+      -- -------------------------------------+-------------------------------------------------
       axil_awaddr       => axil_awaddr,   
       axil_awprot       => axil_awprot,   
       axil_awvalid      => axil_awvalid,  
@@ -246,7 +266,7 @@ begin
     port map (
       clk         => clk,
       rstn        => rstn,
-      ce          => B_TREADY,
+      ce          => B_TREADY AND A_TVALID,
       valid_out   => open,
       data_out    => I_gng
     );
@@ -260,7 +280,7 @@ begin
     port map (
       clk         => clk,
       rstn        => rstn,
-      ce          => B_TREADY,
+      ce          => B_TREADY AND A_TVALID,
       valid_out   => open,
       data_out    => Q_gng
     );
@@ -280,16 +300,19 @@ begin
     port map (
       ------------+-------------------------
       -- Clock and Reset
+      ------------+-------------------------
       clk         => clk,
-      ce          => B_TREADY,
+      ce          => '1',
       rst         => rst,
       ------------+-------------------------
       -- Input Signals
+      ------------+-------------------------
       A           => awgn_gain,
       B           => I_gng,
       In_stb      => '1',
       ------------+-------------------------
       -- Output Signals
+      ------------+-------------------------
       C           => I_gng_d,
       Out_stb     => open
     );
@@ -308,16 +331,19 @@ begin
     port map (
       ------------+-------------------------
       -- Clock and Reset
+      ------------+-------------------------
       clk         => clk,
-      ce          => B_TREADY,
+      ce          => '1',
       rst         => rst,
       ------------+-------------------------
       -- Input Signals
+      ------------+-------------------------
       A           => awgn_gain,
       B           => Q_gng,
       In_stb      => '1',
       ------------+-------------------------
       -- Output Signals
+      ------------+-------------------------
       C           => Q_gng_d,
       Out_stb     => open
     );
@@ -340,16 +366,19 @@ begin
     port map (
       ------------+-------------------------
       -- Clock and Reset
+      ------------+-------------------------
       clk         => clk,
-      ce          => B_TREADY,
+      ce          => '1',
       rst         => rst,
       ------------+-------------------------
       -- Input Signals
+      ------------+-------------------------
       A           => A_TDATA(2*F_IN.tBits-1 downto F_IN.tBits),
       B           => I_gng_d,
       In_stb      => A_TVALID,
       ------------+-------------------------
       -- Output Signals
+      ------------+-------------------------
       C           => B_TDATA_int(2*F_OUT.tBits-1 downto F_OUT.tBits),
       Out_stb     => B_TVALID_int
     );
@@ -368,16 +397,19 @@ begin
     port map (
       ------------+-------------------------
       -- Clock and Reset
+      ------------+-------------------------
       clk         => clk,
-      ce          => B_TREADY,
+      ce          => '1',
       rst         => rst,
       ------------+-------------------------
       -- Input Signals
+      ------------+-------------------------
       A           => A_TDATA(F_IN.tBits-1 downto 0),
       B           => Q_gng_d,
       In_stb      => A_TVALID,
       ------------+-------------------------
       -- Output Signals
+      ------------+-------------------------
       C           => B_TDATA_int(F_OUT.tBits-1 downto 0),
       Out_stb     => open
     );

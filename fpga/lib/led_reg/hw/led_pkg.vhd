@@ -10,10 +10,10 @@ package led_pkg is
 
 
 
-  constant CSR_BASE_ADDR : std_logic_vector(16-1 downto 0) := to_unsigned(0, 16);
+  constant CSR_BASE_ADDR : std_logic_vector(8-1 downto 0) := to_unsigned(0, 8);
 
   -- User_LEDs - User Leds on KR260 (user_leds[1:0])
-  constant CSR_USER_LEDS_ADDR : std_logic_vector(16-1 downto 0) := to_unsigned(16, 16);
+  constant CSR_USER_LEDS_ADDR : std_logic_vector(8-1 downto 0) := to_unsigned(16, 8);
   constant CSR_USER_LEDS_RESET : std_logic_vector(32-1 downto 0) := to_unsigned(0, 32);
 
 

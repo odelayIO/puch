@@ -7,5 +7,6 @@ clean:
 	cd ./managed_ip_project && rm -rf *.cache *.hw *.runs *.sim && cd ../
 	cd ./QPSK_Demod_Out_BRAM && cp QPSK_Demod_Out_BRAM.xci ../ && rm -fr * && mv ../QPSK_Demod_Out_BRAM.xci . && cd ../
 	cd ./QPSK_Demodulator && cp QPSK_Demodulator.xci ../ && rm -fr * && mv ../QPSK_Demodulator.xci . && cd ../
+	cd ./DMA_32b_Capture_FIFO && cp DMA_32b_Capture_FIFO.xci ../ && rm -fr * && mv ../DMA_32b_Capture_FIFO.xci . && cd ../
 
 .PHONY: all clean

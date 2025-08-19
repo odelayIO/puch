@@ -32,6 +32,8 @@
 --#       Date        Description
 --#     -----------   -----------------------------------------------------------------------
 --#      2025-02-22    Original Creation
+--#      2025-04-05    Added DMA write channel for symbols.  DMA packet max size is dependent
+--#                     on FIFO depth.  Currently set to 16K DWORDS
 --#
 --###########################################################################################
 --###########################################################################################
@@ -59,14 +61,18 @@ entity QPSK_Demod_Top is
     rst             : in  std_logic;
     ce              : in  std_logic := '1';
     -- ------------------------------------------------------
-    --    AXI Stream Input
+    --    AXI Stream Input (QPSK Demod Input)
     -- ------------------------------------------------------
     A_TDATA         : in  std_logic_vector(31 downto 0);
     A_TVALID        : in  std_logic;
     A_TREADY        : out std_logic;
-    A_TKEEP         : in  std_logic_vector(3 downto 0);
-    A_TSTRB         : in  std_logic_vector(3 downto 0);
-    A_TLAST         : in  std_logic_vector(0 downto 0);
+    A_TLAST         : in  std_logic;
+    -- ------------------------------------------------------
+    --    AXI Stream Output (QPSK Demod Const)
+    -- ------------------------------------------------------
+    B_SYM_TDATA     : out std_logic_vector(31 downto 0);
+    B_SYM_TVALID    : out std_logic;
+    B_SYM_TREADY    : in  std_logic := '1';
     -- ------------------------------------------------------
     --    AXI-Lite
     -- ------------------------------------------------------
@@ -94,15 +100,21 @@ end entity;
 
 architecture RTL of QPSK_Demod_Top is
 
-  -- Constant and Top level signals
+  -- ----------------------------------------
+  --  Constant and Top level signals
+  -- ----------------------------------------
   constant F_IN             : format := (16,12);
   constant F_OUT            : format := (16,12);
 
+  -- ----------------------------------------
+  --  Signals
+  -- ----------------------------------------
   -- Control Signals
   signal ap_start           : std_logic;
   signal ap_done            : std_logic;
   signal ap_idle            : std_logic;
 
+  -- Demod Signals
   signal demod_bits_stb     : std_logic;
   signal demod_bits         : std_logic_vector( 1 downto 0);
   signal demod_bits_stb_q   : std_logic;
@@ -119,7 +131,13 @@ architecture RTL of QPSK_Demod_Top is
   signal sync_lock          : std_logic := '0';
   signal sync_clr           : std_logic;
 
+  signal B_SYM_TDATA_i      : std_logic_vector(31 downto 0);
+  signal B_SYM_TVALID_i     : std_logic;
 
+
+  -- ----------------------------------------
+  --  Components
+  -- ----------------------------------------
   COMPONENT QPSK_Demod_Out_BRAM
     PORT (
       clka : IN STD_LOGIC;
@@ -158,22 +176,33 @@ architecture RTL of QPSK_Demod_Top is
       ap_return : OUT STD_LOGIC_VECTOR (0 downto 0) );
   end component;
 
+  -- ----------------------------------------
+  --  Debug Signals
+  -- ----------------------------------------
   attribute mark_debug : string;
-  attribute mark_debug of demod_bits_stb    : signal is "true";
-  attribute mark_debug of demod_bits_stb_q  : signal is "true";
-  attribute mark_debug of demod_bits        : signal is "true";
-  attribute mark_debug of demod_bits_q      : signal is "true";
+  --attribute mark_debug of demod_bits_stb    : signal is "true";
+  --attribute mark_debug of demod_bits_stb_q  : signal is "true";
+  --attribute mark_debug of demod_bits        : signal is "true";
+  --attribute mark_debug of demod_bits_q      : signal is "true";
 
-  attribute mark_debug of BRAM_wr_addr      : signal is "true"; 
-  attribute mark_debug of BRAM_wr_addr_clr  : signal is "true"; 
-  attribute mark_debug of BRAM_rd_addr      : signal is "true"; 
-  attribute mark_debug of BRAM_rd_data      : signal is "true"; 
+  --attribute mark_debug of BRAM_wr_addr      : signal is "true"; 
+  --attribute mark_debug of BRAM_wr_addr_clr  : signal is "true"; 
+  --attribute mark_debug of BRAM_rd_addr      : signal is "true"; 
+  --attribute mark_debug of BRAM_rd_data      : signal is "true"; 
 
-  attribute mark_debug of shift_reg         : signal is "true";
-  attribute mark_debug of sync_word         : signal is "true"; 
-  attribute mark_debug of sync_lock         : signal is "true"; 
-  attribute mark_debug of sync_clr          : signal is "true";  
+  --attribute mark_debug of shift_reg         : signal is "true";
+  --attribute mark_debug of sync_word         : signal is "true"; 
+  --attribute mark_debug of sync_lock         : signal is "true"; 
+  --attribute mark_debug of sync_clr          : signal is "true";  
 
+  --attribute mark_debug of dma_length        : signal is "true";  
+  --attribute mark_debug of dma_dword_cnt     : signal is "true";  
+  --attribute mark_debug of dma_rst           : signal is "true";  
+  --attribute mark_debug of A_TVALID          : signal is "true";  
+  --attribute mark_debug of A_TREADY          : signal is "true";  
+  --attribute mark_debug of A_TLAST           : signal is "true";  
+  --attribute mark_debug of B_TVALID          : signal is "true";  
+  --attribute mark_debug of B_TREADY          : signal is "true";  
 
 begin
 
@@ -267,10 +296,12 @@ begin
       I_in_ap_vld       => A_TVALID,
       Q_in              => A_TDATA(15 downto 0),
       Q_in_ap_vld       => A_TVALID,
-      I_out             => open,
-      I_out_ap_vld      => open,
-      Q_out             => open,
+      -------------------+-----------------------------
+      I_out             => B_SYM_TDATA_i(31 downto 16),
+      Q_out             => B_SYM_TDATA_i(15 downto 0),
+      I_out_ap_vld      => B_SYM_TVALID_i,
       Q_out_ap_vld      => open,
+      -------------------+-----------------------------
       demod_bits        => demod_bits,
       demod_bits_ap_vld => demod_bits_stb
     );
@@ -283,6 +314,8 @@ begin
   begin
     if(rising_edge(clk)) then
       demod_bits_stb_q    <= demod_bits_stb;
+      B_SYM_TDATA         <= B_SYM_TDATA_i;
+      B_SYM_TVALID        <= B_SYM_TVALID_i;
       if(demod_bits_stb = '1') then
         demod_bits_q      <= demod_bits;
       end if;
@@ -292,7 +325,7 @@ begin
 
 
   -- -------------------------------------------------------------------
-  --    HLS QPSK Demodulator
+  --    HLS QPSK Demodulator Capture RAM
   -- -------------------------------------------------------------------
   U_QPSK_DEMOD_OUT_BRAM : QPSK_Demod_Out_BRAM
     PORT MAP (
