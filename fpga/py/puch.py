@@ -13,13 +13,15 @@ class PynqInterface:
     Addresses passed to these methods are *offsets* (same convention used in RegMap).
     """
 
-    def __init__(self, base_addr, length):
+    def __init__(self, regmap):
         """
-        base_addr: physical base address of the IP (e.g. 0x40000000)
-        length: size in bytes to map (make sure it covers the highest register offset + 4)
+        regmap is the module constructor, which is mapped to MMIO
+        
+        regmap.mmio.base_addr: physical base address of the IP (e.g. 0x40000000)
+        regmap.mmio.length: size in bytes to map (make sure it covers the highest register offset + 4)
         """
-        self._base = base_addr
-        self._mmio = MMIO(self._base, length)
+        self._base = regmap.mmio.base_addr
+        self._mmio = MMIO(self._base, regmap.mmio.length)
 
     def read(self, offset):
         """Read a 32-bit value at offset (offset is in bytes)."""
