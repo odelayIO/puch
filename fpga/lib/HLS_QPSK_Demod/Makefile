@@ -85,7 +85,15 @@ HW_OUTPUT 	= $(HW_DIR)/qpsk_reg.vhd
 
 
 # Default target
-all: check_regmap hls_gen
+all: hls_gen check_regmap
+
+# Always Generate HLS Module
+.PHONY: hls_gen
+hls_gen:
+	@echo "Generating HLS QPSK Module..."
+	$(GEN_HLS)
+	$(MAKE) clean_spew
+	@echo "Completed Generatoring HLS QPSK Module."
 
 # Run gen_regmap if csrconfig or *_reg.yaml has been modified
 # or if the output files in doc, sw, or hw directories are missing
@@ -97,13 +105,6 @@ $(DOC_OUTPUT) $(SW_OUTPUT) $(HW_OUTPUT): $(CSRCONFIG) $(YAML)
 	$(GEN_REGMAP)
 	$(MAKE) clean_spew
 	@echo "Completed Generating Register Map Files."
-
-# Always Generate HLS Module
-.PHONY: hls_gen
-hls_gen:
-	@echo "Generating HLS QPSK Module..."
-	$(GEN_HLS)
-	@echo "Completed Generatoring HLS QPSK Module."
 
 
 # Phony target to ensure check_regmap is considered every time
