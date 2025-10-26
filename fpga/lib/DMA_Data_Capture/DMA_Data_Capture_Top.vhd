@@ -121,20 +121,20 @@ architecture rtl of DMA_Data_Capture_Top is
   signal fifo_rd_ptr32      : std_logic_vector(31 downto 0);
   signal rst                : std_logic;
 
-  attribute mark_debug : string;
-  attribute mark_debug of fifo_tdata    : signal is "true";
-  attribute mark_debug of fifo_tvalid   : signal is "true";
-  attribute mark_debug of fifo_tlast    : signal is "true";
-  attribute mark_debug of fifo_trdy     : signal is "true";
-  attribute mark_debug of fifo_cnt      : signal is "true";
+  --attribute mark_debug : string;
+  --attribute mark_debug of fifo_tdata    : signal is "true";
+  --attribute mark_debug of fifo_tvalid   : signal is "true";
+  --attribute mark_debug of fifo_tlast    : signal is "true";
+  --attribute mark_debug of fifo_trdy     : signal is "true";
+  --attribute mark_debug of fifo_cnt      : signal is "true";
 
-  attribute mark_debug of cap_trig      : signal is "true";
-  attribute mark_debug of fifo_flush    : signal is "true";
-  attribute mark_debug of debug_cnt_en  : signal is "true";
+  --attribute mark_debug of cap_trig      : signal is "true";
+  --attribute mark_debug of fifo_flush    : signal is "true";
+  --attribute mark_debug of debug_cnt_en  : signal is "true";
 
-  attribute mark_debug of state         : signal is "true";
-  attribute mark_debug of fifo_wr_ptr   : signal is "true";
-  attribute mark_debug of fifo_rd_ptr   : signal is "true";
+  --attribute mark_debug of state         : signal is "true";
+  --attribute mark_debug of fifo_wr_ptr   : signal is "true";
+  --attribute mark_debug of fifo_rd_ptr   : signal is "true";
 
   --attribute mark_debug of B_TDATA       : signal is "true";
   --attribute mark_debug of B_TVALID      : signal is "true";
