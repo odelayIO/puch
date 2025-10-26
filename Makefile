@@ -9,10 +9,9 @@ help:
 	cd ./fpga/overlays && ls -al
 	@echo "  "
 	@echo "Supported commands:"
-	@echo "  		build_overlay		: Build FPGA overlay, OVERLAY=<overlay_name>. DEFAULT : ${OVERLAY}"
-	@echo "  		open_overlay		: Open the Xilinx Vivado project in GUI, OVERLAY=<overlay_name>. DEFAULT : ${OVERLAY}"
-	@echo "                 clean_overlay		: Clean FPGA overlay project, OVERLAY=<overlay_name>. DEFAULT : ${OVERLAY}"
-	@echo "                 clean_all_overlay	: Clean FPGA overlay project and auto-generated files, OVERLAY=<overlay_name>. DEFAULT : ${OVERLAY}"
+	@echo "   build_overlay     : Build FPGA overlay, OVERLAY=<overlay_name>. DEFAULT : ${OVERLAY}"
+	@echo "   open_overlay      : Open the Xilinx Vivado project in GUI, OVERLAY=<overlay_name>. DEFAULT : ${OVERLAY}"
+	@echo "   clean_overlay     : Clean FPGA overlay project, OVERLAY=<overlay_name>. DEFAULT : ${OVERLAY}"
 	@echo "  "
 
 
@@ -31,4 +30,3 @@ clean_overlay:
 	## clean_overlay: Clean FPGA overlay project, OVERLAY=<overlay_name>. DEFAULT : ${OVERLAY}
 	cd ./fpga/overlays/${OVERLAY}/ && make clean && pwd
 	rm -fr *.jou *.log
-
