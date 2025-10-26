@@ -59,7 +59,7 @@ reg_if:
 	cd ../../lib/led_reg && make && pwd
 	cd ../../lib/timestamp && make && pwd
 	cd ../../lib/AWGN_GNG && make && pwd
-	cd ../../lib/HLS_QPSK_Demod && make reg_if && pwd
+	cd ../../lib/HLS_QPSK_Demod && make check_regmap && pwd
 	cd ../../lib/DMA_Data_Capture && make && pwd
 
 build_design: clean 
@@ -81,11 +81,11 @@ clean_all:
 	rm -fr ../../lib/HLS_fixed_gain/*.log
 	rm -fr ../../lib/HLS_fixed_gain/*.jou
 	cd ../../ip/KR260 && make clean && pwd
-	cd ../../lib/HLS_QPSK_Demod && make clean && pwd
-	cd ../../lib/DMA_Data_Capture && make clean && pwd
-	cd ../../lib/timestamp && make clean && pwd
-	cd ../../lib/AWGN_GNG && make clean && pwd
-	cd ../../lib/led_reg && make clean && pwd
+	cd ../../lib/HLS_QPSK_Demod && make clean_gen && pwd
+	cd ../../lib/DMA_Data_Capture && make clean_gen && pwd
+	cd ../../lib/timestamp && make clean_gen && pwd
+	cd ../../lib/AWGN_GNG && make clean_gen && pwd
+	cd ../../lib/led_reg && make clean_gen && pwd
 	rm -fr ../../py/KR260_HLS_QPSK_Demod/.ipynb_checkpoints
 	rm -fr ../../py/__pycache__
 	rm -rf ./${PROJ_DIR} *.jou *.log NA *.bit *.hwh *.xsa .Xil *.str
@@ -93,6 +93,11 @@ clean_all:
 
 clean:				
 ## clean: Just cleans the Vivado build.  Lib is not cleaned
+	cd ../../lib/HLS_QPSK_Demod && make clean_spew && pwd
+	cd ../../lib/DMA_Data_Capture && make clean_spew && pwd
+	cd ../../lib/timestamp && make clean_spew && pwd
+	cd ../../lib/AWGN_GNG && make clean_spew && pwd
+	cd ../../lib/led_reg && make clean_spew && pwd
 	rm -fr ../../lib/HLS_fixed_gain/xpr
 	rm -fr ../../lib/HLS_fixed_gain/*.log
 	rm -fr ../../lib/HLS_fixed_gain/*.jou

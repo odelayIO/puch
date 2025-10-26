@@ -136,11 +136,11 @@ architecture rtl of DMA_Data_Capture_Top is
   attribute mark_debug of fifo_wr_ptr   : signal is "true";
   attribute mark_debug of fifo_rd_ptr   : signal is "true";
 
-  attribute mark_debug of B_TDATA       : signal is "true";
-  attribute mark_debug of B_TVALID      : signal is "true";
-  attribute mark_debug of B_TLAST       : signal is "true";
-  attribute mark_debug of B_TREADY      : signal is "true";
-  attribute mark_debug of B_TKEEP       : signal is "true";
+  --attribute mark_debug of B_TDATA       : signal is "true";
+  --attribute mark_debug of B_TVALID      : signal is "true";
+  --attribute mark_debug of B_TLAST       : signal is "true";
+  --attribute mark_debug of B_TREADY      : signal is "true";
+  --attribute mark_debug of B_TKEEP       : signal is "true";
 
 
   -- ----------------------------------------

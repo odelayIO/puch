@@ -43,7 +43,7 @@ export PYTHONPATH := ../../corsair-reg-map/.:$(PYTHONPATH)
 
 # Define input files and output directories
 CSRCONFIG = csrconfig
-YAML 		= timestamp_reg.yaml
+YAML 			= timestamp_reg.yaml
 DOC_DIR 	= doc
 SW_DIR 		= sw
 HW_DIR 		= hw
@@ -57,10 +57,6 @@ GEN_REGMAP 		= python3 -m corsair
 DOC_OUTPUT 	= $(DOC_DIR)/timestamp_reg.md
 SW_OUTPUT 	= $(SW_DIR)/timestamp_regmap.py
 HW_OUTPUT 	= $(HW_DIR)/timestamp_reg.vhd
-
-#	DOC_OUTPUT 	= $(wildcard $(DOC_DIR)/*.md)
-#	SW_OUTPUT 	= $(wildcard $(SW_DIR)/*.py)
-#	HW_OUTPUT 	= $(wildcard $(HW_DIR)/*.vhd)
 
 # Default target
 all: run_timestamp check_regmap

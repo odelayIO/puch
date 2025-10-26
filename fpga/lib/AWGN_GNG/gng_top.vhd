@@ -139,15 +139,15 @@ architecture rtl of gng_top is
   signal cap_cnt                  : std_logic;
 
   -- ILA Signals
-  attribute mark_debug : string;
-  attribute mark_debug of cnt_tvalid    : signal is "true";
-  attribute mark_debug of cnt_tlast     : signal is "true";
-  attribute mark_debug of B_TVALID      : signal is "true";
-  attribute mark_debug of B_TREADY      : signal is "true";
-  attribute mark_debug of B_TLAST       : signal is "true";
-  attribute mark_debug of A_TVALID      : signal is "true";
+  --attribute mark_debug : string;
+  --attribute mark_debug of cnt_tvalid    : signal is "true";
+  --attribute mark_debug of cnt_tlast     : signal is "true";
+  --attribute mark_debug of B_TVALID      : signal is "true";
+  --attribute mark_debug of B_TREADY      : signal is "true";
+  --attribute mark_debug of B_TLAST       : signal is "true";
+  --attribute mark_debug of A_TVALID      : signal is "true";
   --attribute mark_debug of A_TREADY      : signal is "true"; A_TREADY = B_TREADY;
-  attribute mark_debug of A_TLAST       : signal is "true";
+  --attribute mark_debug of A_TLAST       : signal is "true";
 
 begin
 

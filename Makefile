@@ -1,4 +1,4 @@
-OVERLAY			= KR260_HLS_QPSK_Demod
+OVERLAY			= KR260_AWGN_DMA_Stream
 
 default: help
 
@@ -30,8 +30,5 @@ open_overlay:
 clean_overlay: 
 	## clean_overlay: Clean FPGA overlay project, OVERLAY=<overlay_name>. DEFAULT : ${OVERLAY}
 	cd ./fpga/overlays/${OVERLAY}/ && make clean && pwd
+	rm -fr *.jou *.log
 
-.PHONY: clean_all_overlay
-clean_all_overlay: 
-	## clean_all_overlay: Clean FPGA overlay project and auto-generated files, OVERLAY=<overlay_name>. DEFAULT : ${OVERLAY}
-	cd ./fpga/overlays/${OVERLAY}/ && make clean_all && pwd
