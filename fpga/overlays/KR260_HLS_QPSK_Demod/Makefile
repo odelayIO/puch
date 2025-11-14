@@ -82,7 +82,9 @@ clean:
 	cd ../../lib/timestamp && make clean_spew && pwd
 	cd ../../lib/AWGN_GNG && make clean_spew && pwd
 	cd ../../lib/led_reg && make clean_spew && pwd
+	rm -fr ../../lib/HLS_QPSK_Demod/xpr
 	rm -fr ../../lib/HLS_fixed_gain/xpr
+	rm -fr ../../lib/HLS_fixed_gain/*.log
 	rm -fr ../../lib/HLS_fixed_gain/*.log
 	rm -fr ../../lib/HLS_fixed_gain/*.jou
 	rm -fr ../../lib/timestamp/*.log

@@ -127,9 +127,6 @@ clean_gen:
 clean_spew:
 	@echo "Cleaning Spew..."
 	rm -rf *.jou *.log $(SW_DIR)/__pycache__
-	@rm -rf xpr
-	@rm -rf csim
-	@rm -rf proj
 	@echo "Done cleaning spew."
 
 # Phony target to ensure clean_gen and clean_spew are considered every time

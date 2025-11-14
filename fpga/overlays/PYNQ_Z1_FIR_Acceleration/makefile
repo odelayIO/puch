@@ -1,10 +1,14 @@
 overlay_name := fir_accel
 design_name := fir_accel
 
-all: block_design bitstream check_timing
+build: block_design bitstream check_timing
 	@echo
 	@tput setaf 2 ; echo "Built $(overlay_name) successfully!"; tput sgr0;
 	@echo
+
+all: build
+
+.PHONY: build all block_design bitstream check_timing clean
 
 #source_vivado:
 #	source /tools/Xilinx/Vivado/2019.1/settings64.sh
