@@ -197,7 +197,7 @@ tail -c+73 < boot.scr.uimg > boot.scr
 vi /boot/firmware/boot.scr
 ```
 
-![image-20231114052844521](./doc/image-20231114052844521.png)
+![image-20231114052844521](./images/image-20231114052844521.png)
 
 4. Now rebuild the `boot.scr.uimg`:
 
@@ -205,7 +205,7 @@ vi /boot/firmware/boot.scr
 mkimage -C none -A arm -T script -d boot.scr boot.scr.uimg
 ```
 
-![image-20231114053052323](./doc/image-20231114053052323.png)
+![image-20231114053052323](./images/image-20231114053052323.png)
 
 The boot log on the console should now have `cpuidle.off=1` 
 
@@ -277,11 +277,11 @@ iio_info -u 'ip:PlutoSdr.local'
 
 ### Stream Implementation
 
-![GR-PlutoSDR-FPGA-Gain-IP-Core](./doc/GR-PlutoSDR-FPGA-Gain-IP-Core.png)
+![GR-PlutoSDR-FPGA-Gain-IP-Core](./images/GR-PlutoSDR-FPGA-Gain-IP-Core.png)
 
 ### Vectorized Implementation
 
-![image-20231106073055863](./doc/image-20231106073055863.png)
+![image-20231106073055863](./images/image-20231106073055863.png)
 
 
 
@@ -301,7 +301,7 @@ iio_info -u 'ip:PlutoSdr.local'
 
 ##### HackRF GRC Flowgraph - Vectorized Interface
 
-![image-20231106074145753](./doc/image-20231106074145753.png)
+![image-20231106074145753](./images/image-20231106074145753.png)
 
 
 
@@ -319,7 +319,7 @@ iio_info -u 'ip:PlutoSdr.local'
 
 ##### HackRF GRC Flowgraph - Stream Interface
 
-![image-20231106082127338](./doc/image-20231106082127338.png)
+![image-20231106082127338](./images/image-20231106082127338.png)
 
 
 
