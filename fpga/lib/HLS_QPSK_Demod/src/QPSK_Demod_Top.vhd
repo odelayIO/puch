@@ -179,7 +179,7 @@ architecture RTL of QPSK_Demod_Top is
   -- ----------------------------------------
   --  Debug Signals
   -- ----------------------------------------
-  attribute mark_debug : string;
+  --attribute mark_debug : string;
   --attribute mark_debug of demod_bits_stb    : signal is "true";
   --attribute mark_debug of demod_bits_stb_q  : signal is "true";
   --attribute mark_debug of demod_bits        : signal is "true";

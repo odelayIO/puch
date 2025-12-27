@@ -1,7 +1,7 @@
 OVERLAY_NAME := kr260_fir_acceleration
 PROJ_DIR := xpr
 
-default: clean_all build_design check_timing
+default: clean build_design check_timing
 	@echo
 	@tput setaf 2 ; echo "Built $(OVERLAY_NAME) successfully!"; tput sgr0;
 	@echo
@@ -17,9 +17,6 @@ check_timing:
 #	vivado -mode batch -source build_$(OVERLAY_NAME)_dsa.tcl -notrace
 
 clean:
-	rm -rf $(OVERLAY_NAME) *.jou *.log NA *.bit *.hwh *.xsa .Xil xpr output
-
-clean_all:
 	rm -rf $(OVERLAY_NAME) *.jou *.log NA *.bit *.hwh *.xsa .Xil xpr output
 
 start_gui:		

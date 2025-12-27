@@ -1,27 +1,52 @@
-from pynq import allocate
 from pynq import MMIO
-import pynq.lib.dma
-import time
 
-import fpga.lib.timestamp.sw.timestamp_regmap as timestamp_regmap
-#import fpga.lib.led_reg.sw.led_regmap
-
+#from pynq import allocate
+#import pynq.lib.dma
+#import time
 
 
+#----------------------------------------------------------------------------------------
+#  PYNQ Constructor for Consair RegMap
+#----------------------------------------------------------------------------------------
+class PynqInterface:
+    """Adapter to provide `.read(addr)` and `.write(addr, val)` expected by RegMap.
+    Addresses passed to these methods are *offsets* (same convention used in RegMap).
+    """
+
+    def __init__(self, regmap):
+        """
+        regmap is the module constructor, which is mapped to MMIO
+        
+        regmap.mmio.base_addr: physical base address of the IP (e.g. 0x40000000)
+        regmap.mmio.length: size in bytes to map (make sure it covers the highest register offset + 4)
+        """
+        self._base = regmap.mmio.base_addr
+        self._mmio = MMIO(self._base, regmap.mmio.length)
+
+    def read(self, offset):
+        """Read a 32-bit value at offset (offset is in bytes)."""
+        # MMIO.read takes offset relative to base
+        return self._mmio.read(offset)
+
+    def write(self, offset, val):
+        """Write a 32-bit value at offset."""
+        self._mmio.write(offset, val)
+
+        
+        
+#----------------------------------------------------------------------------------------
+#  Puch Helper Functions
+#----------------------------------------------------------------------------------------
 def get_timestamp_str(timestamp):
-  yr      = str(hex(timestamp.mmio.read(timestamp_regmap.RegMap.TIME_STAMP_YEAR_ADDR)))[2:]
-  mon     = str(hex(timestamp.mmio.read(timestamp_regmap.RegMap.TIME_STAMP_MONTH_ADDR)))[2:]
-  day     = str(hex(timestamp.mmio.read(timestamp_regmap.RegMap.TIME_STAMP_DAY_ADDR)))[2:]
-  hour    = str(hex(timestamp.mmio.read(timestamp_regmap.RegMap.TIME_STAMP_HOUR_ADDR)))[2:]
-  minute  = str(hex(timestamp.mmio.read(timestamp_regmap.RegMap.TIME_STAMP_MINUTE_ADDR)))[2:]
-  sec     = str(hex(timestamp.mmio.read(timestamp_regmap.RegMap.TIME_STAMP_SECONDS_ADDR)))[2:]
+  yr      = str(hex(timestamp.time_stamp_year)[2:])
+  mon     = str(hex(timestamp.time_stamp_month)[2:])
+  day     = str(hex(timestamp.time_stamp_day)[2:])
+  hour    = str(hex(timestamp.time_stamp_hour)[2:])
+  minute  = str(hex(timestamp.time_stamp_minute)[2:])
+  sec     = str(hex(timestamp.time_stamp_seconds)[2:])
 
   
   return (yr+"/"+mon+"/"+day+" "+hour+":"+minute+":"+sec)
 
 
-def get_format(base,reg):
-  f = base.read(reg)
-  tBits = f&0xFFFF
-  fBits = (f&0xFFFF0000)>>16
-  return(tBits,fBits)
+

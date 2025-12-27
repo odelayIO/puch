@@ -39,8 +39,8 @@
 OVERLAY_NAME := kr260_dma_capture
 PROJ_DIR := xpr
 
-default: clean_all hls_ip reg_if build_design check_timing  
-## default: Performs a 'clean_all' and builds eveything from souce
+default: clean hls_ip reg_if build_design check_timing  
+## default: Performs a 'clean' and builds eveything from souce
 	@echo
 	@tput setaf 2 ; echo "Built $(OVERLAY_NAME) successfully!"; tput sgr0;
 	@echo
@@ -73,31 +73,20 @@ start_gui:
 ## start_gui: Start Vivado GUI
 	vivado ./${PROJ_DIR}/${OVERLAY_NAME}.xpr
 
-clean_all:		
-## clean_all: Cleans everything, deletes all generated files
+clean:		
+## clean: Cleans everything, deletes all generated files
 	rm -fr ../../lib/HLS_fixed_gain/xpr
 	rm -fr ../../lib/HLS_fixed_gain/*.log
 	rm -fr ../../lib/HLS_fixed_gain/*.jou
 	cd ../../ip/KR260 && make clean && pwd
-	cd ../../lib/DMA_Data_Capture && make clean && pwd
-	cd ../../lib/timestamp && make clean && pwd
-	cd ../../lib/led_reg && make clean && pwd
+	cd ../../lib/DMA_Data_Capture && make clean_spew && pwd
+	cd ../../lib/timestamp && make clean_spew && pwd
+	cd ../../lib/led_reg && make clean_spew && pwd
 	rm -fr ../../py/KR260_HLS_QPSK_Demod/.ipynb_checkpoints
 	rm -fr ../../py/__pycache__
 	rm -rf ./${PROJ_DIR} *.jou *.log NA *.bit *.hwh *.xsa .Xil *.str
 	rm -fr ./output
 
-clean:				
-## clean: Just cleans the Vivado build.  Lib is not cleaned
-	rm -fr ../../lib/HLS_fixed_gain/xpr
-	rm -fr ../../lib/HLS_fixed_gain/*.log
-	rm -fr ../../lib/HLS_fixed_gain/*.jou
-	rm -fr ../../lib/timestamp/*.log
-	rm -fr ../../lib/timestamp/*.jou
-	cd ../../ip/KR260 && make clean && pwd
-	rm -rf ./${PROJ_DIR} *.jou *.log NA *.bit *.hwh *.xsa .Xil *.str
-	rm -fr ../../py/KR260_HLS_QPSK_Demod/.ipynb_checkpoints
-	rm -fr ../../py/__pycache__
 
 upload_all: upload_bit upload_regmaps upload_ipynb upload_py_driver
 ## upload_all: Upload image to KR260 board

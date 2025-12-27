@@ -1,5 +1,8 @@
+
+
+
 <p align="center">
-  <img src="./doc/puch-logo-1.png">
+  <img src="./docs/images/puch-logo-1.png">
 </p>
 
 <br>
@@ -11,7 +14,7 @@
 <br>
 <br>
 
-![image-20250212155946539](./doc/puch-detailed-level-diagram.png)
+![image-20250212155946539](./docs/images/puch-detailed-level-diagram.png)
 
 <br>
 <br>
