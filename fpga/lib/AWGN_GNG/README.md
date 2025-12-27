@@ -45,6 +45,4 @@ See [RegMap](./doc/awgn_reg.md) README
 
 The AXI Register Interface was generated using consair, and registers are defined in the `awgn_reg.yaml`
 
-```{include} ./doc/awgn_reg.md
-```
 
