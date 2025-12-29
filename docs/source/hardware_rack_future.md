@@ -1,6 +1,6 @@
 # Future Upgrades
 
-This page contains an overview of the hardware rack used in the project.
+
 
 
 
@@ -12,5 +12,9 @@ This page contains an overview of the hardware rack used in the project.
 
 ## Power Module
 
-- Describe the rack layout and its role in the system.
+- Create a custom PCB to remotely control the KR260, PYNQ-Z1, and both Pluto SDRs 
+- Single 12VDC power supply will source power to all 4 devices
+- Add clean external power to both Pluto SDRs
+- Integration to Home Assistant via MQTT device
 
+![puch-power-controller-diagram](./_static/puch-power-controller-diagram.png)

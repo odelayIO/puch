@@ -26,7 +26,12 @@ make -C docs html
 
 4. Open `docs/_build/html/index.html` in a browser.
 
-Notes for Read the Docs
+```bash
+# Exit virtual environment
+deactivate
+```
+
+Notes for Read the Docs  
 
 - This repository includes `.readthedocs.yml` which tells RTD to install `requirements.txt` and build using the Sphinx config at `docs/source/conf.py`.
 - The documentation uses the ReadTheDocs theme; `requirements.txt` includes `sphinx-rtd-theme` so the theme will be installed automatically.
