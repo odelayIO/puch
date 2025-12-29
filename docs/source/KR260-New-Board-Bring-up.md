@@ -2,7 +2,7 @@
 
 # Board Bring-up for KR260
 
-[TOC]
+
 
 All the information for setting up Kria KR260 is on [Confluence Site](https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/1641152513/Kria+SOMs+Starter+Kits)
 
@@ -10,27 +10,23 @@ All the information for setting up Kria KR260 is on [Confluence Site](https://xi
 
 
 
-# Create an SD Card Image
+## Create an SD Card Image
 
-## Download K26 Ubuntu 22.04 Image
+### Download K26 Ubuntu 22.04 Image
 
-```http
-https://ubuntu.com/download/amd-xilinx
-```
+[https://ubuntu.com/download/amd-xilinx](https://ubuntu.com/download/amd-xilinx)
 
 Burn the Ubuntu 22.04 image to a SD Card.  Bot the board, then update the Kria Boot FW image.
 
 
 
-## Download the Updated Kria Boot FW Image
+### Download the Updated Kria Boot FW Image
 
-```http
-https://www.xilinx.com/member/forms/download/design-license-xef.html?filename=BOOT-k26-starter-kit-20230516185703.bin
-```
+[BOOT-k26-starter-kit-20230516185703.bin](https://www.xilinx.com/member/forms/download/design-license-xef.html?filename=BOOT-k26-starter-kit-20230516185703.bin)
 
 
 
-## Install Boot FW Image to the Kria
+### Install Boot FW Image to the Kria
 
 Transfer the *.bin file to KR260 device and install by executing the following command:
 
@@ -40,7 +36,7 @@ sudo xmutil bootfw_update -i BOOT-k26-starter-kit-20230516185703.bin
 
 
 
-## Configure the time zone
+### Configure the time zone
 
 ```bash
 sudo timedatectl set-timezone America/Los_Angeles
@@ -48,7 +44,7 @@ sudo timedatectl set-timezone America/Los_Angeles
 
 
 
-# Create 512MB swap memory 
+### Create 512MB swap memory 
 
 ```bash
 swapon --show
@@ -64,7 +60,7 @@ sudo free -h
 
 
 
-# Install Kria PYNQ
+## Install Kria PYNQ
 
 ```bash
 git clone --recursive https://github.com/Xilinx/Kria-PYNQ.git
@@ -74,7 +70,7 @@ sudo bash install.sh -b KR260
 
 
 
-## Issue with `apt-get update` after Kria PYNQ install
+### Issue with `apt-get update` after Kria PYNQ install
 
 ```bash
 sudo vi /etc/apt/source.list.d/xilinx-gstreamer.list
@@ -88,16 +84,17 @@ Now comment the deb:
 
 
 
-## Open Jupyter Lab
+### Open Jupyter Lab
 
-http://kria:9090/lab
+[http://kria:9090/lab](http://kria:9090/lab)
 
-### Manually Peek/Poke Register without Register Map
+
+#### Manually Peek/Poke Register without Register Map
 
 ```python
-IP_BASE_ADDRESS = 0x40000000
-ADDRESS_RANGE = 0x1000
-ADDRESS_OFFSET = 0x10
+IP_BASE_ADDRESS   = 0x40000000
+ADDRESS_RANGE     = 0x1000
+ADDRESS_OFFSET    = 0x10
 
 from pynq import MMIO
 mmio = MMIO(IP_BASE_ADDRESS, ADDRESS_RANGE)
@@ -109,45 +106,9 @@ result = mmio.read(ADDRESS_OFFSET)
 
 
 
-# Install GNU Radio
-
-This will install GNU Radio 3.10.1.1.  Reference [[LINK](https://wiki.gnuradio.org/index.php/InstallingGR)]
-
-```bash
-sudo apt-get install gnuradio
-```
 
 
-
-# Running GNU Radio
-
-Open browser and open Jupyter, then open terminal, and set PYTHONPATH.  More [information](https://wiki.gnuradio.org/index.php/ModuleNotFoundError).
-
-```bash
-export PYTHONPATH=/usr/local/share/pynq-venv/lib/python3.10/site-packages:$PYTHONPATH
-export PYTHONPATH=/usr/local/share/pynq-venv/bin/pynq:$PYTHONPATH
-export DISPLAY=192.168.1.78:10.0
-```
-
-Source PYNQ  Python3 to use in GNU Radio
-
-```bash
-sudo -i source /etc/profile.d/pynq_venv.sh python3
-```
-
-### GNU Radio Python References
-
-Python Block with Vectors: https://wiki.gnuradio.org/index.php?title=Python_Block_with_Vectors
-
-PySDR: https://pysdr.org/index.html
-
-
-
-
-
-
-
-# Setup Samba Shared Folder
+### Setup Samba Shared Folder
 
 Install and configure `samba`
 
@@ -170,7 +131,7 @@ Paste the following text into the `smb.conf` file:
 
 
 
-# Disable `cpuidle` 
+### Disable `cpuidle` 
 
 Resource: [Using Distro Boot with Xilinx U-Boot](https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/749142017/Using+Distro+Boot+With+Xilinx+U-Boot)
 
@@ -197,7 +158,7 @@ tail -c+73 < boot.scr.uimg > boot.scr
 vi /boot/firmware/boot.scr
 ```
 
-![image-20231114052844521](./images/image-20231114052844521.png)
+![image-20231114052844521](./_static/image-20231114052844521.png)
 
 4. Now rebuild the `boot.scr.uimg`:
 
@@ -205,7 +166,7 @@ vi /boot/firmware/boot.scr
 mkimage -C none -A arm -T script -d boot.scr boot.scr.uimg
 ```
 
-![image-20231114053052323](./images/image-20231114053052323.png)
+![image-20231114053052323](./_static/image-20231114053052323.png)
 
 The boot log on the console should now have `cpuidle.off=1` 
 
@@ -217,7 +178,41 @@ The boot log on the console should now have `cpuidle.off=1`
 
 
 
-# Setting up PlutoSDR
+## Install GNU Radio
+
+This will install GNU Radio 3.10.1.1.  Reference [[LINK](https://wiki.gnuradio.org/index.php/InstallingGR)]
+
+```bash
+sudo apt-get install gnuradio
+```
+
+
+
+### Running GNU Radio
+
+Open browser and open Jupyter, then open terminal, and set PYTHONPATH.  More [information](https://wiki.gnuradio.org/index.php/ModuleNotFoundError).
+
+```bash
+export PYTHONPATH=/usr/local/share/pynq-venv/lib/python3.10/site-packages:$PYTHONPATH
+export PYTHONPATH=/usr/local/share/pynq-venv/bin/pynq:$PYTHONPATH
+export DISPLAY=192.168.1.78:10.0
+```
+
+Source PYNQ  Python3 to use in GNU Radio
+
+```bash
+sudo -i source /etc/profile.d/pynq_venv.sh python3
+```
+
+#### GNU Radio Python References
+
+Python Block with Vectors: https://wiki.gnuradio.org/index.php?title=Python_Block_with_Vectors
+
+PySDR: https://pysdr.org/index.html
+
+
+
+### Setting up PlutoSDR
 
 Resource: https://wiki.analog.com/university/tools/pluto/drivers/linux
 
@@ -249,7 +244,7 @@ Use IP Address `192.168.2.1` for SSH
 
 Use IP Address `192.168.2.10` for GNU Radio, IIO, etc.
 
-##### `iio_info` Example
+#### `iio_info` Example
 
 ```bash
 ubuntu@kria:~$ iio_info -s
@@ -271,21 +266,21 @@ iio_info -u 'ip:PlutoSdr.local'
 
 
 
-# GNU Radio with PlutoSDR using an FPGA Gain Block IP Core
+### GNU Radio with PlutoSDR using an FPGA Gain Block IP Core
 
 
 
-### Stream Implementation
+#### Stream Implementation
 
-![GR-PlutoSDR-FPGA-Gain-IP-Core](./images/GR-PlutoSDR-FPGA-Gain-IP-Core.png)
+![GR-PlutoSDR-FPGA-Gain-IP-Core](./_static/GR-PlutoSDR-FPGA-Gain-IP-Core.png)
 
-### Vectorized Implementation
+#### Vectorized Implementation
 
-![image-20231106073055863](./images/image-20231106073055863.png)
+![image-20231106073055863](./_static/image-20231106073055863.png)
 
 
 
-# Performance
+#### Performance
 
 #### Vectorized Implementation
 
@@ -301,7 +296,7 @@ iio_info -u 'ip:PlutoSdr.local'
 
 ##### HackRF GRC Flowgraph - Vectorized Interface
 
-![image-20231106074145753](./images/image-20231106074145753.png)
+![image-20231106074145753](./_static/image-20231106074145753.png)
 
 
 
@@ -319,15 +314,15 @@ iio_info -u 'ip:PlutoSdr.local'
 
 ##### HackRF GRC Flowgraph - Stream Interface
 
-![image-20231106082127338](./images/image-20231106082127338.png)
+![image-20231106082127338](./_static/image-20231106082127338.png)
 
 
 
-# Backup SD Card
+### Backup SD Card
 
 [PiShrink](https://github.com/Drewsif/PiShrink/tree/master)
 
-# References
+## References
 
 - GNU Radio Architecture Brief [[LINK](https://gnuradio-fr-19.sciencesconf.org/data/pages/gnuRadioArchitecture.pdf)]
 - PySDR [[LINK](https://pysdr.org/index.html)]
