@@ -1,25 +1,13 @@
 
 
-<p align="center">
-  <img src="./docs/source/_static/puch-logo-1.png">
-</p>
-
-<br>
-
-<img src="https://app.readthedocs.org/projects/puch/badge/?version=latest" alt="Documentation Status">
+# Overview
 
 ***puch*** is the glue logic between Software Defined Radio (supporting Analog Devices ADALM-Pluto and HackRF SDR) Evaluation board and the PYNQ development boards (supporting PYNQ Z1 and KR260) with support from GNU Radio to provide a FPGA IP core development platform in wireless communications utilizing Xilinx Vivado HLS </> VHDL </> Verilog register transfer language (RTL).
 
-Full documentation on: [ReadTheDocs](https://puch.readthedocs.io)
 
-<br>
-<br>
 
-![image-20250212155946539](./docs/source/_static/puch-detailed-level-diagram.png)
+![image-20250212155946539](./_static/puch-detailed-level-diagram.png)
 
-<br>
-<br>
-<br>
 
 ## Development Environment
 
