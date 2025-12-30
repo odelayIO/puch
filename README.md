@@ -16,9 +16,16 @@ Full documentation on: [ReadTheDocs](https://puch.readthedocs.io)
 <br>
 
 ![image-20250212155946539](./docs/source/_static/puch-detailed-level-diagram.png)
+<br>
+<br>
 
-<br>
-<br>
+## *puch* 10" mini-rack
+
+Built a *puch* 10" mini-rack to create a portable development solution.  See the  [ReadTheDocs](https://puch.readthedocs.io) for details!
+
+<p align="center">
+  <img src="./docs/source/_static/completed-rack-front.png">
+</p>
 <br>
 
 ## Development Environment
