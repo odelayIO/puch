@@ -44,10 +44,6 @@ It is recommended to have both devices map to a the same development folder.  Th
 
 
 
-### Kria KR260 Board
-
-See [KR260 New Board Bring Up](./KR260-New-Board-Bring-up.md)
-
 
 
 ## Downloads
