@@ -15,8 +15,9 @@
 
 overview.md
 KR260-New-Board-Bring-up.md
-building_fpga.md
-gnuradio_fpga_module.md
+Building-PYNQ-Overlays.md
+Dual-ADALM-Pluto-SDR-Setup.md
+puch-GNURadio-PYNQ-Example.md
 ```
 
 
