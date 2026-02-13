@@ -27,5 +27,6 @@ puch-GNURadio-PYNQ-Example.md
 
 hardware_rack_overview.md
 hardware_rack_inventory.md
+puch-Power-Controller.md
 hardware_rack_future.md
 ```
