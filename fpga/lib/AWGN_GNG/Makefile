@@ -93,3 +93,32 @@ clean_spew:
 
 # Phony target to ensure clean_gen and clean_spew are considered every time
 .PHONY: clean_gen clean_spew
+
+
+# ------------------------------------------------------------------------------------------
+#   AWGN gain -> SNR calibration sweep (Vivado xsim, batch mode)
+#   Runs sim/tb_gng_snr_cal.vhd and writes sim/gng_snr_cal.csv.  Needs Vivado on PATH.
+#   Override testbench generics with SNR_CAL_GENERICS, e.g.
+#     make snr_cal SNR_CAL_GENERICS="-generic_top GAIN_STEP_DB=0.1 -generic_top N_SAMPLES=16384"
+# ------------------------------------------------------------------------------------------
+SIM_WORK          = sim/xsim_snr_cal
+SNR_CAL_GENERICS ?=
+SIM_VLOG          = gng_coef.v gng_ctg.v gng_interp.v gng_lzd.v \
+                    gng_smul_16_18_sadd_37.v gng_smul_16_18.v gng.v
+SIM_VHDL          = ../util/delay_slv.vhd ../util/delay_bit.vhd \
+                    ../arith/Arith_Pkg.vhd ../arith/Add.vhd ../arith/Mult.vhd \
+                    hw/awgn_pkg.vhd hw/awgn_reg.vhd gng_top.vhd sim/tb_gng_snr_cal.vhd
+
+.PHONY: snr_cal clean_sim
+snr_cal:
+	@echo "Running AWGN SNR calibration sweep..."
+	rm -rf $(SIM_WORK) && mkdir -p $(SIM_WORK)
+	cd $(SIM_WORK) && xvlog $(addprefix ../../,$(SIM_VLOG))
+	cd $(SIM_WORK) && xvhdl --2008 $(addprefix ../../,$(SIM_VHDL))
+	cd $(SIM_WORK) && xelab -debug off -generic_top "OUT_FILE=../gng_snr_cal.csv" \
+		$(SNR_CAL_GENERICS) tb_gng_snr_cal -s tb_gng_snr_cal
+	cd $(SIM_WORK) && xsim tb_gng_snr_cal -R
+	@echo "Completed SNR calibration sweep: sim/gng_snr_cal.csv"
+
+clean_sim:
+	rm -rf $(SIM_WORK)
